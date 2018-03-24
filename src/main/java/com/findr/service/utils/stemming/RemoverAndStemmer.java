@@ -1,6 +1,4 @@
-package com.findr.service.stemming.utils;
-
-import com.findr.service.stemming.utils.Porter;
+package com.findr.service.utils.stemming;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

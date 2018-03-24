@@ -1,7 +1,6 @@
-package com.findr.service.stemming;
+package com.findr.service.utils.stemming;
 
 
-import com.findr.service.stemming.utils.RemoverAndStemmer;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;

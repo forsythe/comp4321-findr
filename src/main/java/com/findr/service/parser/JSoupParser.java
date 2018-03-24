@@ -1,7 +1,7 @@
 package com.findr.service.parser;
 
 import com.findr.object.Webpage;
-import com.findr.service.stemming.Vectorizer;
+import com.findr.service.utils.stemming.Vectorizer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,4 +1,5 @@
-package com.findr.service.utils;
+package com.findr.service.utils.timer;
 
-public interface Op {
+public interface Operation {
+    void runOp();
 }

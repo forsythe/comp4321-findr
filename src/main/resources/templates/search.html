@@ -33,8 +33,10 @@
     <br><span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small"></span>
     <br>
     <div th:text="${page.getMetaDescription()}" class="result-small"></div>
-    <!--<span th:text="'Last modified ' + ${page.getLastModified}">Last modified</span>-->
+    <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified</span>
     <br>
+    <br>
+
     <!--<td th:text="${#strings.substring(page.body,100)}">Body</td>-->
 </div>
 
@@ -46,7 +48,7 @@
         <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
             <div th:switch="${i}">
                 <p th:case="${pageNum}" th:text="${i}" class="page-num">CUR PAGE</p>
-                <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${#ctx.query},page=${i})}"></a></p>
+                <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
             </div>
         </td>
     </tr>

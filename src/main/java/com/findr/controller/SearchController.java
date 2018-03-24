@@ -3,6 +3,7 @@ package com.findr.controller;
 import com.findr.object.Webpage;
 import com.findr.service.searcher.HongseoSearcher;
 import com.findr.service.searcher.Searcher;
+import com.findr.service.utils.timer.Timer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ public class SearchController {
     private static final int RESULTS_PER_PAGE = 10;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
+    private double crawlTime = 0;
 
     private Searcher searcher = new HongseoSearcher();
 
@@ -49,6 +51,7 @@ public class SearchController {
             pageNum = 1;
         }
         map.addAttribute("prevQuery", prevQuery);
+        query = query.trim();
 
         //TODO: access db in a thread safe manner
         if (!prevQuery.equals(query)) {
@@ -57,7 +60,8 @@ public class SearchController {
 //                results.add("This is (" + query + ") result #" + k);
             List<String> tempQueryHolder = new ArrayList<>();
             tempQueryHolder.add(query);
-            results.addAll(searcher.search(tempQueryHolder, 12));
+
+            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
             prevQuery = query;
         }
 
@@ -65,11 +69,11 @@ public class SearchController {
         int numResultPages = (int) Math.max(1, Math.ceil((double) results.size() / RESULTS_PER_PAGE));
         pageNum = Math.min(numResultPages, pageNum);
 
+        map.addAttribute("crawlTime", String.format("%.2f", crawlTime));
         map.addAttribute("numResultPages", numResultPages);
         map.addAttribute("totalCrawledPages", results.size());
-        map.addAttribute("crawlTime", 5); //TODO: time it properly
-        map.addAttribute("query", query.trim());
         map.addAttribute("pageNum", pageNum);
+        map.addAttribute("query", query.trim());
 
         return "search";
     }

@@ -1,8 +1,4 @@
-package com.findr.service.utils;
-
-interface Op {
-    void runOp();
-}
+package com.findr.service.utils.timer;
 
 /**
  * Util class for timing functions in a single line
@@ -10,7 +6,7 @@ interface Op {
 public class Timer {
     private static final double ONE_BILLION = 1_000_000_000;
 
-    public static double measure(Op operation) {
+    public static double measure(Operation operation) {
         long startTime = System.nanoTime();
         operation.runOp();
         long endTime = System.nanoTime();
