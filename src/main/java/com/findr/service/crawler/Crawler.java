@@ -10,5 +10,5 @@ import java.util.List;
  * out/modify this class in the future
  */
 public interface Crawler {
-    List<Webpage> crawl(String startingUrl);
+    List<Webpage> crawl(String startingUrl, int maxRunSeconds, int maxPagesCrawl);
 }

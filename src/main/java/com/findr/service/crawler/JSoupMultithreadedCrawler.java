@@ -12,12 +12,10 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * The JSoup implementation of the Crawler service
  */
-public class JSoupCrawler implements Crawler {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(JSoupCrawler.class);
+public class JSoupMultithreadedCrawler implements Crawler {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(JSoupMultithreadedCrawler.class);
 
     private final int numThreads;
-    private final int maxRunSeconds;
-    private final int maxPagesCrawl;
 
     private BlockingQueue<String> crawlQueue;
     private BlockingQueue<Webpage> indexQueue;
@@ -26,27 +24,25 @@ public class JSoupCrawler implements Crawler {
     private ReentrantLock lockSeenURLs = new ReentrantLock();
 
     /**
-     * @param numThreads    Number of threads to use for crawling
-     * @param maxRunSeconds How many seconds to crawl before trying to stop all threads
-     * @param maxPagesCrawl How many pages to crawl before stopping
+     * @param numThreads Number of threads to use for crawling
      */
-    public JSoupCrawler(int maxRunSeconds, int maxPagesCrawl, int numThreads) {
+    public JSoupMultithreadedCrawler(int numThreads) {
         this.numThreads = numThreads;
-        this.maxRunSeconds = maxRunSeconds;
-        this.maxPagesCrawl = maxPagesCrawl;
-        this.indexQueue = new LinkedBlockingDeque<>(maxPagesCrawl);
-        this.crawlQueue = new LinkedBlockingDeque<>(maxPagesCrawl);
         this.seenURLs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     }
 
     @Override
-    public List<Webpage> crawl(String startURL) {
+    public List<Webpage> crawl(String startURL, int maxRunSeconds, int maxPagesCrawl) {
+        this.indexQueue = new LinkedBlockingDeque<>(maxPagesCrawl);
+        this.crawlQueue = new LinkedBlockingDeque<>(maxPagesCrawl);
+
+
         ExecutorService exec = Executors.newFixedThreadPool(numThreads);
         crawlQueue.add(startURL);
 
         long start = System.currentTimeMillis();
         for (int k = 0; k < numThreads; k++) {
-            exec.execute(new CrawlTask());
+            exec.execute(new CrawlTask(maxPagesCrawl));
         }
         exec.shutdown();
 
@@ -70,6 +66,11 @@ public class JSoupCrawler implements Crawler {
     }
 
     class CrawlTask implements Runnable {
+        int maxPagesCrawl;
+
+        public CrawlTask(int maxPagesCrawl) {
+            this.maxPagesCrawl = maxPagesCrawl;
+        }
 
         @Override
         public void run() {
