@@ -9,7 +9,7 @@
 <h1><a href="/">findr</a></h1>
 <span th:text="'you previously searched for ' + ${prevQuery}"></span>
 <br>
-<span th:text="'you searched for ' + ${query} + ', page ' + ${page}"></span>
+<span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}"></span>
 <form th:action="@{/search}">
     <input required type="text" name="query" th:value="${query}">
     <input type="hidden" name="page" value="1">
@@ -31,7 +31,8 @@
 <div th:each="page : ${results}">
     <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}" class="result-title"></a>
     <br><span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small"></span>
-    <br><div th:text="${page.getMetaDescription()}" class="result-small"></div>
+    <br>
+    <div th:text="${page.getMetaDescription()}" class="result-small"></div>
     <!--<span th:text="'Last modified ' + ${page.getLastModified}">Last modified</span>-->
     <br>
     <!--<td th:text="${#strings.substring(page.body,100)}">Body</td>-->

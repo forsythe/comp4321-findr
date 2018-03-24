@@ -20,11 +20,11 @@ import java.util.List;
 @Scope("session")
 public class SearchController {
 
-    static final int RESULTS_PER_PAGE = 10;
+    private static final int RESULTS_PER_PAGE = 10;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
 
-    Searcher searcher = new HongseoSearcher();
+    private Searcher searcher = new HongseoSearcher();
 
     /**
      * Handles user query requests
@@ -48,6 +48,7 @@ public class SearchController {
         } catch (Exception e) {
             pageNum = 1;
         }
+        map.addAttribute("prevQuery", prevQuery);
 
         //TODO: access db in a thread safe manner
         if (!prevQuery.equals(query)) {
@@ -61,7 +62,6 @@ public class SearchController {
         }
 
         map.addAttribute("results", paginate(results, pageNum, RESULTS_PER_PAGE));
-        map.addAttribute("prevQuery", prevQuery);
         int numResultPages = (int) Math.max(1, Math.ceil((double) results.size() / RESULTS_PER_PAGE));
         pageNum = Math.min(numResultPages, pageNum);
 

@@ -19,3 +19,6 @@ Package name 		| Contents
 `service.spider`	| Holds the spider interface, and any implementations. Does crawling and indexing together as an action
 `services.stemming`	| Utility functions for stopword removal and removing.
 
+## TODO
+search for TODO in the code
+
