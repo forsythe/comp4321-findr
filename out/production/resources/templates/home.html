@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>findr</title>
+
+</head>
+<body>
+
+<form th:action="@{/search}">
+    <label for="query">findr</label>
+    <input required type="text" placeholder="Enter a query..." name="query" id="query">
+    <input type="hidden" name="page" value="1">
+    <input type="submit" value="Search">
+</form>
+
+</body>
+</html>
+
+
