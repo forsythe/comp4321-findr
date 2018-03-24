@@ -4,7 +4,7 @@ Final project for COMP4321 Search Engines
 
 ## Getting Started
 
-Launch the `bootRun` gradle task to run, and go to [localhost:8080](localhost:8080)
+Launch the `bootRun` gradle task to run, and go to [http://localhost:8080](http://localhost:8080)
 
 ## Packages
 Package name 		| Contents
