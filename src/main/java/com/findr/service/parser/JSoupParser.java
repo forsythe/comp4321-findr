@@ -31,7 +31,7 @@ public class JSoupParser implements Parser {
     private static final Logger log = LoggerFactory.getLogger(JSoupParser.class);
 
     @Override
-    public Optional<Webpage> parse(String url, boolean handleRedirects) {
+    public Optional<Webpage> parse(String url, boolean handleRedirects, boolean doStoppingAndStemming) {
         log.debug("Parsing {}...", url);
         Optional<Webpage> page = Optional.empty();
 
@@ -66,7 +66,7 @@ public class JSoupParser implements Parser {
                 doc = Jsoup.parse(rawBody);
             }
 
-            HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
+            HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), doStoppingAndStemming);
 
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
@@ -77,6 +77,9 @@ public class JSoupParser implements Parser {
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
                     .setMetaDescription(getMetaDescription(doc));
+
+            //            if (result.getSize() == -1)
+//                result.setSize(result.getBody().length());
 
             page = Optional.of(result);
             log.debug("Successfully downloaded {{}}", url);

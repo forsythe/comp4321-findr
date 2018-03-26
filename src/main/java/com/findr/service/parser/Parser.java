@@ -9,5 +9,5 @@ import java.util.Optional;
  * We'll implement it separately, allowing us to easily swap out/modify this class in the future
  */
 public interface Parser {
-    Optional<Webpage> parse(String url, boolean handleRedirects);
+    Optional<Webpage> parse(String url, boolean handleRedirects, boolean doStoppingAndStemming);
 }

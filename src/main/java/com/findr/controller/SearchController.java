@@ -37,6 +37,7 @@ public class SearchController {
      * @param map   The map object we can add attributes to and access later in the html using curly braces
      * @return The name of the html page to display
      */
+
     @RequestMapping
     public String handleQueryRequest(
             @RequestParam("query") String query,
