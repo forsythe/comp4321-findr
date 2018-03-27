@@ -1,4 +1,6 @@
-package com.findr.service.indexer;
+ 	package com.findr.service.indexer;
+
+import java.util.List;
 
 import com.findr.object.Webpage;
 
@@ -9,8 +11,12 @@ import com.findr.object.Webpage;
  */
 public interface Indexer {
     void addWebpageEntry(Webpage webpage);
-
+       
+    void addAllWebpageEntries(List<Webpage> listOfWebpages);
+    
     void deleteWebpageEntry(Webpage webpage);
+    
+    Webpage getWebpage(Long id);
 
     void readDBFromDisk();
 

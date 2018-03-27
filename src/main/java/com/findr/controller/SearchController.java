@@ -24,7 +24,7 @@ public class SearchController {
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
 
-    private Searcher searcher = new HongseoSearcher();
+    private Searcher searcher = HongseoSearcher.getInstance();
 
     /**
      * Handles user query requests
