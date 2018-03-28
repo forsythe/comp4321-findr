@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.swing.plaf.BorderUIResource.TitledBorderUIResource;
+
 /**
  * Represents a webpage result that we crawled
  */
@@ -14,6 +16,7 @@ public class Webpage {
 
 
     Collection<String> links;
+    HashMap<String, Integer> titleKeywordsAndFrequencies;
     HashMap<String, Integer> keywordsAndFrequencies;
 
     public String getTitle() {
@@ -92,6 +95,15 @@ public class Webpage {
     public Webpage setKeywordsAndFrequencies(HashMap<String, Integer> keywordsAndFrequencies) {
         this.keywordsAndFrequencies = keywordsAndFrequencies;
         return this;
+    }
+    
+    public HashMap<String, Integer> getTitleKeywordsAndFrequencies() {
+    	return titleKeywordsAndFrequencies;
+    }
+    
+    public Webpage setTitleKeywordsAndFrequencies(HashMap<String, Integer> titleKeywordsAndFrequencies) {
+    	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
+    	return this;
     }
 
     public Collection<String> getLinks() {

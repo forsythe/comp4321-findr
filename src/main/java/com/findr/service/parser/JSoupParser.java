@@ -68,6 +68,7 @@ public class JSoupParser implements Parser {
             }
 
             HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
+            HashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
             
             long contentLength = httpCon.getContentLength();
             if (contentLength == -1) {
@@ -81,6 +82,7 @@ public class JSoupParser implements Parser {
                     .setTitle(doc.title())
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
+                    .setTitleKeywordsAndFrequencies(titleKeywords)
                     .setMetaDescription(getMetaDescription(doc));
 
             page = Optional.of(result);

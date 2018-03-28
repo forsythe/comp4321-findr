@@ -229,6 +229,8 @@ http://www.ust.hk/community/
 http://www.ust.hk/search/do-search.php
 http://repository.ust.hk/sp
 http://search.ust.hk/
+http://www.ust.hk/zh-hans/about-hkust/about-the-campus-2/map-directions-2015/
+http://www.ust.hk/zh-hant/about-hkust/about-the-campus-2/map-directions-2015/
 http://www.ust.hk/about-hkust/
 http://www.ust.hk/about-hkust/hkust-at-a-glance/
 http://www.ust.hk/about-hkust/hkust-at-a-glance/hkust-milestones/
@@ -371,8 +373,6 @@ http://www.youtube.com/user/HKUST
 http://www.ust.hk/feed
 http://www.ust.hk/site-map/
 http://www.ust.hk/accessibility/
-http://www.ust.hk/zh-hans/about-hkust/about-the-campus-2/map-directions-2015/
-http://www.ust.hk/zh-hant/about-hkust/about-the-campus-2/map-directions-2015/
 -------------------------------------------------------------------------------------------
 CS System
 http://cssystem.cse.ust.hk/UGuides/index.html
@@ -542,10 +542,6 @@ http://urop.ust.hk
 http://summer.ust.hk/
 http://my.ust.hk/
 http://www.ust.hk/lifehkust/a-good-story-to-tell/
-http://www.ust.hk/./about-hkust/
-http://www.ust.hk/./about-hkust/media-relations/
-http://www.ust.hk/./about-hkust/media-relations/press-releases/
-mailto:anitalam@ust.hk
 http://www.ust.hk/administration/organization_chart
 http://evppo.ust.hk/
 http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=38/
@@ -562,10 +558,14 @@ http://www.ust.hk/site-map/
 http://www.ust.hk/accessibility/
 http://www.ust.hk/zh-hans/abouthkust-zh-hans/media-relations-zh-hans/press-releases-zh-hans/hkust-researchers-develop-first-innovative-fusion-based-location-sensing-technology-shape-smart-city/
 http://www.ust.hk/zh-hant/abouthkust-zh-hant/media-relations-zh-hant/press-releases-zh-hant/hkust-researchers-develop-first-innovative-fusion-based-location-sensing-technology-shape-smart-city/
+http://www.ust.hk/./about-hkust/
+http://www.ust.hk/./about-hkust/media-relations/
+http://www.ust.hk/./about-hkust/media-relations/press-releases/
 https://www.ec.ust.hk/
 http://www.info.gov.hk/gia/general/201712/15/P2017121400746.htm?fontSize=2
 http://www.ust.hk/wp-content/uploads/2018/02/Prof-Gary-Chan-at-press-conference.jpg
 http://www.ust.hk/wp-content/uploads/2018/02/commercialised-at-Harbour-City.jpeg
+mailto:anitalam@ust.hk
 mailto:johnnytam@ust.hk
 -------------------------------------------------------------------------------------------
 HKUST Establishes Joint Lab on Artificial Intelligence and Computer Vision with Face ++
@@ -589,8 +589,6 @@ http://www.ust.hk/community/
 http://www.ust.hk/search/do-search.php
 http://repository.ust.hk/sp
 http://search.ust.hk/
-http://www.ust.hk/zh-hans/abouthkust-zh-hans/media-relations-zh-hans/press-releases-zh-hans/hkust-establishes-joint-lab-artificial-intelligence-computer-vision-face/
-http://www.ust.hk/zh-hant/abouthkust-zh-hant/media-relations-zh-hant/press-releases-zh-hant/hkust-establishes-joint-lab-artificial-intelligence-computer-vision-face/
 http://www.ust.hk/about-hkust/
 http://www.ust.hk/about-hkust/hkust-at-a-glance/
 http://www.ust.hk/about-hkust/hkust-at-a-glance/hkust-milestones/
@@ -719,13 +717,6 @@ http://urop.ust.hk
 http://summer.ust.hk/
 http://my.ust.hk/
 http://www.ust.hk/lifehkust/a-good-story-to-tell/
-http://www.ust.hk/./about-hkust/
-http://www.ust.hk/./about-hkust/media-relations/
-http://www.ust.hk/./about-hkust/media-relations/press-releases/
-http://www.ust.hk/wp-content/uploads/2017/12/DSC_2529_R.jpg
-http://www.ust.hk/wp-content/uploads/2017/12/DSC_2539_crop.jpg
-mailto:anitalam@ust.hk
-mailto:clarechan@ust.hk
 http://www.ust.hk/administration/organization_chart
 http://evppo.ust.hk/
 http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=38/
@@ -740,14 +731,23 @@ http://www.youtube.com/user/HKUST
 http://www.ust.hk/feed
 http://www.ust.hk/site-map/
 http://www.ust.hk/accessibility/
+http://www.ust.hk/./about-hkust/
+http://www.ust.hk/./about-hkust/media-relations/
+http://www.ust.hk/./about-hkust/media-relations/press-releases/
+mailto:anitalam@ust.hk
+http://www.ust.hk/zh-hans/abouthkust-zh-hans/media-relations-zh-hans/press-releases-zh-hans/hkust-establishes-joint-lab-artificial-intelligence-computer-vision-face/
+http://www.ust.hk/zh-hant/abouthkust-zh-hant/media-relations-zh-hant/press-releases-zh-hant/hkust-establishes-joint-lab-artificial-intelligence-computer-vision-face/
+http://www.ust.hk/wp-content/uploads/2017/12/DSC_2529_R.jpg
+http://www.ust.hk/wp-content/uploads/2017/12/DSC_2539_crop.jpg
+mailto:clarechan@ust.hk
 -------------------------------------------------------------------------------------------
 HKUST School of Engineering - News Center - News
 https://www.seng.ust.hk/web/eng/news_detail.php?id=1054
 Thu Mar 29 00:00:00 HKT 2018, 43047
 12 11; 
+http://www.ust.hk
 http://www.cse.ust.hk/BDI/FinTech/
 https://www.seng.ust.hk/web/eng/photo_gallery.php#41
-http://www.ust.hk
 http://www.facebook.com/hkustengineering
 http://www.youtube.com/user/sengpr
 http://www.instagram.com/hkustengineering
@@ -966,70 +966,18 @@ http://statcounter.com/free_hit_counter.html
 -------------------------------------------------------------------------------------------
 HKUST (@hkust) • Instagram photos and videos
 https://www.instagram.com/hkust/
-Thu Mar 29 00:00:00 HKT 2018, 52051
+Thu Mar 29 00:00:00 HKT 2018, 52174
 includ 2; 
--------------------------------------------------------------------------------------------
-Department of Computer Science and Engineering, The Hong Kong University of Science and Technology | LinkedIn
-https://www.linkedin.com/company/department-of-computer-science-and-engineering-the-hong-kong-university-of-science-and-technology
-Thu Mar 29 00:00:00 HKT 2018, 54648
-4 16; 
-https://www.linkedin.com?trk=nav_header_logo
-https://www.linkedin.com/uas/login?trk=nav_header_signin
-https://www.linkedin.com/start/join?trk=nav_header_join
-https://www.linkedin.com/jobs/?trk=organization-guest_subnav-jobs
-https://www.linkedin.com/company?trk=organization-guest_subnav-companies
-https://www.linkedin.com/salary/?trk=organization-guest_subnav-salaries
-https://www.linkedin.com/start/join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fsearch%2Fresults%2Fpeople%2F%3FfacetCurrentCompany%3D%255B3831050%255D&trk=companyTopCard_see-all-employees
-https://www.linkedin.com/jobs/search?locationId=OTHERS%2Eworldwide&f_C=3831050&trk=companyTopCard_top-card-button
-https://www.linkedin.com/start/join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fcompany%2Fdepartment-of-computer-science-and-engineering-the-hong-kong-university-of-science-and-technology&trk=primary_upsell-join
-https://www.linkedin.com/uas/login?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fcompany%2Fdepartment-of-computer-science-and-engineering-the-hong-kong-university-of-science-and-technology&trk=primary_upsell-sign-in
-https://www.linkedin.com/redir/redirect?url=http%3A%2F%2Fwww%2Ecse%2Eust%2Ehk%2F&urlhash=kDoX&trk=about_website
-https://www.linkedin.com/in/ricci-ieong-667bbb5?trk=org-employees_mini-profile_image
-https://www.linkedin.com/in/ricci-ieong-667bbb5?trk=org-employees_mini-profile_title
-https://www.linkedin.com/in/ricci-ieong-667bbb5?trk=org-employees_mini-profile_cta
-https://www.linkedin.com/in/lei-chen-07a2039?trk=org-employees_mini-profile_image
-https://www.linkedin.com/in/lei-chen-07a2039?trk=org-employees_mini-profile_title
-https://www.linkedin.com/in/lei-chen-07a2039?trk=org-employees_mini-profile_cta
-https://www.linkedin.com/in/marco-antonelli-066235a?trk=org-employees_mini-profile_image
-https://www.linkedin.com/in/marco-antonelli-066235a?trk=org-employees_mini-profile_title
-https://www.linkedin.com/in/marco-antonelli-066235a?trk=org-employees_mini-profile_cta
-https://www.linkedin.com/in/szetszwo?trk=org-employees_mini-profile_image
-https://www.linkedin.com/in/szetszwo?trk=org-employees_mini-profile_title
-https://www.linkedin.com/in/szetszwo?trk=org-employees_mini-profile_cta
-https://www.linkedin.com/in/leye-wang?trk=org-employees_mini-profile_image
-https://www.linkedin.com/in/leye-wang?trk=org-employees_mini-profile_title
-https://www.linkedin.com/in/leye-wang?trk=org-employees_mini-profile_cta
-https://www.linkedin.com/start/join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fsearch%2Fresults%2Fpeople%2F%3FfacetCurrentCompany%3D%255B3831050%255D&trk=org-employees_cta
-https://www.linkedin.com/company/hong-kong-university-of-science-and-technology-students%27-union?trk=similar-companies_org_image
-https://www.linkedin.com/company/hong-kong-university-of-science-and-technology-students%27-union?trk=similar-companies_org_title
-https://www.linkedin.com/company/center-for-applied-social-and-economic-research-hkust-?trk=similar-companies_org_image
-https://www.linkedin.com/company/center-for-applied-social-and-economic-research-hkust-?trk=similar-companies_org_title
-https://www.linkedin.com/company/artisteandshowproductionassociationhkustsu?trk=similar-companies_org_image
-https://www.linkedin.com/company/artisteandshowproductionassociationhkustsu?trk=similar-companies_org_title
-https://www.linkedin.com/company/ollie-pets?trk=similar-companies_org_image
-https://www.linkedin.com/company/ollie-pets?trk=similar-companies_org_title
-https://www.linkedin.com/company/olympion-rehabilitation-hospital-of-ioannina?trk=similar-companies_org_image
-https://www.linkedin.com/company/olympion-rehabilitation-hospital-of-ioannina?trk=similar-companies_org_title
-https://www.linkedin.com/company/the-business-students%27%E2%80%8B-union-hkustsu?trk=similar-companies_org_image
-https://www.linkedin.com/company/the-business-students%27%E2%80%8B-union-hkustsu?trk=similar-companies_org_title
-https://press.linkedin.com/about-linkedin?trk=organization-guest_footer-about
-https://www.linkedin.com/legal/user-agreement?trk=organization-guest_footer-user-agreement
-https://www.linkedin.com/legal/privacy-policy?trk=organization-guest_footer-privacy-policy
-https://www.linkedin.com/legal/cookie-policy?trk=organization-guest_footer-cookie-policy
-https://www.linkedin.com/legal/copyright-policy?trk=organization-guest_footer-copyright-policy
-https://brand.linkedin.com/policies?trk=organization-guest_footer-brand-policy
-https://www.linkedin.com/psettings/guest-controls?trk=organization-guest_footer-manage-sub
-https://www.linkedin.com/help/linkedin/answer/34593?lang=en&trk=organization-guest_footer-community-guide
 -------------------------------------------------------------------------------------------
 CSE HKUST - YouTube
 https://www.youtube.com/channel/UC1Gky4HCpEOK5EmoUj6zhGg
-Thu Mar 29 00:00:00 HKT 2018, 155823
+Thu Mar 29 00:00:00 HKT 2018, 155385
 privaci 8; 
-https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252Fchannel%252FUC1Gky4HCpEOK5EmoUj6zhGg%26action_handle_signin%3Dtrue%26hl%3Dzh-HK%26app%3Ddesktop%26feature%3Dsign_in_promo&uilel=3&hl=zh-HK&service=youtube
+https://accounts.google.com/ServiceLogin?service=youtube&hl=zh-HK&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fapp%3Ddesktop%26hl%3Dzh-HK%26feature%3Dsign_in_promo%26action_handle_signin%3Dtrue%26next%3D%252Fchannel%252FUC1Gky4HCpEOK5EmoUj6zhGg&uilel=3&passive=true
 https://plus.google.com/104157104469504041489
 https://plus.google.com/+youtube
 https://www.google.com/intl/zh-HK/policies/privacy/
-https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252Fchannel%252FUC1Gky4HCpEOK5EmoUj6zhGg%26action_handle_signin%3Dtrue%26hl%3Dzh-HK%26app%3Ddesktop%26feature%3Dplaylist&uilel=3&hl=zh-HK&service=youtube
+https://accounts.google.com/ServiceLogin?service=youtube&hl=zh-HK&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fapp%3Ddesktop%26hl%3Dzh-HK%26feature%3Dplaylist%26action_handle_signin%3Dtrue%26next%3D%252Fchannel%252FUC1Gky4HCpEOK5EmoUj6zhGg&uilel=3&passive=true
 -------------------------------------------------------------------------------------------
 Privacy Policy
 http://www.ust.hk/privacy-policy/
@@ -1197,30 +1145,10 @@ http://www.ust.hk/zh-hans/privacy-policy-2/
 http://www.ust.hk/zh-hant/privacy-policy-3/
 mailto:ispdpo@ust.hk
 -------------------------------------------------------------------------------------------
-University Fintech Education Forum
-http://www.cse.ust.hk/BDI/FinTech/
-Fri Nov 24 08:56:27 HKT 2017, 27319
-dean 25; 
-http://bdi.ust.hk/
-mailto:bdi@ust.hk
-mailto:ycaiap@connect.ust.hk
-https://www.facebook.com/FinTechForumNov24
-https://twitter.com/forum_fintech
-https://plus.google.com/communities/118232250040145112853
--------------------------------------------------------------------------------------------
-HKUST School of Engineering - News Center
-https://www.seng.ust.hk/web/eng/photo_gallery.php#41
-Thu Mar 29 00:00:00 HKT 2018, 31908
-fact 4; 
-http://www.ust.hk
-http://www.facebook.com/hkustengineering
-http://www.youtube.com/user/sengpr
-http://www.instagram.com/hkustengineering
--------------------------------------------------------------------------------------------
 HKUST - Hong Kong University of Science and Technology
 http://www.ust.hk
 Thu Mar 29 00:00:00 HKT 2018, 167235
-role 64; 
+dean 64; 
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 http://my.ust.hk
 https://www.instagram.com/hkust/
@@ -1400,7 +1328,7 @@ http://iwd.ust.hk
 Prospective Students - HKUST
 http://www.ust.hk/prospective-students/
 Thu Mar 29 00:00:00 HKT 2018, 116401
-sun 43; 
+fact 43; 
 http://www.ust.hk/
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 https://www.instagram.com/hkust/
@@ -1567,7 +1495,7 @@ https://www.timeshighereducation.com/features/global-university-employability-ra
 Current Students - HKUST
 http://www.ust.hk/current-students/
 Thu Mar 29 00:00:00 HKT 2018, 117597
-elect 43; 
+role 43; 
 http://www.ust.hk/
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 https://www.instagram.com/hkust/
@@ -1736,7 +1664,7 @@ http://arr.ust.hk/reg/in/in_std_info/badweather.html
 Faculty & Staff - HKUST
 http://www.ust.hk/faculty-staff/
 Thu Mar 29 00:00:00 HKT 2018, 118111
-kei 45; 
+weik 45; 
 http://www.ust.hk/
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 https://www.instagram.com/hkust/
@@ -1909,7 +1837,7 @@ http://arr.ust.hk/sis/home/home.html
 Alumni - HKUST
 http://www.ust.hk/alumnus/
 Thu Mar 29 00:00:00 HKT 2018, 112626
-polici 44; 
+29 44; 
 http://www.ust.hk/
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 https://www.instagram.com/hkust/
@@ -2080,17 +2008,17 @@ http://alum.ust.hk/your-networks/update-your-contacts
 -------------------------------------------------------------------------------------------
 Giving to HKUST
 http://giving.ust.hk/en/index.php
-Thu Mar 29 00:00:00 HKT 2018, 24769
-how 12; 
+Thu Mar 29 00:00:00 HKT 2018, 24767
+global 12; 
 http://www.ust.hk/
 http://ptc.ust.hk/
 http://dao.ust.hk/cgi-bin/officeuse.php?ticket=ST-568150-bd2awEGSOAfiLCKhrhwi-cas2.ust.hk
 http://dao.ust.hk/info_for_staff.php
 -------------------------------------------------------------------------------------------
-Media - HKUST
-http://www.ust.hk/media/
-Thu Mar 29 00:00:00 HKT 2018, 113534
-hkust 44; 
+Visitors - HKUST
+http://www.ust.hk/visitors/
+Thu Mar 29 00:00:00 HKT 2018, 118987
+sun 45; 
 http://www.ust.hk/
 http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
 https://www.instagram.com/hkust/
@@ -2251,30 +2179,235 @@ http://www.ust.hk/site-map/
 http://www.ust.hk/accessibility/
 http://www.seng.ust.hk/web/eng/publication.php
 http://www.ust.hk/about-hkust/publications-multimedia/genesis/
-http://www.ust.hk/zh-hans/media/
-http://www.ust.hk/zh-hant/media/
+http://www.ust.hk/zh-hans/visitors-2/
+http://www.ust.hk/zh-hant/visitors-3/
+http://www.ust.hk/about-hkust/hkust-at-a-glance/hkust-milestones
+http://www.ust.hk/about-hkust/hkust-at-a-glance/facts-figures
+http://www.ust.hk/visitors/mr-mrs-ho-ting-sik-visitor-information-center/
+https://souvenir.ust.hk
 http://www.ust.hk/about-hkust/publications-multimedia/annual-report/
-http://www.ust.hk/wp-content/uploads/2017/10/20171009_UST_booklet_update_10.pdf
-http://www.ust.hk/wp-content/uploads/2017/10/20170916_HKUST_Folded-Brochure_master_r14_EN.pdf
-http://www.ust.hk/wp-content/uploads/2017/09/20170831_FactsAndFigures_preview_r11.pdf
+http://www.ust.hk/wp-content/uploads/2016/10/page1_46-r6_op_outline.pdf
+http://www.ust.hk/wp-content/uploads/2016/09/HKUST_Folded-Brochure_Eng_preview-fv.pdf
+http://www.ust.hk/wp-content/uploads/2017/01/FactsAndFigures_20161220_op-r3_new-low.pdf
 http://alum.ust.hk/services-and-benefits/alumni-news-magazine
-http://ias.ust.hk/web/ias/eng/about_publications.php
+http://ias.ust.hk/newsletter/
+http://pgnews.ust.hk/
 http://www.vprg.ust.hk/rgs/eng/RP/index.html
 http://www.bm.ust.hk/en-us/media-resources/overview/publications
-http://pgnews.ust.hk/
 http://www.ust.hk/media/find-expert/
 http://epublish.ust.hk/cgi-bin/eng/home.php
 http://library.ust.hk/newsletters/
-http://sustainability-report.ust.hk
+http://www.ab.ust.hk/hseo/EnvRep/envrpt.htm
 http://www.ab.ust.hk/hseo/sftywise.htm
 http://itsc.ust.hk/publications/channel
 http://www.ust.hk/about-hkust/publications-multimedia/multimedia
+https://career.ust.hk
+-------------------------------------------------------------------------------------------
+Media - HKUST
+http://www.ust.hk/media/
+Thu Mar 29 00:00:00 HKT 2018, 113534
+elect 44; 
+http://www.ust.hk/
+http://www.ust.hk/about-hkust/about-the-campus/map-directions-2015/
+https://www.instagram.com/hkust/
+http://www.ust.hk/privacy-policy/
+http://www.ust.hk
+http://www.ust.hk/prospective-students/
+http://www.ust.hk/current-students/
+http://www.ust.hk/faculty-staff/
+http://www.ust.hk/alumnus/
+http://giving.ust.hk/en/index.php
+http://www.ust.hk/visitors/
+http://www.ust.hk/media/
+http://www.ust.hk/community/
+http://www.ust.hk/search/do-search.php
+http://repository.ust.hk/sp
+http://search.ust.hk/
+http://www.ust.hk/about-hkust/
+http://www.ust.hk/about-hkust/hkust-at-a-glance/
+http://www.ust.hk/about-hkust/hkust-at-a-glance/hkust-milestones/
+http://www.ust.hk/about-hkust/hkust-at-a-glance/mission-vision/
+http://www.ust.hk/about-hkust/hkust-at-a-glance/facts-figures/
+https://www.youtube.com/watch?v=GgPOd4L97Vg
+http://www.ust.hk/about-hkust/governance/
+https://www.ab.ust.hk/ccss/Court.htm
+https://www.ab.ust.hk/ccss/Council.htm
+https://www.ab.ust.hk/ccss/Senate.htm
+https://www.ab.ust.hk/ccss/Ordinance.htm
+https://www.ab.ust.hk/ccss/Statutes.htm
+http://www.ust.hk/about-hkust/awards/
+http://www.ust.hk/about-hkust/awards/awards-faculty/
+http://www.ust.hk/about-hkust/awards/awards-student/
+http://www.ust.hk/about-hkust/awards/awards-university/
+http://www.ust.hk/about-hkust/media-relations/
+http://www.ust.hk/about-hkust/media-relations/press-releases/
+http://www.ust.hk/about-hkust/media-relations/hkust-in-the-media/
+http://strategicplan.ust.hk/
+http://www.ust.hk/about-hkust/senior-adm/
+http://www.ust.hk/about-hkust/rankings/
+http://www.ust.hk/about-hkust/hkust-directory/
+http://www.ust.hk/about-hkust/publications-multimedia/
+http://www.ust.hk/administration/organization_chart/
+http://www.ust.hk/about-hkust/about-the-campus/
+https://www.ab.ust.hk/cso/
+https://sao.ust.hk/facilities/amenities.html
+http://www.ab.ust.hk/fmo/Commual_Areas/Communal_Areas.htm
+http://facultyprofiles.ust.hk
+https://www.ab.ust.hk/hro/PubDoc/careers/main.html?btn1=btn_nav_06&main=welcome.html
+http://www.ust.hk/academics/
+http://evppo.ust.hk
+http://ugadmin.ust.hk/
+http://ias.ust.hk/eng/index.html
+http://ucalendar.ust.hk/cgi-bin/index.php
+http://publish.ust.hk/prog_crs/index.html
+http://pg.ust.hk
+http://pg.ust.hk/cgi-bin/pg/eng/ocpe
+http://library.ust.hk/
+http://www.ust.hk/academics/schools-programs-office/
+http://science.ust.hk/
+http://www.seng.ust.hk/web/eng/
+http://www.bm.ust.hk/en-us/
+http://www.shss.ust.hk/
+http://www.ipo.ust.hk/
+http://fytgs.ust.hk/en/index
+http://ipp.ust.hk/
+http://www.ust.hk/academics/teaching-learning/
+http://registry.ust.hk/
+http://tl.ust.hk/integrity/index.html
+http://cei.ust.hk/
+http://sfq.ust.hk/results/
+http://www.ust.hk/administration/
+http://president.ust.hk/eng/index.html
+http://www.ust.hk/administration/office-of-the-vice-president-for-institutional-advancement/
+https://www.ab.ust.hk/vpabo/
+http://www.vprg.ust.hk/
+http://dst.ust.hk/
+http://pg.ust.hk/cgi-bin/pg/eng/index.php
+http://oir.ust.hk/
+https://sao.ust.hk/aesthetics/center.html
+https://www.ab.ust.hk/ccss/
+http://dao.ust.hk/
+https://www.ab.ust.hk/fmo/
+https://www.ab.ust.hk/fo/
+http://www.ab.ust.hk/hseo/
+https://www.ab.ust.hk/hro/
+http://iso.ust.hk/
+http://itsc.ust.hk/
+http://pao.ust.hk/
+http://ptc.ust.hk/
+https://www.ab.ust.hk/puro/
+https://sao.ust.hk/
+http://www.ust.hk/research/
+http://www.vprg.ust.hk/cgi-bin/rgs/eng/index.php
+http://www.vprg.ust.hk/rgs/eng/research_at_hkust/index.html
+http://www.vprg.ust.hk/rgs/eng/research_at_hkust/research_strategy.html
+http://www.vprg.ust.hk/rgs/eng/research_at_hkust/research_clusters.html
+http://www.vprg.ust.hk/rgs/eng/centers_n_institutes/index.html
+http://ias.ust.hk/web/ias/eng/
+http://www.vprg.ust.hk/rgs/eng/centers_n_institutes/state_key_laboratories.html
+http://www.vprg.ust.hk/rgs/eng/centers_n_institutes/centers.html
+http://www.vprg.ust.hk/rgs/eng/centers_n_institutes/institutes.html
+http://www.vprg.ust.hk/rgs/eng/central_research_facilities/index.html
+http://www.vprg.ust.hk/rgs/eng/mainland_platforms/index.html
+http://www.vprg.ust.hk/rgs/eng/research_n_innovation/knowledge_transfer.html
+http://www.ec.ust.hk/
+http://urop.ust.hk/
+http://www.ust.hk/admit/
+http://join.ust.hk/index.html
+http://pg.ust.hk/admissions
+http://sfao.ust.hk
+http://summer.ust.hk
+http://www.ust.hk/admissions/
+http://join.ust.hk/visiting/visiting_students.html
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=39
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=38
+http://www.ust.hk/global-connections/
+http://ebookshelf.ust.hk/flippingbook/R77004/
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=37
+http://www.ust.hk/global-connections/a-truly-international-university/
+http://www.ust.hk/global-connections/mainland-china-connections/
+http://www.ust.hk/global-connections/global-partnerships/
+http://studyabroad.ust.hk/
+http://alum.ust.hk/your-networks/relocation-program
+http://www.shenzhen-institute.ust.hk/
+http://www.fsldctr.org/en/index.asp
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3
+http://www.ust.hk/lifehkust/
+http://fys.ust.hk/
+https://sao.ust.hk/studentlife/discover.html
+https://sao.ust.hk/studentlife/activities.html
+https://sao.ust.hk/counseling/cgi-bin/web/index.php
+https://sao.ust.hk/career/index.html
+https://sao.ust.hk/housing/index.html
+https://sao.ust.hk/sports/index.html
+https://sao.ust.hk/aesthetics/index.html
+http://connect.ust.hk/
+https://sao.ust.hk/facilities/facilities.html
+https://www.ab.ust.hk/fmo/Commual_Areas/Communal_Areas.htm
+http://green.ust.hk/
+http://sfao.ust.hk/
+http://shrl.ust.hk/eng/detail.php?catid=4&sid=23&tid=27
+http://urop.ust.hk
+http://summer.ust.hk/
+http://my.ust.hk/
+http://www.ust.hk/lifehkust/a-good-story-to-tell/
+http://www.ust.hk/administration/organization_chart
+http://evppo.ust.hk/
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=38/
+http://pg.ust.hk/cgi-bin/pg/eng/detail.php?catid=3&sid=9&tid=39/
+http://www.ust.hk/zh-hant/global-connections/
+http://www.ust.hk/global-connections/research-collaborations-with-mainland-china/
+http://jobs.ust.hk/
+http://www.ust.hk/contact-us/
+http://facebook.com/HKUST
+https://www.linkedin.com/school/11966
+http://www.youtube.com/user/HKUST
+http://www.ust.hk/feed
+http://www.ust.hk/site-map/
+http://www.ust.hk/accessibility/
+http://www.seng.ust.hk/web/eng/publication.php
+http://www.ust.hk/about-hkust/publications-multimedia/genesis/
+http://www.ust.hk/about-hkust/publications-multimedia/annual-report/
+http://alum.ust.hk/services-and-benefits/alumni-news-magazine
+http://pgnews.ust.hk/
+http://www.vprg.ust.hk/rgs/eng/RP/index.html
+http://www.bm.ust.hk/en-us/media-resources/overview/publications
+http://www.ust.hk/media/find-expert/
+http://epublish.ust.hk/cgi-bin/eng/home.php
+http://library.ust.hk/newsletters/
+http://www.ab.ust.hk/hseo/sftywise.htm
+http://itsc.ust.hk/publications/channel
+http://www.ust.hk/about-hkust/publications-multimedia/multimedia
+http://www.ust.hk/zh-hans/media/
+http://www.ust.hk/zh-hant/media/
+http://www.ust.hk/wp-content/uploads/2017/10/20171009_UST_booklet_update_10.pdf
+http://www.ust.hk/wp-content/uploads/2017/10/20170916_HKUST_Folded-Brochure_master_r14_EN.pdf
+http://www.ust.hk/wp-content/uploads/2017/09/20170831_FactsAndFigures_preview_r11.pdf
+http://ias.ust.hk/web/ias/eng/about_publications.php
+http://sustainability-report.ust.hk
 http://www.ust.hk/media/media-contact/
+-------------------------------------------------------------------------------------------
+HKUST Scholarly Publications
+http://repository.ust.hk/sp
+Thu Mar 29 00:00:00 HKT 2018, 32949
+how 12; 
+http://www.ust.hk/
+http://library.ust.hk/
+http://spfind.ust.hk/spfind/AuthorProfile/SearchResult?searchValue=&searchField=allfields&submit=Find
+mailto:lbspi@ust.hk
+http://vufind.org
+http://www.dspace.org
+-------------------------------------------------------------------------------------------
+Search Results:
+http://search.ust.hk/
+Fri Aug 29 16:21:53 HKT 2014, 1246
+search 1; 
+http://www.ust.hk/
 -------------------------------------------------------------------------------------------
 Big Data Institute of HKUST
 http://www.cse.ust.hk/BDI
 Thu Mar 22 12:13:35 HKT 2018, 81773
-award 27; 
+achiev 27; 
 http://www.cse.ust.hk/BDI/BD&AIDAY/big_data_ai_day_2018.html
 http://www.cse.ust.hk/BDI/news/news_20180109.html
 http://www.cse.ust.hk/BDI/news/news_20171215.html

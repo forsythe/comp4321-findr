@@ -60,6 +60,10 @@ public class MapDBIndexer implements Indexer {
     // + the frequency of that keyword
     private NavigableSet<Object[]> content_forward;
     
+    //for title keywords indexing
+    private NavigableSet<Object[]> title_inverted;
+    private NavigableSet<Object[]> title_forward;
+    
     //Parent->Child table, also with a MultiMap with NavigableMap
     //each entry would be {parent pageID, child pageID}
     private NavigableSet<Object[]> parent_child;
@@ -137,6 +141,17 @@ public class MapDBIndexer implements Indexer {
         content_forward = db.treeSet("content_forward")
         		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
         		.createOrOpen();
+        
+        //multi-map
+        title_inverted = db.treeSet("title_inverted")
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
+        		.createOrOpen();
+        
+        //multi-map
+        title_forward = db.treeSet("title_forward")
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
+        		.createOrOpen();
+        
         //multi-map
         parent_child = db.treeSet("parent_child")
         		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
@@ -219,6 +234,22 @@ public class MapDBIndexer implements Indexer {
 						pageID++; //increment pageID for next page 
 					}
 					parent_child.add(new Object[] {pID, childID});
+				}
+				//Handle the title keywords in the same way as the normal inverted/forward indices
+				HashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
+				for (String tKeyword : titleKeywords.keySet()) {
+					Long wID = new Long(wordID);
+					if (keyword_wordID.containsKey(tKeyword)) {
+						wID = keyword_wordID.get(tKeyword);
+					}
+					else {
+						keyword_wordID.put(tKeyword, wID);
+						wordID_keyword.put(wID, tKeyword);
+						wordID++;
+					}
+					Integer freq = titleKeywords.get(tKeyword);
+					title_inverted.add(new Object[] {wID, pID, freq});
+					title_forward.add(new Object[] {pID, wID, freq});
 				}
 			}
     	} catch (DBException e) {
@@ -325,7 +356,7 @@ public class MapDBIndexer implements Indexer {
     //commitAndClose() must be called to finish indexing to make the actual change (otherwise the file will get corrupted) 
     @Override
     public void commitAndClose() {
-        db.commit(); //commit() makes the actual change to the (.db) file
+        db.commit(); 
         db.close(); //closes the db file -> cannot work with it anymore!
     }
 }
