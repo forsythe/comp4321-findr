@@ -39,6 +39,7 @@ public class JSoupParser implements Parser {
             Document doc;
 
             HttpURLConnection httpCon = (HttpURLConnection) new URL(url).openConnection();
+            httpCon.setRequestProperty("Accept-Encoding", "identity");
             httpCon.setConnectTimeout(TIMEOUT);
             String rawBody;
 
@@ -58,7 +59,7 @@ public class JSoupParser implements Parser {
             if (null != (metaDest = handleMetaRefreshHttpURLConnection(doc))) {
                 url = metaDest;
                 httpCon = (HttpURLConnection) new URL(url).openConnection();
-
+                httpCon.setRequestProperty("Accept-Encoding", "identity");
                 httpCon.setInstanceFollowRedirects(true);
 
                 httpCon = handleRedirectHttpURLConnection(httpCon);
@@ -67,10 +68,14 @@ public class JSoupParser implements Parser {
             }
 
             HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
-
+            
+            long contentLength = httpCon.getContentLength();
+            if (contentLength == -1) {
+            	contentLength = rawBody.length();
+            }
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
-                    .setSize(httpCon.getContentLengthLong())
+                    .setSize(contentLength)
                     .setBody(rawBody)
                     .setLinks(getLinks(doc))
                     .setTitle(doc.title())
@@ -133,6 +138,7 @@ public class JSoupParser implements Parser {
 
             // open the new connnection again
             httpCon = (HttpURLConnection) new URL(newUrl).openConnection();
+            httpCon.setRequestProperty("Accept-Encoding", "identity");
             httpCon.setConnectTimeout(TIMEOUT);
         }
         return httpCon;

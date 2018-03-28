@@ -9,18 +9,12 @@ import com.findr.object.Webpage;
  * corresponding hashtables (e.g. page->keywords). We'll implement it separately, allowing us to easily swap out/modify
  * this class in the future
  */
-public interface Indexer {
-    void addWebpageEntry(Webpage webpage);
-       
+public interface Indexer {  
     void addAllWebpageEntries(List<Webpage> listOfWebpages);
-    
-    void deleteWebpageEntry(Webpage webpage);
     
     Webpage getWebpage(Long id);
 
     void readDBFromDisk();
-
-    void writeInfoToDisk();
 
     void commitAndClose();
 

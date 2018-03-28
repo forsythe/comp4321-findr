@@ -22,19 +22,17 @@ public class SpiderPhase1 implements Spider {
         Crawler crawler = new JSoupMultithreadedCrawler(numCrawlerThreads);
         List<Webpage> crawledPages = crawler.crawl(startUrl, maxRunSeconds, maxPages);
         
-        for (Webpage wp : crawledPages) {
-        	System.out.println(wp.getTitle());
-        	System.out.println(wp.getLastModified().toString());
-        	
-        }
+//        for (Webpage wp : crawledPages) {
+//        	System.out.println(wp.getTitle());
+//        	System.out.println(wp.getLastModified().toString());
+//        	
+//        }
         
         Indexer hongseo = new MapDBIndexer();
         hongseo.readDBFromDisk();
-        System.out.println("Start putting");
         hongseo.addAllWebpageEntries(crawledPages);
         
         try {
-        	System.out.println("hi");
 	        File output = new File("spider_result.txt");
 	        BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 	        

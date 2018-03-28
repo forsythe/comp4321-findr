@@ -2,6 +2,15 @@
 
 Final project for COMP4321 Search Engines
 
+##Phase 1 Testing
+
+Make sure to delete the existing "index.db" file to do the crawling and indexing from scratch.
+
+"gradle -Dtest.single=SpiderPhase1 test"
+
+
+
+
 ## Getting Started
 
 Launch the `bootRun` gradle task to run, and go to [http://localhost:8080](http://localhost:8080)

@@ -21,8 +21,7 @@ public class SpiderImpl implements Spider {
         Indexer hongseo = new MapDBIndexer();
         //TODO idk what hongseo does, i assume this is correct? -heng
         hongseo.readDBFromDisk();
-        crawledPages.forEach(hongseo::addWebpageEntry);
-        hongseo.writeInfoToDisk();
+        hongseo.addAllWebpageEntries(crawledPages);
         hongseo.commitAndClose();
     }
 }

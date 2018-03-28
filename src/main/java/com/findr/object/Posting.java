@@ -33,7 +33,11 @@ public class Posting implements Serializable, Comparable {
 	public int compareTo(Object o) {
 		if (o == null)
 			throw new NullPointerException();
-			
+		
+		if (getClass() != o.getClass()) {
+			System.out.println("NO");
+		}
+		
 		Posting p = (Posting)o;
 		if (this.id == null)
 			return 1;
@@ -42,4 +46,6 @@ public class Posting implements Serializable, Comparable {
 	
 		return ((this.id).compareTo(p.id));
 	}
+	
+	
 }

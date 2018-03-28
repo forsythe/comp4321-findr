@@ -4,6 +4,7 @@ import com.findr.object.Posting;
 import com.findr.object.Webpage;
 import com.findr.service.crawler.Crawler;
 import com.findr.service.crawler.JSoupMultithreadedCrawler;
+import com.findr.service.indexer.MapDBIndexer;
 import com.findr.service.stemming.Vectorizer;
 
 import java.io.BufferedReader;
@@ -77,21 +78,18 @@ public class HongseoSearcher implements Searcher {
 	}
 
 	private HongseoSearcher() {
-		if (!checkCurrentDBFile()) {
-			loadFromOriginalDBInfo();
-			copyDBFileandUpdateInfo();
-		}
-		
-		db = DBMaker.fileDB("index_current.db")
+		db = DBMaker.fileDB("index.db")
 				.fileChannelEnable()
 				.fileMmapEnable()
 				.fileMmapEnableIfSupported()
 				.closeOnJvmShutdown()
+				.readOnly()
 				.make();
 		
 		pageID_url = db.hashMap("pageID_url")
         		.keySerializer(Serializer.LONG)
         		.valueSerializer(Serializer.STRING)
+        		.counterEnable()
         		.createOrOpen();
         
         url_pageID = db.hashMap("url_pageID")
@@ -102,6 +100,7 @@ public class HongseoSearcher implements Searcher {
         wordID_keyword = db.hashMap("wordID_keyword")
         		.keySerializer(Serializer.LONG)
         		.valueSerializer(Serializer.STRING)
+        		.counterEnable()
         		.createOrOpen();
         
         keyword_wordID = db.hashMap("keyword_wordID")
@@ -135,204 +134,99 @@ public class HongseoSearcher implements Searcher {
         		.createOrOpen();
         
         content_inverted = db.treeSet("content_inverted")
-        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.JAVA))
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
         		.createOrOpen();
            
         content_forward = db.treeSet("content_forward")
-        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.JAVA))
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
         		.createOrOpen();
         
         parent_child = db.treeSet("parent_child")
         		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
         		.createOrOpen();
         
-        /*
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-		ses.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				reloadDB();
-			}
-		}, 1, 1, TimeUnit.HOURS);
-         */	
+        pageID = pageID_url.sizeLong();
+        wordID = wordID_keyword.sizeLong();
 	}
-	
-	private void loadFromOriginalDBInfo() {
-		File infoFile = new File("index_info");		
-		while (!infoFile.exists()) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	
-		try {
-			FileReader fr = new FileReader("index_info");
-			BufferedReader br = new BufferedReader(fr);
-			updatedTime = br.readLine();
-			pageID = Long.valueOf(br.readLine()).longValue();
-			wordID = Long.valueOf(br.readLine()).longValue();
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	private void copyDBFileandUpdateInfo() {
-		try {
-			FileInputStream originalDB = new FileInputStream("index.db");
-			FileOutputStream copyDB = new FileOutputStream("index_current.db");
-			byte[] buffer = new byte[256];
-			int end;
-			while ((end = originalDB.read(buffer)) != -1)
-				copyDB.write(buffer);
-			copyDB.flush();
-			copyDB.close();
-			originalDB.close();
-			
-			FileWriter fw = new FileWriter("index_info_current");
-			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
-			pw.println(updatedTime);
-			pw.println(pageID);
-			pw.println(wordID);
-			pw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	private void cleanCurrentFiles() {
-		File currentInfoFile = new File("index_info_current");
-		File currentDBFile = new File("index_current.db");
 		
-		if (currentInfoFile.exists())
-			currentInfoFile.delete();
-		if (currentDBFile.exists())
-			currentDBFile.delete();
-	}
-	
-	private boolean checkCurrentDBFile() {
-		String lastUpdated = null; 
-		boolean infoFileMissing = false;
-		long pID = 0; long wID = 0;
-	
-		File currentInfoFile = new File("index_info_current");
-		if (currentInfoFile.exists()) {
-			try {
-				FileReader fr = new FileReader("index_info_current");
-				BufferedReader br = new BufferedReader(fr);
-				updatedTime = br.readLine();
-				pageID = Long.valueOf(br.readLine()).longValue();
-				wordID = Long.valueOf(br.readLine()).longValue();
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				cleanCurrentFiles();
-				return false;
-			}
-			
-			File currentDBFile = new File("index_current.db");
-			if (!currentDBFile.exists()) {
-				cleanCurrentFiles();
-				return false;
-			}
-			
-			File infoFile = new File("index_info");
-			if (infoFile.exists()) {
-				try {
-					FileReader fr = new FileReader("index_info");
-					BufferedReader br = new BufferedReader(fr);
-					lastUpdated = br.readLine();
-					pID = Long.valueOf(br.readLine()).longValue();
-					wID = Long.valueOf(br.readLine()).longValue();
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-					return true;
-				}
-				
-				if (Long.valueOf(lastUpdated).compareTo(Long.valueOf(updatedTime)) > 0) {
-					pageID = pID;
-					wordID = wID;
-					updatedTime = lastUpdated;
-					return false;
-				}
-			}
-			return true;	
-		}
-		else {
-			cleanCurrentFiles();
-			return false;
-		}	
-	}
-	
-	private void reloadDB() {
-		 
-	}
-	
 	private Double cosSim(Double docWeightSum, Double docWeightSqrSum, Double queryLength) {
 		return new Double( docWeightSum.doubleValue() / (Math.sqrt(docWeightSqrSum.doubleValue()) + Math.sqrt(queryLength.doubleValue())));
 	}
 	
     @Override
-    public synchronized List<Webpage> search(List<String> query, int maxResults) {
-    	BlockingQueue<String> wordList= new LinkedBlockingQueue<String>();
-    	ConcurrentHashMap<Long, Double> weightsSum = new ConcurrentHashMap<Long, Double>(); 
-    	ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>(); 
-        TreeMap<Double, Long> sortedByScore = new TreeMap<Double, Long>();
-    	Double queryLength = new Double(0.0);
-        
-    	List<Webpage> results = new ArrayList<Webpage>();
-    	
-    	ExecutorService exec = Executors.newFixedThreadPool(NUM_OF_SEARCHER_THREAD + 1);
-    	QueryHandler qHandler = new QueryHandler(wordList, query);
-    	Future<Double> val = exec.submit(qHandler);
-    	
-    	for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
-    		exec.execute(new SimpleSearcher(wordList, weightsSum, weightsSqrSum));
+    public List<Webpage> search(List<String> query, int maxResults) {
+    	synchronized(MapDBIndexer.class) {
+	    	BlockingQueue<String> wordList= new LinkedBlockingQueue<String>();
+	    	ConcurrentHashMap<Long, Double> weightsSum = new ConcurrentHashMap<Long, Double>(); 
+	    	ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>(); 
+	        TreeMap<Double, List<Long> > sortedByScore = new TreeMap<Double, List<Long> >();
+	    	Double queryLength = new Double(0.0);
+	        
+	    	List<Webpage> results = new ArrayList<Webpage>();
+	    	
+	    	ExecutorService exec = Executors.newFixedThreadPool(NUM_OF_SEARCHER_THREAD + 1);
+	    	QueryHandler qHandler = new QueryHandler(wordList, query);
+	    	Future<Double> val = exec.submit(qHandler);
+	    	
+	    	for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
+	    		exec.execute(new SimpleSearcher(wordList, weightsSum, weightsSqrSum));
+	    	}
+	    	
+	    	try {
+	    		exec.shutdown();
+	    		exec.awaitTermination(10, TimeUnit.SECONDS);
+	    	} catch (InterruptedException e) {
+	    		e.printStackTrace();
+	    		exec.shutdownNow();
+	    		return Collections.emptyList();
+	    	}
+	    	
+	    	try {
+	    		queryLength = val.get();
+	    	} catch (InterruptedException e) {
+	    		e.printStackTrace();
+	    		return Collections.emptyList();
+	    	} catch (ExecutionException e) {
+	    		e.printStackTrace();
+	    		return Collections.emptyList();
+	    	}
+	    	
+	    	for (Long pID : weightsSum.keySet()) {
+	    		Double score = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+	    		if (sortedByScore.containsKey(score))
+	    			sortedByScore.get(score).add(pID);
+	    		else {
+	    			List<Long> list = new ArrayList<Long>();
+	    			list.add(pID);
+	    			sortedByScore.put(score, list);
+	    		}
+	    				
+	    		System.out.println("Score: " + cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength).toString() + "  " + "DocID: " + pID.toString() + "  " + "Title: " + pageID_title.get(pID));
+	    	}
+	    	
+	    	while (!sortedByScore.isEmpty() && (results.size() < maxResults)) {
+	    		List<Long> pages = sortedByScore.pollLastEntry().getValue();
+	    		for (Long pID : pages) {																																																																											
+		    		Webpage page = Webpage.create();
+	    			System.out.println(pID.toString());
+		    		page.setTitle(pageID_title.get(pID));
+		    		page.setMyUrl(pageID_url.get(pID));
+		    		page.setLastModified(pageID_lastmodified.get(pID));
+		    		page.setMetaDescription(pageID_metaD.get(pID));
+		    		
+		    		results.add(page);
+	    		}
+	    	}
+	    	return results;
     	}
-    	
-    	try {
-    		exec.shutdown();
-    		exec.awaitTermination(10, TimeUnit.SECONDS);
-    	} catch (InterruptedException e) {
-    		e.printStackTrace();
-    		exec.shutdownNow();
-    		return Collections.emptyList();
-    	}
-    	
-    	try {
-    		queryLength = val.get();
-    	} catch (InterruptedException e) {
-    		e.printStackTrace();
-    		return Collections.emptyList();
-    	} catch (ExecutionException e) {
-    		e.printStackTrace();
-    		return Collections.emptyList();
-    	}
-    	
-    	for (Long pID : weightsSum.keySet()) {
-    		sortedByScore.put(cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength), pID);
-    	}
-    	
-    	while (!sortedByScore.isEmpty() || results.size() < maxResults) {
-    		Webpage page = Webpage.create();
-    		Long pID = sortedByScore.pollLastEntry().getValue();
-    		page.setTitle(pageID_title.get(pID));
-    		page.setMyUrl(pageID_url.get(pID));
-    		page.setLastModified(pageID_lastmodified.get(pID));
-    		page.setMetaDescription(pageID_metaD.get(pID));
-    		
-    		results.add(page);
-    	}
-    	return results;
     }
 
     @Override
-    public synchronized List<List<String>> getRelatedQueries(List<String> query) {
-        //TODO
-        return Collections.emptyList();
+    public List<List<String>> getRelatedQueries(List<String> query) {
+    	synchronized (MapDBIndexer.class) {
+    		//TODO
+    		return Collections.emptyList();
+    	}
     }
     
     class QueryHandler implements Callable<Double> {
@@ -347,13 +241,16 @@ public class HongseoSearcher implements Searcher {
 		@Override
 		public Double call() throws Exception {
 			double queryLength = 0.0;
+			System.out.println("LENGTH: " + queryList.size());
 			for (String query : queryList) {
 				HashMap<String, Integer> tokenizedQuery = Vectorizer.vectorize(query, true);
 				for (String s : tokenizedQuery.keySet()) {
 					for (int i = 0; i < tokenizedQuery.get(s).intValue(); i++) {
 						queryLength++;
+						System.out.println("querylength: " + queryLength);
 						try {
 							wordList.put(s);
+							System.out.println("Done");
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -363,7 +260,7 @@ public class HongseoSearcher implements Searcher {
 			
 			for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
 				try {
-					wordList.put(null);
+					wordList.put("");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -392,25 +289,40 @@ public class HongseoSearcher implements Searcher {
 		@Override
 		public void run() {
 			try {
+				System.out.println("Start");
 				String word = wordList.take();
-				while (word != null) {
+				while (!word.equals("")) {
 					Long wID = keyword_wordID.get(word);
-					Set<Object[]> documents = content_inverted.subSet(new Object[] {wID}, new Object[] {wID, new Posting(null, 0)});
+					Set<Object[]> documents = content_inverted.subSet(new Object[] {wID}, new Object[] {wID, null, null});
 					Iterator<Object[]> it = documents.iterator();
 					while (it.hasNext()) {
 						Object[] wordDocPair = it.next();
-						Posting p = (Posting)wordDocPair[1];
-						double docWeight = documentWeight(p.frequency, pageID_tfmax.get(p.id), documents.size());
-						weightsSum.put(p.id, new Double((weightsSum.get(p.id) != null ? weightsSum.get(p.id) : 0) + docWeight));
-						weightsSqrSum.put(p.id, new Double((weightsSqrSum.get(p.id) != null ? weightsSqrSum.get(p.id) : 0) + Math.pow(docWeight, 2)));	
+						Long pID = (Long)wordDocPair[1]; 
+						System.out.println("Doc:" + pageID_title.get(pID));
+						Integer freq = (Integer)wordDocPair[2];
+						//Posting p = (Posting)wordDocPair[1];
+						double docWeight = documentWeight(freq, pageID_tfmax.get(pID), documents.size());
+						weightsSum.put(pID, new Double((weightsSum.get(pID) != null ? weightsSum.get(pID) : 0) + docWeight));
+						weightsSqrSum.put(pID, new Double((weightsSqrSum.get(pID) != null ? weightsSqrSum.get(pID) : 0) + Math.pow(docWeight, 2)));	
 					}
 					word = wordList.take();
 				}
+				System.out.println("END");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
 		}
     	
+    }
+    
+    public static void main(String[] args) {
+    	Searcher searcher = HongseoSearcher.getInstance();
+    	List<String> searchList = new ArrayList<String>();
+    	searchList.add("HKUST");
+    	List<Webpage> result = searcher.search(searchList, 30);
+    	for (Webpage wp : result) {
+    		System.out.println(wp.getTitle());
+    	}
     }
 }
