@@ -327,7 +327,6 @@ public class MapDBIndexer implements Indexer {
 	    	Iterator<Object[]> it = docKeyFreq.iterator(); //iterate through the subset
 	    	while (it.hasNext()) {
 	    		Object[] entry = it.next();
-	    		System.out.println(wordID_keyword.get((Long)entry[1]) + "     " + ((Integer)entry[2]).toString());
 	    		// element 0 is Long object (=pageID) and element 1 is Posting object
 	    		//Posting p = (Posting)((it.next())[1]); //get element 1 (=Posting)
 	    		keyFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
