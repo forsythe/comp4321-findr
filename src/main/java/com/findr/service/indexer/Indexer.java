@@ -1,4 +1,4 @@
- 	package com.findr.service.indexer;
+ package com.findr.service.indexer;
 
 import java.util.List;
 
