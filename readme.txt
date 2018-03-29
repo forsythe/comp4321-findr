@@ -9,14 +9,75 @@ To make the database file again from scratch, please remove the existing "index.
 
 To run the phase 1 task:
 
-First change the permission on gradlew by:
+Move to the project directory, and 
 
-'chmod 777 gradlew'
+1. First change the permission on gradlew by:
 
-Then exextue:
+'chmod 755 gradlew'
+
+2. Then exextue:
 
 './gradlew testClean'
 
 './gradlew -Dtest.single=SpiderPhase1 test'
 
 After executing those, "index.db" and "spider_result.txt" will be outputted in the project working directory.
+Please make sure to execute the "gradlew" commands inside the project directory. 
+
+--------------------------------------------------------------------------------------------------------
+Remarks
+
+- The zipped file containing this "readme.txt" does not only contain the necessary source codes for the spider, indexer and the test program, but also some other files that are not used in phase 1. These files are for the final submission and they were included in this submission for completeness only. 
+- Although the other files are not used for phase 1 task, please do not remove them for running the test program.
+- The files used for phase 1 tasks are marked with (*) :
+
+comp4321-findr 
+|
++- src 
+|   |
+|   +- main
+|      |
+|      +- java 
+|      |  |
+|      |  +-com
+|      |    |
+|      |    +- object
+|      |    |  |
+|      |    |  +- Webpage.java *
+|      |    |
+|      |    +- service
+|      |       |
+|      |       +- crawler *
+|      |       |
+|      |       +- indexer *
+|      |       |
+|      |       +- parser * 
+|      |       |
+|      |       +- spider *
+|      |       |
+|      |       +- stemming *
+|      |
+|      +- resources
+|         |
+|         +- stopwords.txt *
+|
++- bin * 
+|
++- build * 
+|
++- gradle *
+|
++- build.gradle * 
+|
++- COMP4321 Phase1 Database Design.pdf * 
+|
++- gradlew * 
+|
++- gradlew.bat *
+|
++- index.db * 
+|
++- readme.txt * 
+|
++- spider_result.txt * 
+

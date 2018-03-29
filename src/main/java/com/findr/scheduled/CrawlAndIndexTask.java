@@ -24,12 +24,12 @@ public class CrawlAndIndexTask {
         log.info("I am scheduled to say hi every 30 seconds. Replace me with some crawling/indexing task, " +
                 "and change it to 1 hour or something {}", dateFormat.format(new Date()));
     }
-    
+    /*
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void crawlAndIndex() {
         Spider spider = new SpiderImpl();
         //spider.run("https://www.nytimes.com/", 50, 50);
         spider.run("http://www.cse.ust.hk", 50, 50);
     }
-   
+    */
 }

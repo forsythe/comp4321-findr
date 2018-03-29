@@ -243,8 +243,10 @@ public class HongseoSearcher implements Searcher {
 			double queryLength = 0.0;
 			System.out.println("LENGTH: " + queryList.size());
 			for (String query : queryList) {
+				System.out.println("QUERY:" + query);
 				HashMap<String, Integer> tokenizedQuery = Vectorizer.vectorize(query, true);
 				for (String s : tokenizedQuery.keySet()) {
+					System.out.println("TOKENIZED: " + s);
 					for (int i = 0; i < tokenizedQuery.get(s).intValue(); i++) {
 						queryLength++;
 						System.out.println("querylength: " + queryLength);
