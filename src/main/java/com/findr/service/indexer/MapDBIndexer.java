@@ -213,7 +213,7 @@ public class MapDBIndexer implements Indexer {
 					}
 					Integer freq = keywordFreq.get(keyword);
 					content_inverted.add(new Object[] {wID, pID, freq}); //add to Inverted Index 
-					content_forward.add(new Object[] {pID, pID, freq}); //add to the Forward Index
+					content_forward.add(new Object[] {pID, wID, freq}); //add to the Forward Index
 					
 					//update the page->tfmax table 
 					if (!pageID_tfmax.containsKey(pID)) //if there is no entry for the given page
@@ -327,6 +327,7 @@ public class MapDBIndexer implements Indexer {
 	    	Iterator<Object[]> it = docKeyFreq.iterator(); //iterate through the subset
 	    	while (it.hasNext()) {
 	    		Object[] entry = it.next();
+	    		System.out.println(wordID_keyword.get((Long)entry[1]) + "     " + ((Integer)entry[2]).toString());
 	    		// element 0 is Long object (=pageID) and element 1 is Posting object
 	    		//Posting p = (Posting)((it.next())[1]); //get element 1 (=Posting)
 	    		keyFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
