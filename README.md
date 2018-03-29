@@ -4,12 +4,28 @@ Final project for COMP4321 Search Engines
 
 ##Phase 1 Testing
 
-Make sure to delete the existing "index.db" file to do the crawling and indexing from scratch.
+The output files from the Phase 1 tasks:
+* database file ("index.db") containing the first 30 pages crawled from "http://www.cse.ust.hk/"
+* "spider_result.txt"
 
-"gradle -Dtest.single=SpiderPhase1 test"
+To make the database file again from scratch, please remove the existing "index.db" file first before running the Phase 1 task program. Otherwise, the indexer will load in the existing database file and if there is no changes in the pages crawled, no change will take place.
 
+To run the phase 1 task:
 
+First change the permission on gradlew:
 
+```
+chmod 777 gradlew
+```
+
+then execute:
+
+```
+./gradlew testClean
+./gradlew -Dtest.single=SpiderPhase1 test
+```
+
+"index.db" and "spider_result.txt" will be outputted in the project working directory. 
 
 ## Getting Started
 

@@ -70,13 +70,18 @@ public class JSoupParser implements Parser {
             HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
             HashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
             
-            long contentLength = httpCon.getContentLength();
-            if (contentLength == -1) {
-            	contentLength = rawBody.length();
+            String contentLength = httpCon.getHeaderField("Content-Length");
+            long contentLengthLong;
+            
+            try {
+            	contentLengthLong = Long.parseLong(contentLength);
+            } catch (Exception e) {
+            	contentLengthLong = rawBody.length();
             }
+     
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
-                    .setSize(contentLength)
+                    .setSize(contentLengthLong)
                     .setBody(rawBody)
                     .setLinks(getLinks(doc))
                     .setTitle(doc.title())
