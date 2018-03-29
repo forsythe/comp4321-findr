@@ -8,6 +8,8 @@ The output files from the Phase 1 tasks:
 * database file ("index.db") containing the first 30 pages crawled from "http://www.cse.ust.hk/"
 * "spider_result.txt"
 
+are already included.
+
 To make the database file again from scratch, please remove the existing "index.db" file first before running the Phase 1 task program. Otherwise, the indexer will load in the existing database file and if there is no changes in the pages crawled, no change will take place.
 
 To run the phase 1 task:
