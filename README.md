@@ -2,7 +2,7 @@
 
 Final project for COMP4321 Search Engines
 
-##Phase 1 Testing
+## Phase 1 Testing
 
 The output files from the Phase 1 tasks:
 * database file ("index.db") containing the first 30 pages crawled from "http://www.cse.ust.hk/"
