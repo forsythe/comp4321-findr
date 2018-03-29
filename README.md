@@ -17,7 +17,7 @@ To run the phase 1 task:
 First change the permission on gradlew:
 
 ```
-chmod 777 gradlew
+chmod 755 gradlew
 ```
 
 then execute:
