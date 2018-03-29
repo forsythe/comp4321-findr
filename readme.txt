@@ -17,7 +17,7 @@ Move to the project directory, and
 
 2. Then exextue:
 
-'./gradlew testClean'
+'./gradlew cleanTest'
 
 './gradlew -Dtest.single=SpiderPhase1 test'
 

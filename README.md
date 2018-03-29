@@ -23,7 +23,7 @@ chmod 755 gradlew
 then execute:
 
 ```
-./gradlew testClean
+./gradlew cleanTest
 ./gradlew -Dtest.single=SpiderPhase1 test
 ```
 
