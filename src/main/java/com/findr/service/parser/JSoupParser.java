@@ -232,6 +232,9 @@ public class JSoupParser implements Parser {
         		linksFixed.add(fixedString);
         		System.out.println("ADDED");
         	}
+        	else if (l.indexOf('#') == 0) {
+        		System.out.println("SKIPPED");
+        	}
         	else {
         		System.out.println("OTHER CASE: " + l);
         		int sharp = 0;
