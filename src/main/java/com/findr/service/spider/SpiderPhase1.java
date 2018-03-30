@@ -48,7 +48,7 @@ public class SpiderPhase1 implements Spider {
 	        	bw.newLine();
 	        	bw.write(p.getMyUrl());
 	        	bw.newLine();
-	        	bw.write(p.getLastModified().toString() + ", " + p.getSize());
+	        	bw.write(p.getLastModified().toString() + ", " + p.getSize() + " bytes");
 	        	bw.newLine();
 	        	HashMap<String, Integer> keywordFreq = p.getKeywordsAndFrequencies();
 	        	for (String keyword : keywordFreq.keySet()) {
