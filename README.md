@@ -4,6 +4,8 @@ Final project for COMP4321 Search Engines
 
 ## Phase 1 Testing
 
+NOTE: Please refer to "readme.txt" for instructions on executing the phase 1 task, not this file.
+
 The output files from the Phase 1 tasks:
 * database file ("index.db") containing the first 30 pages crawled from "http://www.cse.ust.hk/"
 * "spider_result.txt"
