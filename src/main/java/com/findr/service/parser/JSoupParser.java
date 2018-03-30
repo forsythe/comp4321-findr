@@ -249,7 +249,7 @@ public class JSoupParser implements Parser {
         
         }
         catch (Exception e) {
-        	System.out.println("FUCKED");
+        	System.out.println("EXCEPTION");
         }
 
         log.debug("Found {} child links", links.size());
