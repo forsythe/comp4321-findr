@@ -54,7 +54,7 @@ public class JSoupParser implements Parser {
             doc = Jsoup.parse(rawBody);
 
             String metaDest;
-
+            
             //Check for html level meta-refresh redirection
             if (null != (metaDest = handleMetaRefreshHttpURLConnection(doc))) {
                 url = metaDest;
@@ -79,11 +79,13 @@ public class JSoupParser implements Parser {
             	contentLengthLong = rawBody.length();
             }
      
+            String baseURL = httpCon.getURL().toString();
+            
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(contentLengthLong)
                     .setBody(rawBody)
-                    .setLinks(getLinks(doc))
+                    .setLinks(getLinks(doc, baseURL))
                     .setTitle(doc.title())
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
@@ -196,7 +198,7 @@ public class JSoupParser implements Parser {
         return lastModified;
     }
 
-    private static Collection<String> getLinks(Document doc) {
+    private static Collection<String> getLinks(Document doc, String baseURL) {
         //Elements linkElements = doc.select("a[href]");
 
         Elements linkElements = doc.select("a");
@@ -204,12 +206,40 @@ public class JSoupParser implements Parser {
         Collection<String> links = new ArrayList<>();
 
         linkElements.stream()
-                .filter(x -> !x.attr("abs:href").isEmpty())
+                .filter(x -> !x.attr("href").isEmpty())
                 .filter(x -> !x.attr("abs:href").endsWith("mp4"))
-                .forEach(x -> links.add(x.attr("abs:href")));
+                .forEach(x -> links.add(x.attr("href")));
+        
+        Collection<String> linksFixed = new ArrayList<String>();
+        try {
+        	System.out.println("HI");
+        	System.out.println(baseURL);
+        	System.out.println("HI2");
+        	
+        URL base = new URL(baseURL);
+        
+        for (int i = 0; i < links.size(); i++ ) {
+        	String l = ((ArrayList<String>) links).get(i);
+        	System.out.println("LINKS: " + l);
+        	if (l.indexOf("http") != 0 && l.indexOf('#') != 0) {
+        		int secondSharp = 0; 
+        		if ((secondSharp = l.indexOf('#', 1)) != -1) {
+        			l = l.substring(0, secondSharp);
+        		}
+        		URL fixed = new URL(base , l);
+        		String fixedString  = fixed.toString();
+        		System.out.println("FIXED: " + fixedString);
+        		linksFixed.add(fixedString);
+        	}
+        }
+        
+        }
+        catch (Exception e) {
+        	System.out.println("FUCKED");
+        }
 
         log.debug("Found {} child links", links.size());
-        return links;
+        return linksFixed;
     }
 
     private static String getMetaTag(Document document, String attr) {

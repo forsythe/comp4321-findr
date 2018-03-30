@@ -191,6 +191,8 @@ public class MapDBIndexer implements Indexer {
 			if (!skip) {
 				//index all the necessary page information
 				//if this is an update to a previous webpage entry, pID (ID of the page) is set to that of the preivous webpage in the previous step
+				System.out.println("Page ID:" + pID.toString());
+				
 				pageID_url.put(pID, webpage.getMyUrl());
 				url_pageID.put(webpage.getMyUrl(), pID);
 				pageID_title.put(pID, webpage.getTitle());
@@ -224,6 +226,9 @@ public class MapDBIndexer implements Indexer {
 				//get children page URLs
 				Collection<String> childLinks = webpage.getLinks();
 				for (String link : childLinks) {
+					
+					System.out.println(link);
+					
 					Long childID = new Long(pageID); //give the child page a new pageID
 					if (url_pageID.containsKey(link)) //check if this URL (webpage) was already given a pageID before
 						childID = url_pageID.get(link); //if yes, then change the ID of this child page to that ID 
@@ -251,6 +256,8 @@ public class MapDBIndexer implements Indexer {
 					title_inverted.add(new Object[] {wID, pID, freq});
 					title_forward.add(new Object[] {pID, wID, freq});
 				}
+				
+				System.out.println("-----------------------------");
 			}
     	} catch (DBException e) {
     		e.printStackTrace();

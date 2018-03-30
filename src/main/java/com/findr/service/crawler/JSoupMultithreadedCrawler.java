@@ -48,7 +48,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
 
         try {
             if (exec.awaitTermination(maxRunSeconds, TimeUnit.SECONDS)) { //blocking
-                log.info("Crawled the maximum pages before time ran out!");
+                //log.info("Crawled the maximum pages before time ran out!");
             } else {
                 exec.shutdownNow();
                 running = false;
@@ -60,7 +60,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
         while (!exec.isTerminated()) ; //spinlock
         long elapsedTimeMillis = System.currentTimeMillis() - start;
         float elapsedTimeSec = elapsedTimeMillis / 1000F;
-        log.info("Crawl completed in {} seconds", elapsedTimeSec);
+        //log.info("Crawl completed in {} seconds", elapsedTimeSec);
 
         return new ArrayList<>(indexQueue);
     }
@@ -78,36 +78,38 @@ public class JSoupMultithreadedCrawler implements Crawler {
             while (running) {
                 try {
                     String crawlTarget = crawlQueue.take(); //blocks until there's a page to take
-                    log.info("Crawl target is " + crawlTarget);
+                    //log.info("Crawl target is " + crawlTarget);
 
                     Optional<Webpage> result = parser.parse(crawlTarget, false);
                     if (!result.isPresent())
                         continue;
 
                     Webpage page = result.get();
-                    log.info("Crawled " + page.getMyUrl());
+                    //log.info("Crawled " + page.getMyUrl());
 
                     lockSeenURLs.lockInterruptibly();
                     try {
                         if (seenURLs.size() >= maxPagesCrawl) {
                             running = false;
-                            log.info("max seen pages reached, killing this thread");
+                      //      log.info("max seen pages reached, killing this thread");
                             return;
                         } else {
                             if (seenURLs.add(page.getMyUrl())) {
                                 indexQueue.put(page); //blocks if full. Indexer threads NEED to actively remove them!
-                                log.info("{{}} saved", page.getMyUrl());
+                                System.out.println("Page in Crawler: " + page.getMyUrl());
+                        //        log.info("{{}} saved", page.getMyUrl());
                             } else {
-                                log.info("{{}} seen before, ignoring", page.getMyUrl());
+                          //      log.info("{{}} seen before, ignoring", page.getMyUrl());
                             }
                         }
 
                         for (String link : page.getLinks()) {
+                        	System.out.println("-- child: " + link);
                             if (!seenURLs.contains(link)) {
                                 boolean status = crawlQueue.offer(link); //may fail silently if queue full
-                                log.info("Insert {{}} into crawlQueue was {{}}", link, status);
+                            //    log.info("Insert {{}} into crawlQueue was {{}}", link, status);
                             } else {
-                                log.info("already saw {{}}, skip", link);
+                            //    log.info("already saw {{}}, skip", link);
                             }
                         }
                     } finally {
@@ -115,7 +117,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
                     }
 
                 } catch (InterruptedException e) {
-                    log.info("INTERRUPTED");
+                //    log.info("INTERRUPTED");
                     return;
                 }
             }
