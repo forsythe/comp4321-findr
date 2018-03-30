@@ -230,6 +230,17 @@ public class JSoupParser implements Parser {
         		String fixedString  = fixed.toString();
         		System.out.println("FIXED: " + fixedString);
         		linksFixed.add(fixedString);
+        		System.out.println("ADDED");
+        	}
+        	else {
+        		System.out.println("OTHER CASE: " + l);
+        		int sharp = 0;
+        		if ((sharp = l.indexOf('#', 0)) != -1) {
+        			l = l.substring(0, sharp);
+        		}
+        		System.out.println("OTHER CASE PROCESSED: " + l);
+        		linksFixed.add(l);
+        		System.out.println("ADDED");
         	}
         }
         
