@@ -2,21 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>findr</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  data-th-href="@{/../search.css}"/>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  th:href="@{/css/search.css}"/>
 </head>
 <body>
 
-<div id="logo_searchbar">
+    <div id="logo_searchbar">
     <a href="/" class="hidden">
-        <image src="../static/images/logo_v2.png" id="logo" alt="logo"/>
+        <image src="../static/images/logo_v2.png"
+               th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
 
     <div class="image_text">
-      <image src= "../static/images/talk_bubble.png" alt="bubble" id="bubble"/>
-      <span class="centered" th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">
-        you prev search for...<br/>
+      <image src= "../static/images/talk_bubble.png" th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/>
+      <div class="centered">
+        <span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">
+          you prev search for...
+        </span>
+        <br/>
         <span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>
-      </span>
+      </div>
     </div>
 
     <form th:action="@{/search}">
@@ -28,33 +32,34 @@
     <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">time elapsed...</span>
 </div>
 
+    <div class="content-body">
+        <div th:each="page : ${results}" class="results_para">
+            <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}" class="result-title">Title</a>
+            <br/>
+            <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL abbrev</span>
+            <br/>
+            <div th:text="${page.getMetaDescription()}" class="result-small">
+              page description
+            </div>
+            <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified placeholder</span>
+            <br>
+            <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
+        </div>
 
-<div class="content-body">
-  <div th:each="page : ${results}" class="results_para">
-    <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}" class="result-title">Title</a>
-    <br/>
-    <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL abbrev</span>
-    <br/>
-    <div th:text="${page.getMetaDescription()}" class="result-small">
-      page description
+        <div class="num_bar">
+            <hr>
+            <table>
+                <tr>
+                    <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
+                        <div th:switch="${i}" class="circle">
+                            <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
+                            <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified placeholder</span>
-    <br>
-    <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
-  <div class="num_bar">
-    <hr>
-    <table>
-        <tr>
-            <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
-                <div th:switch="${i}" class="circle">
-                    <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
-                    <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
-                </div>
-            </td>
-        </tr>
-    </table>
-  </div>
-</div>
 
 </body>
 </html>
