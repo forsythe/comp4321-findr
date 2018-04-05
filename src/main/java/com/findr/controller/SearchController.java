@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class SearchController {
     private String prevQuery = "";
     private double crawlTime = 0;
 
-    private Searcher searcher = new HongseoSearcher();
+    private Searcher searcher = HongseoSearcher.getInstance();
 
     /**
      * Handles user query requests
@@ -38,7 +39,7 @@ public class SearchController {
      * @return The name of the html page to display
      */
 
-    @RequestMapping
+    @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
     public String handleQueryRequest(
             @RequestParam("query") String query,
             @RequestParam("page") String page,
