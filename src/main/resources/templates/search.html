@@ -2,63 +2,59 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>findr</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  data-th-href="@{/../search.css}"/>
 </head>
 <body>
 
+<div id="logo_searchbar">
+    <a href="/" class="hidden">
+        <image src="../static/images/logo_v2.png" id="logo" alt="logo"/>
+    </a>
 
-<h1><a href="/">findr</a></h1>
-<span th:text="'you previously searched for ' + ${prevQuery}"></span>
-<br>
-<span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}"></span>
-<form th:action="@{/search}">
-    <input required type="text" name="query" th:value="${query}">
-    <input type="hidden" name="page" value="1">
-    <input type="submit" value="Search">
-</form>
+    <div class="image_text">
+      <image src= "../static/images/talk_bubble.png" alt="bubble" id="bubble"/>
+      <span class="centered" th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">
+        you prev search for...<br/>
+        <span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>
+      </span>
+    </div>
 
-<!--<hr>-->
-
-<span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'"></span>
-<br><br>
-
-<!--<div th:each="result : ${results}">-->
-
-<!--<a th:text="${#strings.abbreviate(page.getTitle,80)} " th:href="${page.getMyUrl()}"-->
-<!--class="result-title"></a>-->
-<!--<br>-->
-<!--</div>-->
-
-<div th:each="page : ${results}">
-    <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}" class="result-title"></a>
-    <br><span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small"></span>
-    <br>
-    <div th:text="${page.getMetaDescription()}" class="result-small"></div>
-    <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified placeholder</span>
-    <br>
-    <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
-    <br>
-    <br>
-
-    <!--<td th:text="${#strings.substring(page.body,100)}">Body</td>-->
+    <form th:action="@{/search}">
+        <input required type="text" name="query" th:value="${query}" id="query">
+        <input type="hidden" name="page" value="1">
+        <input type="submit" value="Search">
+    </form>
+    <br/>
+    <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">time elapsed...</span>
 </div>
 
 
-<hr>
+<div class="content-body">
+  <div th:each="page : ${results}" class="results_para">
+    <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}" class="result-title">Title</a>
+    <br/>
+    <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL abbrev</span>
+    <br/>
+    <div th:text="${page.getMetaDescription()}" class="result-small">
+      page description
+    </div>
+    <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified placeholder</span>
+    <br>
+    <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
+  <div class="num_bar">
+    <hr>
+    <table>
+        <tr>
+            <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
+                <div th:switch="${i}" class="circle">
+                    <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
+                    <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
+                </div>
+            </td>
+        </tr>
+    </table>
+  </div>
+</div>
 
-<table>
-    <tr>
-        <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
-            <div th:switch="${i}">
-                <p th:case="${pageNum}" th:text="${i}" class="page-num">CUR PAGE</p>
-                <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
-            </div>
-        </td>
-    </tr>
-</table>
-
-
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>-->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>-->
-<!--&lt;!&ndash;<script th:src="@{js/demo.js}" src="../static/js/demo.js"></script> &ndash;&gt;-->
 </body>
 </html>
