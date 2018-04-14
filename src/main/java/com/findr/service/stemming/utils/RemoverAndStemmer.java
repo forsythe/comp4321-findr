@@ -8,11 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-
 public class RemoverAndStemmer {
     private final Porter porter;
     private final HashSet<String> stopWords; //threadsafe if we never add/remove elements outside of constructor
-
 
     public RemoverAndStemmer(String str) {
         porter = new Porter();
@@ -40,7 +38,6 @@ public class RemoverAndStemmer {
     private String stem(String str) {
         return porter.stripAffixes(str);
     }
-
 
     public List<String> stopAndStem(String[] words) {
         List<String> answer = new ArrayList<>();

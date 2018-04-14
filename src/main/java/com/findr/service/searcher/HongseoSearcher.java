@@ -224,8 +224,8 @@ public class HongseoSearcher implements Searcher {
 	    		Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
 	    		int vsmRank = Arrays.asList(sortedByVSM.keySet().toArray()).indexOf(vsmScore);
 	    		Double prScore = pageID_pagerank.get(pID);
-	    		
-	    		Double titleMult = 1.0;
+
+	    		Integer titleMatchCount = 0;
 	    		for (String q : query) {
 	    			for (String subq : q.split(" ")) {
 	    	    		ArrayList<String> subqTokens = new ArrayList<String>();
@@ -235,11 +235,12 @@ public class HongseoSearcher implements Searcher {
 
 	    	    		for (String token : subqTokens) {
 		    				if (pageID_title.get(pID).toLowerCase().contains(token.toLowerCase())) {
-		    					titleMult += 0.1;
+		    					titleMatchCount += 1;
 		    				}
 	    	    		}
 	    			}
 	    		}
+	    		Double titleMult = 1 + titleMatchCount*0.1;
 	    		Double alpha = Math.log(5);
 	    		Double w = 0.8;
 	    		Double score = titleMult*(w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha));
