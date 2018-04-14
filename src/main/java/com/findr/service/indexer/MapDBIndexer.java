@@ -1,6 +1,7 @@
 package com.findr.service.indexer;
 
 import com.findr.object.*;
+import com.findr.service.pagerank.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,10 +30,13 @@ import java.util.Set;
 import org.mapdb.*;
 import org.mapdb.serializer.*;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * An implementation of the Indexer service which uses mapdb
  */
 public class MapDBIndexer implements Indexer {
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(MapDBIndexer.class);
 	
 	private DB db;
 	
@@ -49,6 +53,9 @@ public class MapDBIndexer implements Indexer {
     private HTreeMap<Long, String> pageID_metaD; //pageID -> meta description (used in search result page)
     //pageID to the tfmax in the page that corresponds to the pageID, used for cosSim calculation 
     private HTreeMap<Long, Integer> pageID_tfmax;
+    
+    // pageID to the PageRank of the page that corresponds to the pageID
+    private HTreeMap<Long, Double> pageID_pagerank;
     
     //inverted index - uses NavigableSet of Object array to achieve a MultiMap
     //each array would contain {wordID, Posting(pageID, frequency)}, linking word to the page it appears on
@@ -133,6 +140,12 @@ public class MapDBIndexer implements Indexer {
         		.keySerializer(Serializer.LONG)
         		.valueSerializer(Serializer.INTEGER)
         		.createOrOpen();
+        
+        pageID_pagerank = db.hashMap("pageID_pagerank")
+        		.keySerializer(Serializer.LONG)
+        		.valueSerializer(Serializer.DOUBLE)
+        		.createOrOpen();
+        
         //multi-map
         content_inverted = db.treeSet("content_inverted")
         		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
@@ -199,6 +212,7 @@ public class MapDBIndexer implements Indexer {
 				pageID_size.put(pID, webpage.getSize());
 				pageID_lastmodified.put(pID, webpage.getLastModified());
 				pageID_metaD.put(pID, webpage.getMetaDescription());
+				
 				//get all keywords and frequency
 				HashMap<String, Integer> keywordFreq = webpage.getKeywordsAndFrequencies();
 				for (String keyword : keywordFreq.keySet()) { //for each keyword in the retrieved set,
@@ -223,6 +237,7 @@ public class MapDBIndexer implements Indexer {
 					else if (pageID_tfmax.get(pID) < freq) //if there is an entry, then compare the current keyword frequency to the current tfmax 
 						pageID_tfmax.put(pID, freq); //update it only if the current one is	larger in value than the one in the table
 				}	
+				
 				//get children page URLs
 				Collection<String> childLinks = webpage.getLinks();
 				for (String link : childLinks) {
@@ -240,6 +255,7 @@ public class MapDBIndexer implements Indexer {
 					}
 					parent_child.add(new Object[] {pID, childID});
 				}
+				
 				//Handle the title keywords in the same way as the normal inverted/forward indices
 				HashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
 				for (String tKeyword : titleKeywords.keySet()) {
@@ -264,12 +280,19 @@ public class MapDBIndexer implements Indexer {
     	}
     }
 
-    //simply does addWebpageEntry() for each webpage
+    //simply does addWebpageEntry() for each webpage, then calculates PageRank for each webpage
     @Override
     public void addAllWebpageEntries(List<Webpage> listOfWebpages) {
     	synchronized (MapDBIndexer.class) {
 	    	for (Webpage webpage : listOfWebpages)
 	    		addWebpageEntry(webpage);
+	    	
+	    	log.info("[MapDBIndexer] Executing PageRank after indexing all webpages");
+	    	List<PRNode> pagerankResult = PageRank.pagerank(listOfWebpages, 0.85, 100);
+	    	for (PRNode node : pagerankResult) {
+	    		Long pID = url_pageID.get(node.getMyUrl());
+	    		pageID_pagerank.put(pID, node.getRank());
+	    	}
     	}
     }
     
@@ -339,6 +362,7 @@ public class MapDBIndexer implements Indexer {
 	    		keyFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
 	    	}
 	    
+	    	result.setPageRank(pageID_pagerank.get(id)); //set the pagerank value of the webpage
 	    	result.setKeywordsAndFrequencies(keyFreq); //set the keywordFrequency 
 	    	
 	    	List<String> childLinks = new LinkedList<String>();

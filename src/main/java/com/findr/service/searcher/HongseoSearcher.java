@@ -60,6 +60,7 @@ public class HongseoSearcher implements Searcher {
     private HTreeMap<Long, String> pageID_metaD;
     
     private HTreeMap<Long, Integer> pageID_tfmax;
+    private HTreeMap<Long, Double> pageID_pagerank;
     
     private NavigableSet<Object[]> content_inverted; //keyword to word id, freq   
     private NavigableSet<Object[]> content_forward; //page to keywords, freq
@@ -131,6 +132,11 @@ public class HongseoSearcher implements Searcher {
         pageID_tfmax = db.hashMap("pageID_tfmax")
         		.keySerializer(Serializer.LONG)
         		.valueSerializer(Serializer.INTEGER)
+        		.createOrOpen();
+        
+        pageID_pagerank = db.hashMap("pageID_pagerank")
+        		.keySerializer(Serializer.LONG)
+        		.valueSerializer(Serializer.DOUBLE)
         		.createOrOpen();
         
         content_inverted = db.treeSet("content_inverted")
@@ -213,6 +219,7 @@ public class HongseoSearcher implements Searcher {
 		    		page.setMyUrl(pageID_url.get(pID));
 		    		page.setLastModified(pageID_lastmodified.get(pID));
 		    		page.setMetaDescription(pageID_metaD.get(pID));
+		    		page.setPageRank(pageID_pagerank.get(pID));
 		    		
 		    		results.add(page);
 	    		}

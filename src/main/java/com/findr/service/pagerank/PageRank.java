@@ -91,7 +91,7 @@ public class PageRank {
     		}
     	}
     	
-    	// Transform map to list
+    	// Transform map to list.
     	List<PRNode> result = new ArrayList<PRNode>();
     	for (PRNode n : nodes.values()) {
     		result.add(n);

@@ -13,8 +13,8 @@ public class Webpage {
     String title, body, myUrl, parentUrl, metaDescription;
     long size;
     Date lastModified;
-
-
+    double pagerank;
+    
     Collection<String> links;
     HashMap<String, Integer> titleKeywordsAndFrequencies;
     HashMap<String, Integer> keywordsAndFrequencies;
@@ -85,7 +85,15 @@ public class Webpage {
     public Webpage setLastModified(Date lastModified) {
         this.lastModified = lastModified;
         return this;
-
+    }
+    
+    public double getPageRank() {
+    	return pagerank;
+    }
+    
+    public Webpage setPageRank(double pagerank) {
+    	this.pagerank = pagerank;
+    	return this;
     }
 
     public HashMap<String, Integer> getKeywordsAndFrequencies() {
