@@ -26,10 +26,10 @@ public class RemoverAndStemmer {
                 stopWords.add(word);
             }
             stopWords.add("");
+            bfreader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private boolean isStopWord(String str) {
@@ -53,7 +53,5 @@ public class RemoverAndStemmer {
                 answer.add(result);
         }
         return answer;
-
-
     }
 }

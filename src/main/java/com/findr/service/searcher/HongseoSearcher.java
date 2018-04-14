@@ -202,7 +202,8 @@ public class HongseoSearcher implements Searcher {
 	    	}
 	    	
 	    	// VSM = Vector Space Model
-	    	// Score = w*VSM + (1-w)*PR/(log(rank of VSM) + alpha
+	    	// Score = titleMult*(w*VSM + (1-w)*PR/(log(rank of VSM) + alpha))
+	    	// titleMult = 1 + 0.1*(the number of query terms that match at least one term in the title)
 	    	// w determines whether to weight VSM or PR more
 	    	// From https://guangchun.files.wordpress.com/2012/05/searchenginereport.pdf, use alpha = log5
 	    	//
@@ -219,16 +220,33 @@ public class HongseoSearcher implements Searcher {
 	    	}
 
 	    	// Then, calculate aggregate score
-	    	for (Long pID : weightsSum.keySet()) {
-	    		Double alpha = Math.log(5);
-	    		Double w = 0.8;
+	    	for (Long pID : weightsSum.keySet()) {    		
 	    		Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
 	    		int vsmRank = Arrays.asList(sortedByVSM.keySet().toArray()).indexOf(vsmScore);
 	    		Double prScore = pageID_pagerank.get(pID);
-	    		Double score = w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha);
 	    		
-	    		System.out.print("VSM Score: " + vsmScore.toString() + "  ");
-	    		System.out.print("PR Score: " + prScore.toString() + " ");
+	    		Double titleMult = 1.0;
+	    		for (String q : query) {
+	    			for (String subq : q.split(" ")) {
+	    	    		ArrayList<String> subqTokens = new ArrayList<String>();
+	    	    		for (String token : Vectorizer.vectorize(subq, true).keySet()) {
+	    	    			subqTokens.add(token);
+	    	    		}
+
+	    	    		for (String token : subqTokens) {
+		    				if (pageID_title.get(pID).toLowerCase().contains(token.toLowerCase())) {
+		    					titleMult += 0.1;
+		    				}
+	    	    		}
+	    			}
+	    		}
+	    		Double alpha = Math.log(5);
+	    		Double w = 0.8;
+	    		Double score = titleMult*(w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha));
+	    		
+	    		System.out.print("Title multiplier: " + titleMult.toString() + " ");
+	    		System.out.print("VSM score: " + vsmScore.toString() + "  ");
+	    		System.out.print("PR score: " + prScore.toString() + " ");
 	    		System.out.println("Score: " + score.toString() + " " + "DocID: " + pID.toString() + "  " + "Title: " + pageID_title.get(pID));
 	    		
 	    		if (sortedByScore.containsKey(score))
@@ -245,7 +263,7 @@ public class HongseoSearcher implements Searcher {
 	    		List<Long> pages = lastEntry.getValue();
 	    		for (Long pID : pages) {																																																																											
 		    		Webpage page = Webpage.create();
-	    			System.out.println(pID.toString() + "(" + lastEntry.getKey().toString() + ")");
+	    			System.out.println(pID.toString() + " (" + lastEntry.getKey().toString() + ")");
 		    		page.setTitle(pageID_title.get(pID));
 		    		page.setMyUrl(pageID_url.get(pID));
 		    		page.setLastModified(pageID_lastmodified.get(pID));
@@ -348,7 +366,6 @@ public class HongseoSearcher implements Searcher {
 				}
 				System.out.println("END");
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
 		}

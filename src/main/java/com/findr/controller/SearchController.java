@@ -63,7 +63,7 @@ public class SearchController {
             results.addAll(searcher.search(tempQueryHolder, 12));
             Long endTime = new Date().getTime();
             crawlTime = (double) ((endTime - startTime)/1000.0);
-            System.out.println("Crawled for : " + crawlTime.toString() + "s");
+            System.out.println("Crawled for : " + crawlTime.toString() + " seconds");
             prevQuery = query;
         }
 
@@ -73,7 +73,7 @@ public class SearchController {
 
         map.addAttribute("numResultPages", numResultPages);
         map.addAttribute("totalCrawledPages", results.size());
-        map.addAttribute("crawlTime", crawlTime); //TODO: time it properly
+        map.addAttribute("crawlTime", crawlTime);
         map.addAttribute("query", query.trim());
         map.addAttribute("pageNum", pageNum);
 
