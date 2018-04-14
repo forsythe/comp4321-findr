@@ -19,7 +19,7 @@ public class PageRank {
      * @param webpages List of webpages to rank
      * @param dampingFactor Damping factor of PageRank
      * @param numIter Number of iterations
-     * @return
+     * @return List of webpage URLs with their ranks
      */
     public static List<PRNode> pagerank(List<Webpage> webpages, double dampingFactor, int numIter) {
     	log.info("Executing PageRank");
