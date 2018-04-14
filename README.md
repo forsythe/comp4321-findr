@@ -46,7 +46,7 @@ Package name 		| Contents
 `service.parser`	| Holds the parser interface, and any implementations. Classes which take a URL and return a Webpage object
 `service.searcher`	| Holds the searcher interface, and any implementations. Classes which take a query and return a list of results
 `service.spider`	| Holds the spider interface, and any implementations. Does crawling and indexing together as an action
-`services.stemming`	| Utility functions for stopword removal and removing.
+`service.stemming`	| Utility functions for stopword removal and removing.
 
 ## TODO
 search for TODO in the code
