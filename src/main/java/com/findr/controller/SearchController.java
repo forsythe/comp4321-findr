@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +52,8 @@ public class SearchController {
         map.addAttribute("prevQuery", prevQuery);
 
         //TODO: access db in a thread safe manner
+        Long startTime = new Date().getTime();
+        Double crawlTime = 0.0;
         if (!prevQuery.equals(query)) {
             results.clear();
 //            for (int k = 0; k < 35; k++)
@@ -58,6 +61,9 @@ public class SearchController {
             List<String> tempQueryHolder = new ArrayList<>();
             tempQueryHolder.add(query);
             results.addAll(searcher.search(tempQueryHolder, 12));
+            Long endTime = new Date().getTime();
+            crawlTime = (double) ((endTime - startTime)/1000.0);
+            System.out.println("Crawled for : " + crawlTime.toString() + "s");
             prevQuery = query;
         }
 
@@ -67,7 +73,7 @@ public class SearchController {
 
         map.addAttribute("numResultPages", numResultPages);
         map.addAttribute("totalCrawledPages", results.size());
-        map.addAttribute("crawlTime", 5); //TODO: time it properly
+        map.addAttribute("crawlTime", crawlTime); //TODO: time it properly
         map.addAttribute("query", query.trim());
         map.addAttribute("pageNum", pageNum);
 
