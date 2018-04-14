@@ -47,7 +47,7 @@ public class PageRank {
     		PRNode n = new PRNode();
     		n.myUrl = w.getMyUrl();
     		n.currRank = 1.0;
-    		n.newRank = 1.0*dampingFactor;
+    		n.newRank = 1 - dampingFactor;
     		nodes.put(n.myUrl, n);
     		edges.put(n, new ArrayList<PRNode>());
     		
@@ -56,7 +56,7 @@ public class PageRank {
 	        		PRNode en = new PRNode();
 	        		en.myUrl = e;
 	        		en.currRank = 1.0;
-	        		en.newRank = 1.0*dampingFactor;
+	        		en.newRank = 1 - dampingFactor;
 	        		nodes.put(en.myUrl, en);
 	        		edges.put(en, new ArrayList<PRNode>());
     			}
@@ -81,13 +81,13 @@ public class PageRank {
     			
     			int size = destNodes.size();
     			for (PRNode destNode : destNodes) {
-    				destNode.newRank += (1 - dampingFactor)*currNode.currRank/size;
+    				destNode.newRank += dampingFactor*currNode.currRank/size;
     			}
     		}
     		
     		for (PRNode currPRNode : edges.keySet()) {
     			currPRNode.currRank = currPRNode.newRank;
-    			currPRNode.newRank = currPRNode.newRank*dampingFactor;
+    			currPRNode.newRank = 1 - dampingFactor;
     		}
     	}
     	
