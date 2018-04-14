@@ -17,11 +17,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeMap;
@@ -165,6 +168,7 @@ public class HongseoSearcher implements Searcher {
 	    	BlockingQueue<String> wordList= new LinkedBlockingQueue<String>();
 	    	ConcurrentHashMap<Long, Double> weightsSum = new ConcurrentHashMap<Long, Double>(); 
 	    	ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>(); 
+	        TreeMap<Double, List<Long> > sortedByVSM = new TreeMap<Double, List<Long> >();
 	        TreeMap<Double, List<Long> > sortedByScore = new TreeMap<Double, List<Long> >();
 	    	Double queryLength = new Double(0.0);
 	        
@@ -197,8 +201,36 @@ public class HongseoSearcher implements Searcher {
 	    		return Collections.emptyList();
 	    	}
 	    	
+	    	// VSM = Vector Space Model
+	    	// Score = w*VSM + (1-w)*PR/(log(rank of VSM) + alpha
+	    	// w determines whether to weight VSM or PR more
+	    	// From https://guangchun.files.wordpress.com/2012/05/searchenginereport.pdf, use alpha = log5
+	    	//
+	    	// First, Get all VSM scores
 	    	for (Long pID : weightsSum.keySet()) {
-	    		Double score = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+	    		Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+	    		if (sortedByVSM.containsKey(vsmScore))
+	    			sortedByVSM.get(vsmScore).add(pID);
+	    		else {
+	    			List<Long> list = new ArrayList<Long>();
+	    			list.add(pID);
+	    			sortedByVSM.put(vsmScore, list);
+	    		}
+	    	}
+
+	    	// Then, calculate aggregate score
+	    	for (Long pID : weightsSum.keySet()) {
+	    		Double alpha = Math.log(5);
+	    		Double w = 0.8;
+	    		Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+	    		int vsmRank = Arrays.asList(sortedByVSM.keySet().toArray()).indexOf(vsmScore);
+	    		Double prScore = pageID_pagerank.get(pID);
+	    		Double score = w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha);
+	    		
+	    		System.out.print("VSM Score: " + vsmScore.toString() + "  ");
+	    		System.out.print("PR Score: " + prScore.toString() + " ");
+	    		System.out.println("Score: " + score.toString() + " " + "DocID: " + pID.toString() + "  " + "Title: " + pageID_title.get(pID));
+	    		
 	    		if (sortedByScore.containsKey(score))
 	    			sortedByScore.get(score).add(pID);
 	    		else {
@@ -206,20 +238,18 @@ public class HongseoSearcher implements Searcher {
 	    			list.add(pID);
 	    			sortedByScore.put(score, list);
 	    		}
-	    				
-	    		System.out.println("Score: " + cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength).toString() + "  " + "DocID: " + pID.toString() + "  " + "Title: " + pageID_title.get(pID));
 	    	}
 	    	
 	    	while (!sortedByScore.isEmpty() && (results.size() < maxResults)) {
-	    		List<Long> pages = sortedByScore.pollLastEntry().getValue();
+	    		Entry<Double, List<Long>> lastEntry = sortedByScore.pollLastEntry();
+	    		List<Long> pages = lastEntry.getValue();
 	    		for (Long pID : pages) {																																																																											
 		    		Webpage page = Webpage.create();
-	    			System.out.println(pID.toString());
+	    			System.out.println(pID.toString() + "(" + lastEntry.getKey().toString() + ")");
 		    		page.setTitle(pageID_title.get(pID));
 		    		page.setMyUrl(pageID_url.get(pID));
 		    		page.setLastModified(pageID_lastmodified.get(pID));
 		    		page.setMetaDescription(pageID_metaD.get(pID));
-		    		page.setPageRank(pageID_pagerank.get(pID));
 		    		
 		    		results.add(page);
 	    		}

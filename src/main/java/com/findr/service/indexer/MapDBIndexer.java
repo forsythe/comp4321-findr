@@ -362,7 +362,6 @@ public class MapDBIndexer implements Indexer {
 	    		keyFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
 	    	}
 	    
-	    	result.setPageRank(pageID_pagerank.get(id)); //set the pagerank value of the webpage
 	    	result.setKeywordsAndFrequencies(keyFreq); //set the keywordFrequency 
 	    	
 	    	List<String> childLinks = new LinkedList<String>();
