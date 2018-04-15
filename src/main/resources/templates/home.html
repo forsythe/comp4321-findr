@@ -2,16 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>findr</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../static/css/main.css" th:href="@{/css/main.css}" />
+    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/main.css" th:href="@{/css/main.css}" />
+    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/main2.css" th:href="@{/css/main2.css}" />
 </head>
 <body>
 
 
 <div class = "main_searchBox">
-    <!--<image th:if="${isMorning}==true" src = "../static/images/logo_searchEngine2.png" th:attr="src=@{/images/logo_searchEngine2.png}" alt="logo" id="logo"/>-->
-    <!--<image th:if="${isMorning}==false" src = "../static/images/logo_v2.png" th:attr="src=@{/images/logo_v2.png}" alt="logo" id="logo"/>-->
-     <image th:if="${isMorning}==false" src = "../static/images/logo_v2.png" th:attr="src=@{/images/logo_v2.png}" alt="logo" id="logo"/>
-     <image th:if="${isMorning}==true" src = "../static/images/logo_v2.png" th:attr="src=@{/images/logo_v2.png}" alt="logo" id="logo"/>
+    <image th:if="${isMorning}==false" src = "../static/images/logo_v2.png" th:attr="src=@{/images/logo_v2.png}" alt="logo" id="logo"/>
+    <image th:if="${isMorning}==true" src = "../static/images/logo_searchEngine2.png" th:attr="src=@{/images/logo_searchEngine2.png}" alt="logo" id="logo"/>
     <form th:action="@{/search}">
         <!--<label for="query">findr</label>-->
         <input required type="text" placeholder="Enter a query..." name="query" id="query">
