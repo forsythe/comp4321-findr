@@ -2,21 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>findr</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"  th:href="@{/css/search2.css}"/>
+    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"  th:href="@{/css/search2.css}"/>
+    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  th:href="@{/css/search.css}"/>
 </head>
 <body>
 
     <div id="logo_searchbar">
     <a href="/" class="hidden">
-        <image src="../static/images/logo_searchEngine2.png"
-               th:attr="src=@{/logo_searchEngine2.png}" id="logo" alt="logo"/>
-        <!-- <image src="../static/images/logo_v2.png"
-          th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/> -->
+        <image th:if="${isMorning}==true" src="../static/images/logo_searchEngine2.png"
+               th:attr="src=@{/images/logo_searchEngine2.png}" id="logo" alt="logo"/>
+         <image th:if="${isMorning}==false" src="../static/images/logo_v2.png"
+          th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
 
     <div class="image_text">
-      <image src= "../static/images/talk_bubble2.png" th:attr="src=@{/images/talk_bubble2.png" alt="bubble" id="bubble"/>
-      <!-- <image src= "../static/images/talk_bubble.png" th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/> -->
+      <image th:if="${isMorning}==true" src= "../static/images/talk_bubble2.png" th:attr="src=@{/images/talk_bubble2.png}" alt="bubble" id="bubble"/>
+      <image th:if="${isMorning}==false" src= "../static/images/talk_bubble.png" th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/>
       <div class="centered">
         <span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">
           you prev search for...

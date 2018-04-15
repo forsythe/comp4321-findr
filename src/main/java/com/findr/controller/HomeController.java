@@ -29,7 +29,7 @@ public class HomeController {
         return "home";
     }
 
-    boolean DayorNight(){
+    public static boolean DayorNight(){
         boolean isMorning = false;
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
