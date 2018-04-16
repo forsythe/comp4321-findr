@@ -51,6 +51,7 @@ public class JSoupParser implements Parser {
 
             httpCon = handleRedirectHttpURLConnection(httpCon);
             rawBody = getBody(httpCon);
+            
             doc = Jsoup.parse(rawBody);
 
             String metaDest;
@@ -80,6 +81,8 @@ public class JSoupParser implements Parser {
             }
      
             String baseURL = httpCon.getURL().toString();
+            
+           // System.out.println(doc);
             
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
@@ -202,12 +205,19 @@ public class JSoupParser implements Parser {
         //Elements linkElements = doc.select("a[href]");
 
         Elements linkElements = doc.select("a");
+        
+        Iterator it = linkElements.iterator();
+        while(it.hasNext()) {
+        	Element e = (Element)it.next();
+        	System.out.println(e.toString());
+        }
 
         Collection<String> links = new ArrayList<>();
 
         linkElements.stream()
-                .filter(x -> !x.attr("href").isEmpty())
+               	.filter(x -> !x.attr("href").isEmpty())
                 .filter(x -> !x.attr("abs:href").endsWith("mp4"))
+                .filter(x -> !x.attr("href").startsWith("javascript"))
                 .forEach(x -> links.add(x.attr("href")));
         
         Collection<String> linksFixed = new ArrayList<String>();
