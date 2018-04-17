@@ -237,7 +237,7 @@ public class HongseoSearcher implements Searcher {
                     page.setMyUrl(pageID_url.get(pID));
                     page.setLastModified(pageID_lastmodified.get(pID));
                     page.setMetaDescription(pageID_metaD.get(pID));
-                    
+                    page.setSize(pageID_size.get(pID));
                     HashMap<String, Integer> keywordAndFreq = new HashMap<String, Integer>();
                     Set<Object[]> docKeyFreq = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
                     for (Object[] entry : docKeyFreq) {
