@@ -53,6 +53,7 @@ public class JSoupParser implements Parser {
 
             httpCon = handleRedirectHttpURLConnection(httpCon);
             rawBody = getBody(httpCon);
+
             doc = Jsoup.parse(rawBody);
 
             String metaDest;
@@ -82,7 +83,6 @@ public class JSoupParser implements Parser {
             }
 
             String baseURL = httpCon.getURL().toString();
-
 
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
@@ -209,6 +209,12 @@ public class JSoupParser implements Parser {
 
         Elements linkElements = doc.select("a");
 
+        Iterator it = linkElements.iterator();
+        while (it.hasNext()) {
+            Element e = (Element) it.next();
+            System.out.println(e.toString());
+        }
+
         Collection<String> links = new ArrayList<>();
 
         linkElements.stream()
@@ -219,6 +225,7 @@ public class JSoupParser implements Parser {
 
         Collection<String> linksFixed = new ArrayList<>();
         //TODO: do we need this?
+
         try {
             System.out.println("HI");
             System.out.println(baseURL);
