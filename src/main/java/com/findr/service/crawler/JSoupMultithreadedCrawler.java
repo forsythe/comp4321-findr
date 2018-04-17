@@ -91,25 +91,25 @@ public class JSoupMultithreadedCrawler implements Crawler {
                     try {
                         if (seenURLs.size() >= maxPagesCrawl) {
                             running = false;
-                      //      log.info("max seen pages reached, killing this thread");
+                            //      log.info("max seen pages reached, killing this thread");
                             return;
                         } else {
                             if (seenURLs.add(page.getMyUrl())) {
                                 indexQueue.put(page); //blocks if full. Indexer threads NEED to actively remove them!
                                 System.out.println("Page in Crawler: " + page.getMyUrl());
-                        //        log.info("{{}} saved", page.getMyUrl());
+                                //        log.info("{{}} saved", page.getMyUrl());
                             } else {
-                          //      log.info("{{}} seen before, ignoring", page.getMyUrl());
+                                //      log.info("{{}} seen before, ignoring", page.getMyUrl());
                             }
                         }
 
                         for (String link : page.getLinks()) {
-                        	System.out.println("-- child: " + link);
+                            System.out.println("-- child: " + link);
                             if (!seenURLs.contains(link)) {
                                 boolean status = crawlQueue.offer(link); //may fail silently if queue full
-                            //    log.info("Insert {{}} into crawlQueue was {{}}", link, status);
+                                //    log.info("Insert {{}} into crawlQueue was {{}}", link, status);
                             } else {
-                            //    log.info("already saw {{}}, skip", link);
+                                //    log.info("already saw {{}}, skip", link);
                             }
                         }
                     } finally {
@@ -117,7 +117,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
                     }
 
                 } catch (InterruptedException e) {
-                //    log.info("INTERRUPTED");
+                    //    log.info("INTERRUPTED");
                     return;
                 }
             }

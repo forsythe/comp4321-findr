@@ -12,7 +12,7 @@ public class Webpage {
     long size;
     Date lastModified;
     double score;
-    
+
     Collection<String> links;
     HashMap<String, Integer> titleKeywordsAndFrequencies;
     HashMap<String, Integer> keywordsAndFrequencies;
@@ -36,6 +36,9 @@ public class Webpage {
 
     }
 
+    /**
+     * @return the URL of the page. Does not have any query terms, just the base URL
+     */
     public String getMyUrl() {
         return myUrl;
     }
@@ -93,14 +96,14 @@ public class Webpage {
         this.keywordsAndFrequencies = keywordsAndFrequencies;
         return this;
     }
-    
+
     public HashMap<String, Integer> getTitleKeywordsAndFrequencies() {
-    	return titleKeywordsAndFrequencies;
+        return titleKeywordsAndFrequencies;
     }
-    
+
     public Webpage setTitleKeywordsAndFrequencies(HashMap<String, Integer> titleKeywordsAndFrequencies) {
-    	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
-    	return this;
+        this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
+        return this;
     }
 
     public LinkedHashMap<String, Integer> getTopNKeywords(int n) {
