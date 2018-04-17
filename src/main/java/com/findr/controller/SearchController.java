@@ -76,7 +76,7 @@ public class SearchController {
         map.addAttribute("totalCrawledPages", results.size());
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
-        map.addAttribute("isMorning",HomeController.DayorNight());
+        map.addAttribute("isMorning",false);
 
         return "search";
     }
