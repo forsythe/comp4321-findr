@@ -237,7 +237,15 @@ public class HongseoSearcher implements Searcher {
                     page.setMyUrl(pageID_url.get(pID));
                     page.setLastModified(pageID_lastmodified.get(pID));
                     page.setMetaDescription(pageID_metaD.get(pID));
-                    //TODO: need to reconstruct the keywordAndFrequencies and set it for the page
+                    
+                    HashMap<String, Integer> keywordAndFreq = new HashMap<String, Integer>();
+                    Set<Object[]> docKeyFreq = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
+                    for (Object[] entry : docKeyFreq) {
+                    	keywordAndFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
+                    }
+                    
+                    page.setKeywordsAndFrequencies(keywordAndFreq);
+                    
                     results.add(page);
                 }
             }

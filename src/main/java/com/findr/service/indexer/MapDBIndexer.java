@@ -182,7 +182,7 @@ public class MapDBIndexer implements Indexer {
             if (!skip) {
                 //index all the necessary page information
                 //if this is an update to a previous webpage entry, pID (ID of the page) is set to that of the preivous webpage in the previous step
-                System.out.println("Page ID:" + pID.toString());
+               // System.out.println("Page ID:" + pID.toString());
 
                 pageID_url.put(pID, webpage.getMyUrl());
                 url_pageID.put(webpage.getMyUrl(), pID);
@@ -219,7 +219,7 @@ public class MapDBIndexer implements Indexer {
                 Collection<String> childLinks = webpage.getLinks();
                 for (String link : childLinks) {
 
-                    System.out.println(link);
+                    //System.out.println(link);
 
                     Long childID = pageID; //give the child page a new pageID
                     if (url_pageID.containsKey(link)) //check if this URL (webpage) was already given a pageID before
@@ -249,7 +249,7 @@ public class MapDBIndexer implements Indexer {
                     title_forward.add(new Object[]{pID, wID, freq});
                 }
 
-                System.out.println("-----------------------------");
+                //System.out.println("-----------------------------");
             }
         } catch (DBException e) {
             e.printStackTrace();
@@ -289,11 +289,11 @@ public class MapDBIndexer implements Indexer {
             //--------------------------------------------------
             //take a subset of the Forward Index to get all entries with the same pageID as the one to be deleted
             //removeKeywords has all the keywords entries for the given page
-            Set<Object[]> removeKeywords = content_forward.subSet(new Object[]{deleteID}, new Object[]{deleteID, new Posting(null, 0)});
+            Set<Object[]> removeKeywords = content_forward.subSet(new Object[]{deleteID}, new Object[]{deleteID, null, null});
             for (Object[] deleteEntry : removeKeywords) {
                 //need to take out the keyword->page entry in the invered index
                 //simply flip the first and the second element in the Object array to swap the page and the word IDs
-                content_inverted.remove(new Object[]{((Posting) deleteEntry[1]).id, new Posting((Long) deleteEntry[0], ((Posting) deleteEntry[1]).frequency)});
+                content_inverted.remove(new Object[]{((Long) deleteEntry[1]), ((Long) deleteEntry[0]), ((Integer) deleteEntry[2])});
             }
             //remove all the elements in the subset from the original set
             content_forward.removeAll(removeKeywords);
