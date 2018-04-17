@@ -97,7 +97,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
                             if (seenURLs.add(page.getMyUrl())) {
                                 indexQueue.put(page); //blocks if full. Indexer threads NEED to actively remove them!
                                 System.out.println("Page in Crawler: " + page.getMyUrl());
-                                //        log.info("{{}} saved", page.getMyUrl());
+                                log.info("{{}} saved", page.getMyUrl());
                             } else {
                                 //      log.info("{{}} seen before, ignoring", page.getMyUrl());
                             }

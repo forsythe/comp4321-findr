@@ -322,7 +322,7 @@ public class MapDBIndexer implements Indexer {
             result.setSize(pageID_size.get(id));
             result.setLastModified(pageID_lastmodified.get(id));
             //HashMap to use in setKeywordsAndFrequencies()
-            HashMap<String, Integer> keyFreq = new HashMap<String, Integer>();
+            HashMap<String, Integer> keyFreq = new HashMap<>();
             //From the Forward Index (NavigableSet), take a subset
             //subSet(new Object[] {id}, new Object[] {id, new Posting(null, 0)})
             //takes a subset of the entire forward index that has the first element = id and second element from the bottom to Posting(null, 0)

@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class RemoverAndStemmer {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(RemoverAndStemmer.class);
 
     private final Porter porter;
     private final HashSet<String> stopWords; //threadsafe if we never add/remove elements outside of constructor
@@ -47,12 +46,10 @@ public class RemoverAndStemmer {
         for (String w : words) {
             w = w.toLowerCase();
             if (isStopWord(w)) {
-                log.debug("ignoring encountered stopword: " + w);
                 continue;
             }
             String result = stem(w);
             if (!result.isEmpty()) {
-                log.debug("saving stemmed word: " + result + ", which previously was " + w);
                 answer.add(result);
             }
         }

@@ -109,12 +109,16 @@ public class Webpage {
     public LinkedHashMap<String, Integer> getTopNKeywords(int n) {
         LinkedHashMap<String, Integer> topN = new LinkedHashMap<>();
 
-        keywordsAndFrequencies.entrySet()
-                .stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .limit(n)
-                .forEach(e -> topN.put(e.getKey(), e.getValue()));
-        return topN;
+        if (keywordsAndFrequencies != null) {
+            keywordsAndFrequencies.entrySet()
+                    .stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .limit(n)
+                    .forEach(e -> topN.put(e.getKey(), e.getValue()));
+            return topN;
+        } else {
+            return new LinkedHashMap<>();
+        }
     }
 
     public Collection<String> getLinks() {
