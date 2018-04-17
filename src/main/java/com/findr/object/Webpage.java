@@ -1,8 +1,6 @@
 package com.findr.object;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 import javax.swing.plaf.BorderUIResource.TitledBorderUIResource;
 
@@ -103,6 +101,17 @@ public class Webpage {
     public Webpage setTitleKeywordsAndFrequencies(HashMap<String, Integer> titleKeywordsAndFrequencies) {
     	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
     	return this;
+    }
+
+    public LinkedHashMap<String, Integer> getTopNKeywords(int n) {
+        LinkedHashMap<String, Integer> topN = new LinkedHashMap<>();
+
+        keywordsAndFrequencies.entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(n)
+                .forEach(e -> topN.put(e.getKey(), e.getValue()));
+        return topN;
     }
 
     public Collection<String> getLinks() {

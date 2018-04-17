@@ -1,46 +1,17 @@
 package com.findr.service.searcher;
 
-import com.findr.object.Posting;
 import com.findr.object.Webpage;
-import com.findr.service.crawler.Crawler;
-import com.findr.service.crawler.JSoupMultithreadedCrawler;
 import com.findr.service.indexer.MapDBIndexer;
-import com.findr.service.stemming.Vectorizer;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.mapdb.*;
+import com.findr.service.utils.stemming.Vectorizer;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.mapdb.serializer.SerializerArrayTuple;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.*;
 
 /**
  * Hongseo's implementation of the Searcher interface
@@ -193,15 +164,12 @@ public class HongseoSearcher implements Searcher {
 	    	
 	    	try {
 	    		queryLength = val.get();
-	    	} catch (InterruptedException e) {
-	    		e.printStackTrace();
-	    		return Collections.emptyList();
-	    	} catch (ExecutionException e) {
+	    	} catch (InterruptedException | ExecutionException e) {
 	    		e.printStackTrace();
 	    		return Collections.emptyList();
 	    	}
-	    	
-	    	// VSM = Vector Space Model
+
+			// VSM = Vector Space Model
 	    	// Score = titleMult*(w*VSM + (1-w)*PR/(log(rank of VSM) + alpha))
 	    	// titleMult = 1 + 0.1*(the number of query terms that match at least one term in the title)
 	    	// w determines whether to weight VSM or PR more
@@ -303,7 +271,7 @@ public class HongseoSearcher implements Searcher {
 				HashMap<String, Integer> tokenizedQuery = Vectorizer.vectorize(query, true);
 				for (String s : tokenizedQuery.keySet()) {
 					System.out.println("TOKENIZED: " + s);
-					for (int i = 0; i < tokenizedQuery.get(s).intValue(); i++) {
+					for (int i = 0; i < tokenizedQuery.get(s); i++) {
 						queryLength++;
 						System.out.println("querylength: " + queryLength);
 						try {
@@ -323,7 +291,7 @@ public class HongseoSearcher implements Searcher {
 					e.printStackTrace();
 				}
 			}
-			return new Double(queryLength);
+			return queryLength;
 		}
     }
 
@@ -332,9 +300,9 @@ public class HongseoSearcher implements Searcher {
     	ConcurrentHashMap<Long, Double> weightsSum;
     	ConcurrentHashMap<Long, Double> weightsSqrSum;
     	
-    	public SimpleSearcher(BlockingQueue<String> wordList, 
-    			ConcurrentHashMap<Long, Double> weightsSum, 
-    			ConcurrentHashMap<Long, Double> weightsSqrSum) {
+    	SimpleSearcher(BlockingQueue<String> wordList,
+					   ConcurrentHashMap<Long, Double> weightsSum,
+					   ConcurrentHashMap<Long, Double> weightsSqrSum) {
     		this.wordList = wordList;
     		this.weightsSum = weightsSum;
     		this.weightsSqrSum = weightsSqrSum;
@@ -352,16 +320,14 @@ public class HongseoSearcher implements Searcher {
 				while (!word.equals("")) {
 					Long wID = keyword_wordID.get(word);
 					Set<Object[]> documents = content_inverted.subSet(new Object[] {wID}, new Object[] {wID, null, null});
-					Iterator<Object[]> it = documents.iterator();
-					while (it.hasNext()) {
-						Object[] wordDocPair = it.next();
-						Long pID = (Long)wordDocPair[1]; 
+					for (Object[] wordDocPair : documents) {
+						Long pID = (Long) wordDocPair[1];
 						System.out.println("Doc:" + pageID_title.get(pID));
-						Integer freq = (Integer)wordDocPair[2];
+						Integer freq = (Integer) wordDocPair[2];
 						//Posting p = (Posting)wordDocPair[1];
 						double docWeight = documentWeight(freq, pageID_tfmax.get(pID), documents.size());
-						weightsSum.put(pID, new Double((weightsSum.get(pID) != null ? weightsSum.get(pID) : 0) + docWeight));
-						weightsSqrSum.put(pID, new Double((weightsSqrSum.get(pID) != null ? weightsSqrSum.get(pID) : 0) + Math.pow(docWeight, 2)));	
+						weightsSum.put(pID, (weightsSum.get(pID) != null ? weightsSum.get(pID) : 0) + docWeight);
+						weightsSqrSum.put(pID, (weightsSqrSum.get(pID) != null ? weightsSqrSum.get(pID) : 0) + Math.pow(docWeight, 2));
 					}
 					word = wordList.take();
 				}
@@ -381,5 +347,7 @@ public class HongseoSearcher implements Searcher {
     	for (Webpage wp : result) {
     		System.out.println(wp.getTitle());
     	}
+
     }
+
 }

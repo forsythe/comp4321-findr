@@ -1,6 +1,6 @@
-package com.findr.service.stemming.utils;
+package com.findr.service.utils.stemming;
 
-import com.findr.service.stemming.utils.Porter;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class RemoverAndStemmer {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(RemoverAndStemmer.class);
+
     private final Porter porter;
     private final HashSet<String> stopWords; //threadsafe if we never add/remove elements outside of constructor
 
@@ -43,11 +45,16 @@ public class RemoverAndStemmer {
         List<String> answer = new ArrayList<>();
 
         for (String w : words) {
-            if (isStopWord(w))
+            w = w.toLowerCase();
+            if (isStopWord(w)) {
+                log.debug("ignoring encountered stopword: " + w);
                 continue;
+            }
             String result = stem(w);
-            if (!result.isEmpty())
+            if (!result.isEmpty()) {
+                log.debug("saving stemmed word: " + result + ", which previously was " + w);
                 answer.add(result);
+            }
         }
         return answer;
     }

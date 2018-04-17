@@ -1,36 +1,14 @@
 package com.findr.service.indexer;
 
-import com.findr.object.*;
-import com.findr.service.pagerank.*;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
-
+import com.findr.object.Posting;
+import com.findr.object.Webpage;
+import com.findr.service.pagerank.PRNode;
+import com.findr.service.pagerank.PageRank;
 import org.mapdb.*;
-import org.mapdb.serializer.*;
-
+import org.mapdb.serializer.SerializerArrayTuple;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * An implementation of the Indexer service which uses mapdb
@@ -179,7 +157,7 @@ public class MapDBIndexer implements Indexer {
     	try { //try...catch for any DBException (e.g. DB is closed and a page is about to be added)
     		//"skip" indicates whether this webpage should be skipped (not indexed) or not 
 			boolean skip = false;
-			Long pID = new Long(pageID);
+			Long pID = pageID;
 
 			//With the page URL, check if this entry was indexed before
 			if (url_pageID.containsKey(webpage.getMyUrl())) { 
@@ -219,11 +197,11 @@ public class MapDBIndexer implements Indexer {
 					Long wID = new Long(wordID); //give a new word ID
 					//check the keyword->wordID table to check if this keyword was indexed before
 					if (keyword_wordID.containsKey(keyword)) {
-						wID = keyword_wordID.get(keyword); //set wID (ID for the current keyword) to the matched ID 
+						wID = keyword_wordID.get(keyword); //set wID (ID for the current keyword) to the matched ID
 					}
 					else {
 						//if the keyword is a completely new keyword, then put it into the keyword->wordID and wordID->keyword table
-						keyword_wordID.put(keyword, wID); 
+						keyword_wordID.put(keyword, wID);
 						wordID_keyword.put(wID, keyword);
 						wordID++; //increment wordID to prepare for the next keyword
 					}
@@ -244,7 +222,7 @@ public class MapDBIndexer implements Indexer {
 					
 					System.out.println(link);
 					
-					Long childID = new Long(pageID); //give the child page a new pageID
+					Long childID = pageID; //give the child page a new pageID
 					if (url_pageID.containsKey(link)) //check if this URL (webpage) was already given a pageID before
 						childID = url_pageID.get(link); //if yes, then change the ID of this child page to that ID 
 					else {
@@ -259,7 +237,7 @@ public class MapDBIndexer implements Indexer {
 				//Handle the title keywords in the same way as the normal inverted/forward indices
 				HashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
 				for (String tKeyword : titleKeywords.keySet()) {
-					Long wID = new Long(wordID);
+					Long wID = wordID;
 					if (keyword_wordID.containsKey(tKeyword)) {
 						wID = keyword_wordID.get(tKeyword);
 					}
@@ -278,6 +256,7 @@ public class MapDBIndexer implements Indexer {
     	} catch (DBException e) {
     		e.printStackTrace();
     	}
+
     }
 
     //simply does addWebpageEntry() for each webpage, then calculates PageRank for each webpage
@@ -313,13 +292,11 @@ public class MapDBIndexer implements Indexer {
 	    	//take a subset of the Forward Index to get all entries with the same pageID as the one to be deleted
 	    	//removeKeywords has all the keywords entries for the given page
 	    	Set<Object[]> removeKeywords = content_forward.subSet(new Object[] {deleteID}, new Object[] {deleteID, new Posting(null, 0)});
-	    	Iterator<Object[]> it = removeKeywords.iterator();
-	    	while (it.hasNext()) {
-	    		Object[] deleteEntry = it.next();
-	    		//need to take out the keyword->page entry in the invered index
-	    		//simply flip the first and the second element in the Object array to swap the page and the word IDs
-	    		content_inverted.remove(new Object[] {((Posting)deleteEntry[1]).id, new Posting((Long)deleteEntry[0], ((Posting)deleteEntry[1]).frequency)});
-	    	}
+			for (Object[] deleteEntry : removeKeywords) {
+				//need to take out the keyword->page entry in the invered index
+				//simply flip the first and the second element in the Object array to swap the page and the word IDs
+				content_inverted.remove(new Object[]{((Posting) deleteEntry[1]).id, new Posting((Long) deleteEntry[0], ((Posting) deleteEntry[1]).frequency)});
+			}
 	    	//remove all the elements in the subset from the original set
 	    	content_forward.removeAll(removeKeywords);
 	    	
@@ -336,7 +313,7 @@ public class MapDBIndexer implements Indexer {
     @Override
     public Webpage getWebpage(Long id) {
     	synchronized (MapDBIndexer.class) {
-	    	if (id.longValue() >= pageID || !pageID_title.containsKey(id))
+	    	if (id >= pageID || !pageID_title.containsKey(id))
 	    		return null;
 	    	//Webpage object to return
 	    	Webpage result = Webpage.create();
@@ -354,13 +331,11 @@ public class MapDBIndexer implements Indexer {
 	    	//Posting object is ordered by its value in the ID field and ID=null is set to be larger than any value
 	    	//taking subset this way will then give all entries for the given page ID
 	    	Set<Object[]> docKeyFreq = content_forward.subSet(new Object[] {id}, new Object[] {id, null, null});
-	    	Iterator<Object[]> it = docKeyFreq.iterator(); //iterate through the subset
-	    	while (it.hasNext()) {
-	    		Object[] entry = it.next();
-	    		// element 0 is Long object (=pageID) and element 1 is Posting object
-	    		//Posting p = (Posting)((it.next())[1]); //get element 1 (=Posting)
-	    		keyFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
-	    	}
+            for (Object[] entry : docKeyFreq) {
+                // element 0 is Long object (=pageID) and element 1 is Posting object
+                //Posting p = (Posting)((it.next())[1]); //get element 1 (=Posting)
+                keyFreq.put(wordID_keyword.get((Long) entry[1]), (Integer) entry[2]);
+            }
 	    
 	    	result.setKeywordsAndFrequencies(keyFreq); //set the keywordFrequency 
 	    	
@@ -368,11 +343,10 @@ public class MapDBIndexer implements Indexer {
 	    	//take the subset of the child_parent navigable set in a similar way
 	    	//from id -> id, null => gives all that matches ID in the first element and everything for the second element
 	    	Set<Object[]> cLinks = parent_child.subSet(new Object[] {id}, new Object[] {id, null});
-	    	Iterator<Object[]> itt = cLinks.iterator();
-	    	while (itt.hasNext()) {
-	    		String cUrl = pageID_url.get((Long)((itt.next())[1])); //the second element in the Object array ([1]) is the childID
-	    		childLinks.add(cUrl); //add them to the temporary list
-	    	}
+            for (Object[] cLink : cLinks) {
+                String cUrl = pageID_url.get((Long) ((cLink)[1])); //the second element in the Object array ([1]) is the childID
+                childLinks.add(cUrl); //add them to the temporary list
+            }
 	    	result.setLinks(childLinks); //set the list to the page's child links
 	    	//Body, MetaDescription and ParentURL are all not needed for our use -> set to empty string
 	    	result.setBody("");

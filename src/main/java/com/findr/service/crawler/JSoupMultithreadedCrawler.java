@@ -80,7 +80,7 @@ public class JSoupMultithreadedCrawler implements Crawler {
                     String crawlTarget = crawlQueue.take(); //blocks until there's a page to take
                     //log.info("Crawl target is " + crawlTarget);
 
-                    Optional<Webpage> result = parser.parse(crawlTarget, false);
+                    Optional<Webpage> result = parser.parse(crawlTarget, false, true);
                     if (!result.isPresent())
                         continue;
 

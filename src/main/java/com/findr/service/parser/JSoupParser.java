@@ -1,7 +1,7 @@
 package com.findr.service.parser;
 
 import com.findr.object.Webpage;
-import com.findr.service.stemming.Vectorizer;
+import com.findr.service.utils.stemming.Vectorizer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,7 +31,7 @@ public class JSoupParser implements Parser {
     private static final Logger log = LoggerFactory.getLogger(JSoupParser.class);
 
     @Override
-    public Optional<Webpage> parse(String url, boolean handleRedirects) {
+    public Optional<Webpage> parse(String url, boolean handleRedirects, boolean doStoppingAndStemming) {
         log.debug("Parsing {}...", url);
         Optional<Webpage> page = Optional.empty();
 
@@ -81,6 +81,7 @@ public class JSoupParser implements Parser {
      
             String baseURL = httpCon.getURL().toString();
             
+
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(contentLengthLong)
@@ -91,6 +92,9 @@ public class JSoupParser implements Parser {
                     .setKeywordsAndFrequencies(keywords)
                     .setTitleKeywordsAndFrequencies(titleKeywords)
                     .setMetaDescription(getMetaDescription(doc));
+
+            //            if (result.getSize() == -1)
+//                result.setSize(result.getBody().length());
 
             page = Optional.of(result);
             log.debug("Successfully downloaded {{}}", url);
