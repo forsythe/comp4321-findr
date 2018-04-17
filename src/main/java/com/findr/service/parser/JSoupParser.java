@@ -67,7 +67,6 @@ public class JSoupParser implements Parser {
             }
 
             HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), doStoppingAndStemming);
-
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(httpCon.getContentLengthLong())

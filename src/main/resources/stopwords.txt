@@ -13,6 +13,7 @@ already
 also
 although
 always
+am
 among
 an
 and
@@ -91,6 +92,7 @@ ended
 ending
 ends
 enough
+et
 even
 evenly
 ever
