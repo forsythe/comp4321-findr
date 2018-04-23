@@ -59,7 +59,7 @@ public class HongseoSearcher implements Searcher {
 
 	private NavigableSet<Object[]> parent_child;
 
-	private long pageID = 0;
+	private long totalPageCount = 0;
 	private long wordID = 0;
 
 	private String updatedTime = null;
@@ -149,20 +149,21 @@ public class HongseoSearcher implements Searcher {
 				.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
 				.createOrOpen();
 
-		pageID = pageID_url.sizeLong();
+		totalPageCount = pageID_url.sizeLong();
 		wordID = wordID_keyword.sizeLong();
 	}
 
-	private Double cosSim(Double docWeightSum, Double docWeightSqrSum, Double queryLength) {
-		return new Double( docWeightSum.doubleValue() / (Math.sqrt(docWeightSqrSum.doubleValue()) + Math.sqrt(queryLength.doubleValue())));
-	}
+//	private Double cosSim(Double docWeightSum, Double docWeightSqrSum, Double queryLength) {
+//		return new Double( docWeightSum.doubleValue() / (Math.sqrt(docWeightSqrSum.doubleValue()) + Math.sqrt(queryLength.doubleValue())));
+//	}
 
 	@Override
 	public List<Webpage> search(List<String> query, int maxResults) {
 		synchronized(MapDBIndexer.class) {
 			BlockingQueue<String> wordList = new LinkedBlockingQueue<String>();
 			ConcurrentHashMap<Long, Double> weightsSum = new ConcurrentHashMap<Long, Double>(); 
-			ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>(); 
+			ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>();
+			ConcurrentHashMap<Long, Double> normalisedWeights = new ConcurrentHashMap<Long, Double>();
 			TreeMap<Double, List<Long> > sortedByVSM = new TreeMap<Double, List<Long> >();
 			TreeMap<Double, List<Long> > sortedByScore = new TreeMap<Double, List<Long> >();
 			Double queryLength = new Double(0.0);
@@ -176,7 +177,7 @@ public class HongseoSearcher implements Searcher {
 			for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
 				//exec.execute(new SimpleSearcher(wordList, weightsSum, weightsSqrSum));
 			}
-			exec.execute(new PhraseSearcher(wordList, weightsSum, weightsSqrSum)); // Currently single-threaded recursive search
+			exec.execute(new PhraseSearcher(wordList, normalisedWeights)); // Currently single-threaded recursive search
 
 			try {
 				exec.shutdown();
@@ -204,11 +205,24 @@ public class HongseoSearcher implements Searcher {
 			// From https://guangchun.files.wordpress.com/2012/05/searchenginereport.pdf, use alpha = log5
 			//
 			// First, Get all VSM scores
-			for (Long pID : weightsSum.keySet()) {
-				Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
-				if (sortedByVSM.containsKey(vsmScore))
+			
+//			for (Long pID : weightsSum.keySet()) {
+//				Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+//				if (sortedByVSM.containsKey(vsmScore))
+//					sortedByVSM.get(vsmScore).add(pID);
+//				else {
+//					List<Long> list = new ArrayList<Long>();
+//					list.add(pID);
+//					sortedByVSM.put(vsmScore, list);
+//				}
+//			}
+			
+			for (Entry<Long, Double> nw : normalisedWeights.entrySet()) {
+				Long pID = nw.getKey();
+				Double vsmScore = nw.getValue();
+				if (sortedByVSM.containsKey(vsmScore)) {
 					sortedByVSM.get(vsmScore).add(pID);
-				else {
+				} else {
 					List<Long> list = new ArrayList<Long>();
 					list.add(pID);
 					sortedByVSM.put(vsmScore, list);
@@ -216,10 +230,13 @@ public class HongseoSearcher implements Searcher {
 			}
 
 			// Then, calculate aggregate score
-			for (Long pID : weightsSum.keySet()) {    		
-				Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
-				int vsmRank = Arrays.asList(sortedByVSM.keySet().toArray()).indexOf(vsmScore);
+			for (Entry<Long, Double> nw : normalisedWeights.entrySet()) {		
+//				Double vsmScore = cosSim(weightsSum.get(pID), weightsSqrSum.get(pID), queryLength);
+				
+				Long pID = nw.getKey();
+				Double vsmScore = nw.getValue();
 				Double prScore = pageID_pagerank.get(pID);
+				int vsmRank = Arrays.asList(sortedByVSM.keySet().toArray()).indexOf(vsmScore);
 
 				Integer titleMatchCount = 0;
 				for (String q : query) {
@@ -236,7 +253,7 @@ public class HongseoSearcher implements Searcher {
 						}
 					}
 				}
-				Double titleMult = 1 + titleMatchCount*0.1;
+				Double titleMult = 1 + titleMatchCount*0.5;
 				Double alpha = Math.log(5);
 				Double w = 0.8;
 				Double score = titleMult*(w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha));
@@ -342,7 +359,7 @@ public class HongseoSearcher implements Searcher {
 		}
 
 		private double documentWeight(double tf, double tf_max, double df) {
-			return (tf/tf_max) * (Math.log(((double)(pageID-1))/df) / Math.log(2));
+			return (tf/tf_max) * (Math.log(((double)(totalPageCount-1))/df) / Math.log(2));
 		}
 
 		@Override
@@ -375,15 +392,11 @@ public class HongseoSearcher implements Searcher {
 
 	class PhraseSearcher implements Runnable {
 		BlockingQueue<String> wordList;
-		ConcurrentHashMap<Long, Double> weightsSum;
-		ConcurrentHashMap<Long, Double> weightsSqrSum;
+		ConcurrentHashMap<Long, Double> normalisedWeights;
 
-		public PhraseSearcher(BlockingQueue<String> wordList,
-				ConcurrentHashMap<Long, Double> weightsSum, 
-				ConcurrentHashMap<Long, Double> weightsSqrSum) {
+		public PhraseSearcher(BlockingQueue<String> wordList, ConcurrentHashMap<Long, Double> normalisedWeights) {
 			this.wordList = wordList;
-			this.weightsSum = weightsSum;
-			this.weightsSqrSum = weightsSqrSum;
+			this.normalisedWeights = normalisedWeights;
 		}
 
 		/**
@@ -412,6 +425,7 @@ public class HongseoSearcher implements Searcher {
 				if (documents.isEmpty()) {
 					return false;
 				} else {
+					System.out.println("[PhraseSearcher] Finding document " + d.toString());
 					for (Object[] document : documents) {
 						printTriple(document);
 						
@@ -422,6 +436,7 @@ public class HongseoSearcher implements Searcher {
 								((Long)document[6]).equals(id3) && ((Long)document[7]).equals(d)) {
 							found = true;
 							System.out.println(" [KEPT]");
+							System.out.println("[PhraseSearcher] Breaking");
 							break;
 						}
 						
@@ -448,47 +463,65 @@ public class HongseoSearcher implements Searcher {
 		}
 		
 		private void printSeperator() {
-			System.out.println("===========================================");
+			System.out.println("[PhraseSearcher] ===========================================");
 		}
 		
-		private double getDocumentWeight(double tf, double tf_max, double df) {
-			return (tf/tf_max) * (Math.log(((double)(pageID-1))/df) / Math.log(2));
+		/**
+		 * w_i,j = tf_i,j * log_2(N/df_j)
+		 * @param tf the term frequency of word/phrase j in document i tf_i,j
+		 * @param df document frequency of word/phrase j df_j
+		 * @return
+		 */
+		private double getDocumentWeight(double tf, double df) {
+			return tf * (Math.log(((double)(totalPageCount-1))/df) / Math.log(2));
+		}
+		
+		/**
+		 * w_Q,j = tf_Q,j * log_2(N/df_j)
+		 * @param tf the term frequency of word/phrase j in query Q tf_Q,j
+		 * @param df document frequency of word/phrase j df_j
+		 * @return
+		 */
+		private double getQueryWeight(double tf, double df) {
+			return tf * (Math.log(((double)(totalPageCount-1))/df) / Math.log(2));
 		}
 
 		/**
 		 * 
 		 * @param words the list of words for phrase search.
-		 * @return the document IDs containing all the words of the phrase.
+		 * @return the document IDs, and their tf-idf values, of pages containing all the words of the phrase.
 		 */
-		public List<Long> phraseSearch(List<String> words) {
+		public TreeMap<Long, Double> phraseSearch(List<String> words) {
 			if (words.size() > 2) {
 				int midIndex = (int)(words.size()/2);
-				List<Long> d1 = phraseSearch(words.subList(0, midIndex));
-				List<Long> d2 = phraseSearch(words.subList(midIndex, words.size()));
+				TreeMap<Long, Double> d1 = phraseSearch(words.subList(0, midIndex));
+				TreeMap<Long, Double> d2 = phraseSearch(words.subList(midIndex, words.size()));
 
 				System.out.println("[PhraseSearcher] Searching size > 2");
+				System.out.print("[PhraseSearcher] Words: ");
 				for (String word : words) {
-					System.out.print(word + "(" + keyword_wordID.get(word).toString() + ")" + ",");
+					System.out.print(word + ",");
 				}
 				System.out.println();
 				
-				List<Long> dl = new ArrayList<Long>();
+				TreeMap<Long, Double> dl = new TreeMap<Long, Double>();
 
-				for (Long d : d1) {
+				for (Long d : d1.keySet()) {
 					if (check(words, d)) {
-						dl.add(d);
+						Double d1Weight = d1.get(d) != null ? d1.get(d) : 0.0;
+						Double d2Weight = d2.get(d) != null ? d2.get(d) : 0.0;
+						Double weight = d1Weight + d2Weight;
+						dl.put(d, weight);
 					}
 				}
-				for (Long d : d2) {
+				for (Long d : d2.keySet()) {
 					if (check(words, d)) {
-						dl.add(d);
+						Double d1Weight = d1.get(d) != null ? d1.get(d) : 0.0;
+						Double d2Weight = d2.get(d) != null ? d2.get(d) : 0.0;
+						Double weight = d1Weight + d2Weight;
+						dl.put(d, weight);
 					}
 				}
-
-				Set<Long> hs = new HashSet<Long>();
-				hs.addAll(dl);
-				dl.clear();
-				dl.addAll(hs);
 				
 				printSeperator();
 				return dl;
@@ -501,14 +534,14 @@ public class HongseoSearcher implements Searcher {
 				Long id1 = keyword_wordID.get(word1);
 				Long id2 = keyword_wordID.get(word2);
 
-				System.out.println("[PhraseSearcher] " + word1 + "(" + id1 + ")" + "," + word2 + "(" + id2 + ")");
+				System.out.println("[PhraseSearcher] Words: " + word1 + "," + word2);
 
 				Set<Object[]> documents = triple_inverted.subSet(new Object[] {id1}, new Object[] {id1, null, null,
 						id2, null, null,
 						null, null, null});
 
 				Iterator<Object[]> it = documents.iterator();
-				List<Long> d = new ArrayList<Long>();
+				TreeMap<Long, Double> d = new TreeMap<Long, Double>();
 
 				while(it.hasNext()) {
 					Object[] triple = it.next();
@@ -518,16 +551,34 @@ public class HongseoSearcher implements Searcher {
 
 					if (wID1.equals(id1) && wID2.equals(id2)) {
 						Long pID = (Long)triple[1];
-						d.add(pID);
+						Integer freq1 = (Integer)triple[2];
+						Integer freq2 = (Integer)triple[5];
+						Integer freq = freq1 < freq2 ? freq1 : freq2;
+						d.put(pID, freq.doubleValue()); // Store document term frequency for later calculation
 						System.out.print(" [KEPT]");
 					}
 					System.out.println();
 				}
+				
+				for (Long pID : d.keySet()) {
+					Integer tf_Qj = 1; // tf_Q,j
+					Integer tf_ij = d.get(pID).intValue(); // tf_i,j
+					Integer df_j = d.size(); // d_j
+					Double queryWeight = getQueryWeight(tf_Qj, df_j);
+					Double docWeight = getDocumentWeight(tf_ij, df_j);
+					
+					Set<Object[]> wordsInDi = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
+					Integer wordCountDi = wordsInDi.size();
+					
+					Double weight = queryWeight*docWeight/Math.sqrt(wordCountDi); // tf_Q,j*tf_i,j/sqrt(number of words in D_i)
+					d.put(pID, weight);
+				}
 
-				printSeperator();	
+				printSeperator();
 				return d;
 			} else if (words.size() == 1) { // 1 word only
 				System.out.println("[PhraseSearcher] Searching size = 1");
+				System.out.println("[PhraseSearcher] Word: " + words.get(0));
 				
 				String word = words.get(0);
 				Long wID = keyword_wordID.get(word);
@@ -535,7 +586,7 @@ public class HongseoSearcher implements Searcher {
 																								   null, null, null,
 																								   null, null, null});
 				Iterator<Object[]> it = documents.iterator();
-				List<Long> d = new ArrayList<Long>();
+				TreeMap<Long, Double> d = new TreeMap<Long, Double>();
 
 				while (it.hasNext()) {
 					Object[] triple = it.next();
@@ -543,16 +594,31 @@ public class HongseoSearcher implements Searcher {
 					
 					if (((Long)triple[0]).equals(wID)) {
 						Long pID = (Long)triple[1]; 
-						d.add(pID);
+						Integer freq = (Integer)triple[2];
+						d.put(pID, freq.doubleValue()); // Store document term frequency for later calculation
 						System.out.print(" [KEPT]");
 					}
 					System.out.println();
 				}
 				
+				for (Long pID : d.keySet()) {
+					Integer tf_Qj = 1; // tf_Q,j
+					Integer tf_ij = d.get(pID).intValue(); // tf_i,j
+					Integer df_j = d.size(); // d_j
+					Double queryWeight = getQueryWeight(tf_Qj, df_j);
+					Double docWeight = getDocumentWeight(tf_ij, df_j);
+					
+					Set<Object[]> wordsInDi = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
+					Integer wordCountDi = wordsInDi.size();
+					
+					Double weight = queryWeight*docWeight/Math.sqrt(wordCountDi); // tf_Q,j*tf_i,j/sqrt(number of words in D_i)
+					d.put(pID, weight);
+				}
+				
 				printSeperator();
 				return d;
 			} else { // No words
-				return new ArrayList<Long>();
+				return new TreeMap<Long, Double>();
 			}
 		}
 
@@ -573,14 +639,16 @@ public class HongseoSearcher implements Searcher {
 					System.out.println("[PhraseSearcher] " + w);
 				}
 
-				List<Long> documents = phraseSearch(words);
-
-				System.out.println("[PhraseSearcher] Documents retrieved:");
-				for (Long d : documents) {
-					System.out.println("[PhraseSearcher] " + d.toString() + " " + pageID_url.get(d));
-				}
-
+				TreeMap<Long, Double> documents = phraseSearch(words);
+				normalisedWeights.putAll(documents);
 				
+				System.out.println("[PhraseSearcher] Documents retrieved:");
+				for (Entry<Long, Double> d : normalisedWeights.entrySet()) {
+					Long pID = d.getKey();
+					Double score = d.getValue();
+					System.out.print("[PhraseSearcher] " + pID.toString() + " " + pageID_url.get(pID));
+					System.out.println(" (" + score + ")");
+				}
 
 				System.out.println("[PhraseSearcher] End");
 			} catch (InterruptedException e) {
