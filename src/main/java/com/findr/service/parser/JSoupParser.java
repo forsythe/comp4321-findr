@@ -2,13 +2,6 @@ package com.findr.service.parser;
 
 import com.findr.object.Webpage;
 import com.findr.service.stemming.Vectorizer;
-import org.apache.commons.lang3.time.DateUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +14,14 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JSoup implementation of the Parser class
@@ -68,8 +69,8 @@ public class JSoupParser implements Parser {
                 doc = Jsoup.parse(rawBody);
             }
 
-            HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
-            HashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
+            LinkedHashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
+            LinkedHashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
             
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;

@@ -20,8 +20,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NavigableSet;
@@ -60,12 +60,16 @@ public class MapDBIndexer implements Indexer {
     //inverted index - uses NavigableSet of Object array to achieve a MultiMap
     //each array would contain {wordID, Posting(pageID, frequency)}, linking word to the page it appears on
     // + the frequency that it appears on that page
-    private NavigableSet<Object[]> content_inverted;
-    
+    private NavigableSet<Object[]> content_inverted;    
     //forward index - uses NavigableSet of Object array to achieve a MultiMap
     //each array would contain {pageID, Posting(wordID, frequency)}, linking page to the keywords it contains
     // + the frequency of that keyword
     private NavigableSet<Object[]> content_forward;
+    
+    // Triple inverted index - uses NavigableSet of Object array to achieve a MultiMap
+    // Each array would contain {wordID, Posting(pageID, frequency), wordID, Posting(pageID, frequency), wordID, Posting(pageID, frequency)}
+    // Linking word to the page it appears on + the frequency that it appears on that page
+    private NavigableSet<Object[]> triple_inverted;
     
     //for title keywords indexing
     private NavigableSet<Object[]> title_inverted;
@@ -156,6 +160,13 @@ public class MapDBIndexer implements Indexer {
         		.createOrOpen();
         
         //multi-map
+        triple_inverted = db.treeSet("tripled_inverted")
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER, 
+        											 Serializer.LONG, Serializer.LONG, Serializer.INTEGER,
+        											 Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
+        		.createOrOpen();
+        
+        //multi-map
         title_inverted = db.treeSet("title_inverted")
         		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
         		.createOrOpen();
@@ -214,7 +225,7 @@ public class MapDBIndexer implements Indexer {
 				pageID_metaD.put(pID, webpage.getMetaDescription());
 				
 				//get all keywords and frequency
-				HashMap<String, Integer> keywordFreq = webpage.getKeywordsAndFrequencies();
+				LinkedHashMap<String, Integer> keywordFreq = webpage.getKeywordsAndFrequencies();
 				for (String keyword : keywordFreq.keySet()) { //for each keyword in the retrieved set,
 					Long wID = new Long(wordID); //give a new word ID
 					//check the keyword->wordID table to check if this keyword was indexed before
@@ -236,7 +247,27 @@ public class MapDBIndexer implements Indexer {
 						pageID_tfmax.put(pID, freq); //put this keyword frequency as tfmax (max value since there was nothing before)
 					else if (pageID_tfmax.get(pID) < freq) //if there is an entry, then compare the current keyword frequency to the current tfmax 
 						pageID_tfmax.put(pID, freq); //update it only if the current one is	larger in value than the one in the table
-				}	
+				}
+				
+				// Get triple index
+				String[] keywordFreqArr = keywordFreq.keySet().toArray(new String[keywordFreq.size()]);
+				for (int i = 0; i < keywordFreqArr.length - 2; i++) {
+					triple_inverted.add(new Object[] {
+							keyword_wordID.get(keywordFreqArr[i]), pID, keywordFreq.get(keywordFreqArr[i]),
+							keyword_wordID.get(keywordFreqArr[i + 1]), pID, keywordFreq.get(keywordFreqArr[i + 1]),
+							keyword_wordID.get(keywordFreqArr[i + 2]), pID, keywordFreq.get(keywordFreqArr[i + 2])
+					});
+				}
+				for (Object[] o : triple_inverted) {
+					String s = "";
+					for (int i = 0; i < 9; i++) {
+						if (i == 0 || i == 3 || i == 6)
+							s += wordID_keyword.get(o[i]).toString() + ",";
+						else
+							s += o[i].toString() + ",";
+					}
+					System.out.println(s);
+				}
 				
 				//get children page URLs
 				Collection<String> childLinks = webpage.getLinks();
@@ -257,7 +288,7 @@ public class MapDBIndexer implements Indexer {
 				}
 				
 				//Handle the title keywords in the same way as the normal inverted/forward indices
-				HashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
+				LinkedHashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
 				for (String tKeyword : titleKeywords.keySet()) {
 					Long wID = new Long(wordID);
 					if (keyword_wordID.containsKey(tKeyword)) {
@@ -347,7 +378,7 @@ public class MapDBIndexer implements Indexer {
 	    	result.setSize(pageID_size.get(id));
 	    	result.setLastModified(pageID_lastmodified.get(id));
 	    	//HashMap to use in setKeywordsAndFrequencies()
-	    	HashMap<String, Integer> keyFreq = new HashMap<String, Integer>();
+	    	LinkedHashMap<String, Integer> keyFreq = new LinkedHashMap<String, Integer>();
 	    	//From the Forward Index (NavigableSet), take a subset
 	    	//subSet(new Object[] {id}, new Object[] {id, new Posting(null, 0)})
 	    	//takes a subset of the entire forward index that has the first element = id and second element from the bottom to Posting(null, 0)
