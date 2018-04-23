@@ -6,6 +6,20 @@
           th:href="@{/css/search2.css}"/>
     <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"
           th:href="@{/css/search.css}"/>
+	
+	<script type="text/javascript">
+		window.onload = function onLoad() {
+			if (typeof(EventSource) !== "undefined") {
+				var source =  new EventSource("/wolframResult");
+				source.onmessage = function(event) {
+					document.getElementById("wolframElement").innerHTML = event.data;
+				};
+			}
+			else {
+				document.getElementById("wolframElement").innerHTML = "Not Supported";
+			}
+		}
+	</script>
 </head>
 <body>
 
@@ -40,6 +54,8 @@
     <br/>
     <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">time elapsed...</span>
 </div>
+
+<div id="wolframElement"></div>
 
 <div class="content-body">
     <div th:each="page : ${results}" class="results_para">
