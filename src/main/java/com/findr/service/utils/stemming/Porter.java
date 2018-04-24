@@ -8,7 +8,7 @@
 
 */
 
-package com.findr.service.stemming.utils;
+package com.findr.service.utils.stemming;
 
 class NewString {
     public String str;

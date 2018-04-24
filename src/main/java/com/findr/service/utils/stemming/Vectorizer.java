@@ -1,7 +1,7 @@
-package com.findr.service.stemming;
+package com.findr.service.utils.stemming;
 
 
-import com.findr.service.stemming.utils.RemoverAndStemmer;
+import com.findr.service.crawler.JSoupMultithreadedCrawler;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import static org.apache.commons.lang3.StringUtils.split;
  */
 public class Vectorizer {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Vectorizer.class);
     private static final RemoverAndStemmer ras = new RemoverAndStemmer("src/main/resources/stopwords.txt");
 
     /**

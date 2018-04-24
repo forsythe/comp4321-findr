@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
+import java.util.*;
 /**
  * This class is responsible for serving content for the main search page. Session scope indicates that
  * each user gets their own version of this homecontroller in their own thread.
@@ -25,7 +25,18 @@ public class HomeController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String showHomePage(Model model) {
         model.addAttribute("message", "wassup bro");
+        model.addAttribute("isMorning", DayorNight());
         return "home";
+    }
+
+    public static boolean DayorNight(){
+        boolean isMorning = false;
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        if(hour < 12){
+            isMorning = true;
+        }
+        return  isMorning;
     }
 
 

@@ -3,10 +3,12 @@ package com.findr.controller;
 import com.findr.object.Webpage;
 import com.findr.service.searcher.HongseoSearcher;
 import com.findr.service.searcher.Searcher;
+import com.findr.service.utils.timer.Timer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class SearchController {
     private static final int RESULTS_PER_PAGE = 10;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
+    private double crawlTime = 0;
 
     private Searcher searcher = HongseoSearcher.getInstance();
 
@@ -36,7 +39,8 @@ public class SearchController {
      * @param map   The map object we can add attributes to and access later in the html using curly braces
      * @return The name of the html page to display
      */
-    @RequestMapping
+
+    @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
     public String handleQueryRequest(
             @RequestParam("query") String query,
             @RequestParam("page") String page,
@@ -50,6 +54,7 @@ public class SearchController {
             pageNum = 1;
         }
         map.addAttribute("prevQuery", prevQuery);
+        query = query.trim();
 
         //TODO: access db in a thread safe manner
         Long startTime = new Date().getTime();
@@ -60,10 +65,8 @@ public class SearchController {
 //                results.add("This is (" + query + ") result #" + k);
             List<String> tempQueryHolder = new ArrayList<>();
             tempQueryHolder.add(query);
-            results.addAll(searcher.search(tempQueryHolder, 12));
-            Long endTime = new Date().getTime();
-            crawlTime = (double) ((endTime - startTime)/1000.0);
-            System.out.println("Crawled for : " + crawlTime.toString() + " seconds");
+
+            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
             prevQuery = query;
         }
 
@@ -71,11 +74,13 @@ public class SearchController {
         int numResultPages = (int) Math.max(1, Math.ceil((double) results.size() / RESULTS_PER_PAGE));
         pageNum = Math.min(numResultPages, pageNum);
 
+        map.addAttribute("crawlTime", String.format("%.2f", crawlTime));
         map.addAttribute("numResultPages", numResultPages);
         map.addAttribute("totalCrawledPages", results.size());
-        map.addAttribute("crawlTime", crawlTime);
-        map.addAttribute("query", query.trim());
+
         map.addAttribute("pageNum", pageNum);
+        map.addAttribute("query", query.trim());
+        map.addAttribute("isMorning",HomeController.DayorNight());
 
         return "search";
     }
@@ -102,4 +107,6 @@ public class SearchController {
         // toIndex exclusive
         return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
     }
+
+
 }

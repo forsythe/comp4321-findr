@@ -1,5 +1,39 @@
 body {
-    background-color: #e9ecef;
+    background-color: white;
+    width: 100%
+    height: 100%;
+    background-image: url(../images/bg_v2.png);
+    background-repeat:no-repeat;
+    background-position: left top;
+    background-size: cover;
+}
+
+.main_searchBox {
+  /* border: solid rgb(13, 230, 201);*/
+  text-align: center;
+  width: 40%;
+  margin-left: 30%;
+  margin-top: 20vh;
+  padding: 0px;
+}
+
+
+#query{
+  width: 80%;
+  height: 5vh;
+  border: none;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#search_button{
+  width: 18%;
+  height:  5vh;
+  font-size: 1.2vw;
+}
+
+#logo{
+  display: inline-block;
+  width: 100%;
 }
 
 .v-center {

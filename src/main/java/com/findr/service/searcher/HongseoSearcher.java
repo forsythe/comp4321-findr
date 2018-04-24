@@ -2,13 +2,12 @@ package com.findr.service.searcher;
 
 import com.findr.object.Webpage;
 import com.findr.service.indexer.MapDBIndexer;
-import com.findr.service.stemming.Vectorizer;
+import com.findr.service.utils.stemming.Vectorizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,7 +25,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.mapdb.*;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.mapdb.serializer.SerializerArrayTuple;
 
 /**
@@ -60,7 +62,7 @@ public class HongseoSearcher implements Searcher {
 	private NavigableSet<Object[]> parent_child;
 
 	private long totalPageCount = 0;
-	private long wordID = 0;
+	private long totalWordCount = 0;
 
 	private String updatedTime = null;
 
@@ -150,7 +152,7 @@ public class HongseoSearcher implements Searcher {
 				.createOrOpen();
 
 		totalPageCount = pageID_url.sizeLong();
-		wordID = wordID_keyword.sizeLong();
+		totalWordCount = wordID_keyword.sizeLong();
 	}
 
 //	private Double cosSim(Double docWeightSum, Double docWeightSqrSum, Double queryLength) {
@@ -164,8 +166,8 @@ public class HongseoSearcher implements Searcher {
 			ConcurrentHashMap<Long, Double> weightsSum = new ConcurrentHashMap<Long, Double>(); 
 			ConcurrentHashMap<Long, Double> weightsSqrSum = new ConcurrentHashMap<Long, Double>();
 			ConcurrentHashMap<Long, Double> normalisedWeights = new ConcurrentHashMap<Long, Double>();
-			TreeMap<Double, List<Long> > sortedByVSM = new TreeMap<Double, List<Long> >();
-			TreeMap<Double, List<Long> > sortedByScore = new TreeMap<Double, List<Long> >();
+			TreeMap<Double, List<Long>> sortedByVSM = new TreeMap<Double, List<Long> >();
+			TreeMap<Double, List<Long>> sortedByScore = new TreeMap<Double, List<Long> >();
 			Double queryLength = new Double(0.0);
 
 			List<Webpage> results = new ArrayList<Webpage>();
@@ -190,10 +192,7 @@ public class HongseoSearcher implements Searcher {
 
 			try {
 				queryLength = val.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return Collections.emptyList();
-			} catch (ExecutionException e) {
+			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 				return Collections.emptyList();
 			}
@@ -272,21 +271,29 @@ public class HongseoSearcher implements Searcher {
 				}
 			}
 
-			while (!sortedByScore.isEmpty() && (results.size() < maxResults)) {
-				Entry<Double, List<Long>> lastEntry = sortedByScore.pollLastEntry();
-				List<Long> pages = lastEntry.getValue();
-				for (Long pID : pages) {																																																																											
-					Webpage page = Webpage.create();
-					System.out.println(pID.toString() + " (" + lastEntry.getKey().toString() + ")");
-					page.setTitle(pageID_title.get(pID));
-					page.setMyUrl(pageID_url.get(pID));
-					page.setLastModified(pageID_lastmodified.get(pID));
-					page.setMetaDescription(pageID_metaD.get(pID));
-
-					results.add(page);
-				}
-			}
-			return results;
+            while (!sortedByScore.isEmpty() && (results.size() < maxResults)) {
+                Entry<Double, List<Long>> lastEntry = sortedByScore.pollLastEntry();
+                List<Long> pages = lastEntry.getValue();
+                for (Long pID : pages) {
+                    Webpage page = Webpage.create();
+                    System.out.println(pID.toString() + " (" + lastEntry.getKey().toString() + ")");
+                    page.setTitle(pageID_title.get(pID));
+                    page.setMyUrl(pageID_url.get(pID));
+                    page.setLastModified(pageID_lastmodified.get(pID));
+                    page.setMetaDescription(pageID_metaD.get(pID));
+                    page.setSize(pageID_size.get(pID));
+                    LinkedHashMap<String, Integer> keywordAndFreq = new LinkedHashMap<String, Integer>();
+                    Set<Object[]> docKeyFreq = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
+                    for (Object[] entry : docKeyFreq) {
+                    	keywordAndFreq.put(wordID_keyword.get((Long)entry[1]), (Integer)entry[2]);
+                    }
+                    
+                    page.setKeywordsAndFrequencies(keywordAndFreq);
+                    
+                    results.add(page);
+                }
+            }
+            return results;
 		}
 	}
 
@@ -654,16 +661,6 @@ public class HongseoSearcher implements Searcher {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}	
-		}
-	}
-
-	public static void main(String[] args) {
-		Searcher searcher = HongseoSearcher.getInstance();
-		List<String> searchList = new ArrayList<String>();
-		searchList.add("HKUST");
-		List<Webpage> result = searcher.search(searchList, 30);
-		for (Webpage wp : result) {
-			System.out.println(wp.getTitle());
 		}
 	}
 }

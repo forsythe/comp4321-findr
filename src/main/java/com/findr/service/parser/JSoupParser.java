@@ -1,7 +1,15 @@
 package com.findr.service.parser;
 
 import com.findr.object.Webpage;
-import com.findr.service.stemming.Vectorizer;
+import com.findr.service.utils.stemming.Vectorizer;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,14 +23,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.time.DateUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The JSoup implementation of the Parser class
  */
@@ -32,8 +32,10 @@ public class JSoupParser implements Parser {
     private static final Logger log = LoggerFactory.getLogger(JSoupParser.class);
 
     @Override
-    public Optional<Webpage> parse(String url, boolean handleRedirects) {
+    public Optional<Webpage> parse(String url, boolean handleRedirects, boolean doStoppingAndStemming) {
         log.debug("Parsing {}...", url);
+        url = url.split("\\?")[0]; //remove query parameters
+        log.debug("After removing query terms {}", url);
         Optional<Webpage> page = Optional.empty();
 
         try {
@@ -52,11 +54,11 @@ public class JSoupParser implements Parser {
 
             httpCon = handleRedirectHttpURLConnection(httpCon);
             rawBody = getBody(httpCon);
-            
+
             doc = Jsoup.parse(rawBody);
 
             String metaDest;
-            
+
             //Check for html level meta-refresh redirection
             if (null != (metaDest = handleMetaRefreshHttpURLConnection(doc))) {
                 url = metaDest;
@@ -74,17 +76,15 @@ public class JSoupParser implements Parser {
             
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;
-            
+
             try {
-            	contentLengthLong = Long.parseLong(contentLength);
+                contentLengthLong = Long.parseLong(contentLength);
             } catch (Exception e) {
-            	contentLengthLong = rawBody.length();
+                contentLengthLong = rawBody.length();
             }
-     
+
             String baseURL = httpCon.getURL().toString();
-            
-           // System.out.println(doc);
-            
+
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(contentLengthLong)
@@ -95,6 +95,9 @@ public class JSoupParser implements Parser {
                     .setKeywordsAndFrequencies(keywords)
                     .setTitleKeywordsAndFrequencies(titleKeywords)
                     .setMetaDescription(getMetaDescription(doc));
+
+            //            if (result.getSize() == -1)
+//                result.setSize(result.getBody().length());
 
             page = Optional.of(result);
             log.debug("Successfully downloaded {{}}", url);
@@ -206,61 +209,60 @@ public class JSoupParser implements Parser {
         //Elements linkElements = doc.select("a[href]");
 
         Elements linkElements = doc.select("a");
-        
+
         Iterator it = linkElements.iterator();
-        while(it.hasNext()) {
-        	Element e = (Element)it.next();
-        	System.out.println(e.toString());
+        while (it.hasNext()) {
+            Element e = (Element) it.next();
+            System.out.println(e.toString());
         }
 
         Collection<String> links = new ArrayList<>();
 
         linkElements.stream()
-               	.filter(x -> !x.attr("href").isEmpty())
+                .filter(x -> !x.attr("href").isEmpty())
                 .filter(x -> !x.attr("abs:href").endsWith("mp4"))
                 .filter(x -> !x.attr("href").startsWith("javascript"))
-                .forEach(x -> links.add(x.attr("href")));
-        
-        Collection<String> linksFixed = new ArrayList<String>();
+                .forEach(x -> links.add(x.attr("href").split("\\?")[0]));
+
+        Collection<String> linksFixed = new ArrayList<>();
+        //TODO: do we need this?
+
         try {
-        	System.out.println("HI");
-        	System.out.println(baseURL);
-        	System.out.println("HI2");
-        	
-        URL base = new URL(baseURL);
-        
-        for (int i = 0; i < links.size(); i++ ) {
-        	String l = ((ArrayList<String>) links).get(i);
-        	System.out.println("LINKS: " + l);
-        	if (l.indexOf("http") != 0 && l.indexOf('#') != 0) {
-        		int secondSharp = 0; 
-        		if ((secondSharp = l.indexOf('#', 1)) != -1) {
-        			l = l.substring(0, secondSharp);
-        		}
-        		URL fixed = new URL(base , l);
-        		String fixedString  = fixed.toString();
-        		System.out.println("FIXED: " + fixedString);
-        		linksFixed.add(fixedString);
-        		System.out.println("ADDED");
-        	}
-        	else if (l.indexOf('#') == 0) {
-        		System.out.println("SKIPPED");
-        	}
-        	else {
-        		System.out.println("OTHER CASE: " + l);
-        		int sharp = 0;
-        		if ((sharp = l.indexOf('#', 0)) != -1) {
-        			l = l.substring(0, sharp);
-        		}
-        		System.out.println("OTHER CASE PROCESSED: " + l);
-        		linksFixed.add(l);
-        		System.out.println("ADDED");
-        	}
-        }
-        
-        }
-        catch (Exception e) {
-        	System.out.println("EXCEPTION");
+            System.out.println("HI");
+            System.out.println(baseURL);
+            System.out.println("HI2");
+
+            URL base = new URL(baseURL);
+
+            for (int i = 0; i < links.size(); i++) {
+                String l = ((ArrayList<String>) links).get(i);
+                System.out.println("LINKS: " + l);
+                if (l.indexOf("http") != 0 && l.indexOf('#') != 0) {
+                    int secondSharp = 0;
+                    if ((secondSharp = l.indexOf('#', 1)) != -1) {
+                        l = l.substring(0, secondSharp);
+                    }
+                    URL fixed = new URL(base, l);
+                    String fixedString = fixed.toString();
+                    System.out.println("FIXED: " + fixedString);
+                    linksFixed.add(fixedString);
+                    System.out.println("ADDED");
+                } else if (l.indexOf('#') == 0) {
+                    System.out.println("SKIPPED");
+                } else {
+                    System.out.println("OTHER CASE: " + l);
+                    int sharp = 0;
+                    if ((sharp = l.indexOf('#', 0)) != -1) {
+                        l = l.substring(0, sharp);
+                    }
+                    System.out.println("OTHER CASE PROCESSED: " + l);
+                    linksFixed.add(l);
+                    System.out.println("ADDED");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION");
         }
 
         log.debug("Found {} child links", links.size());

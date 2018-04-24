@@ -14,7 +14,7 @@ public class Webpage {
     long size;
     Date lastModified;
     double score;
-    
+
     Collection<String> links;
     LinkedHashMap<String, Integer> titleKeywordsAndFrequencies;
     LinkedHashMap<String, Integer> keywordsAndFrequencies;
@@ -37,6 +37,9 @@ public class Webpage {
         return this;
     }
 
+    /**
+     * @return the URL of the page. Does not have any query terms, just the base URL
+     */
     public String getMyUrl() {
         return myUrl;
     }
@@ -100,6 +103,21 @@ public class Webpage {
     public Webpage setTitleKeywordsAndFrequencies(LinkedHashMap<String, Integer> titleKeywordsAndFrequencies) {
     	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
     	return this;
+    }
+
+    public LinkedHashMap<String, Integer> getTopNKeywords(int n) {
+        LinkedHashMap<String, Integer> topN = new LinkedHashMap<>();
+
+        if (keywordsAndFrequencies != null) {
+            keywordsAndFrequencies.entrySet()
+                    .stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .limit(n)
+                    .forEach(e -> topN.put(e.getKey(), e.getValue()));
+            return topN;
+        } else {
+            return new LinkedHashMap<>();
+        }
     }
 
     public Collection<String> getLinks() {
