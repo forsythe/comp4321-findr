@@ -147,3 +147,7 @@ a{
   font-family: "Open Sans";
   color: rgb(4, 194, 194);
 }
+
+.black {
+    color: black;
+}
