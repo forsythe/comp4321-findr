@@ -5,6 +5,7 @@ import com.findr.service.searcher.MultithreadedSearcher;
 import com.findr.service.searcher.Searcher;
 import com.findr.service.searcher.WolframSearcher;
 import com.findr.service.utils.timer.Timer;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,9 @@ public class SearchController {
     private String prevQuery = "";
 
     private Searcher searcher = MultithreadedSearcher.getInstance();
+
+    private static final int QUERY_HISTORY_SIZE = 5;
+    private final CircularFifoQueue<String> queryHistory = new CircularFifoQueue<>(QUERY_HISTORY_SIZE);
 
     /**
      * Handles user query requests
@@ -69,6 +73,7 @@ public class SearchController {
 
             crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
             prevQuery = query;
+            queryHistory.add(prevQuery);
         }
 
         map.addAttribute("results", paginate(results, pageNum, RESULTS_PER_PAGE));
@@ -81,8 +86,10 @@ public class SearchController {
 
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
-        map.addAttribute("isMorning",HomeController.dayOrNight());
-        
+        map.addAttribute("isMorning", HomeController.dayOrNight());
+
+        map.addAttribute("queryHistory", queryHistory);
+
         return "search";
     }
     
