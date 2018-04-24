@@ -3,6 +3,9 @@
 !gradle/wrapper/gradle-wrapper.jar
 bin/
 
+### DB ###
+*.db
+
 ### STS ###
 .apt_generated
 .classpath

@@ -125,3 +125,8 @@ table{
 ::-webkit-scrollbar {
     width: 0px;  /* remove scrollbar space */
 }
+
+
+.black {
+    color: black;
+}

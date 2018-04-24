@@ -23,12 +23,18 @@
         <image th:if="${isMorning}==false" src="../static/images/talk_bubble.png"
                th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/>
 
-        <div class="centered">
-        <span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">
-          you prev search for...
-        </span>
-            <br/>
-            <span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>
+        <!--<div class="centered">-->
+        <!--<span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">-->
+        <!--you prev search for...-->
+        <!--</span>-->
+        <!--<br/>-->
+        <!--<span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>-->
+        <!--</div>-->
+        <div>
+            <p class="black">You previously searched for:</p>
+            <div th:each="historyItem : ${queryHistory}">
+                <p th:text="${historyItem}" class="black"></p>
+            </div>
         </div>
     </div>
 

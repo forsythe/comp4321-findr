@@ -4,6 +4,7 @@ import com.findr.object.Webpage;
 import com.findr.service.searcher.HongseoSearcher;
 import com.findr.service.searcher.Searcher;
 import com.findr.service.utils.timer.Timer;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +30,9 @@ public class SearchController {
     private double crawlTime = 0;
 
     private Searcher searcher = HongseoSearcher.getInstance();
+
+    private static final int QUERY_HISTORY_SIZE = 5;
+    private final CircularFifoQueue<String> queryHistory = new CircularFifoQueue<>(QUERY_HISTORY_SIZE);
 
     /**
      * Handles user query requests
@@ -68,6 +72,7 @@ public class SearchController {
 
             crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
             prevQuery = query;
+            queryHistory.add(prevQuery);
         }
 
         map.addAttribute("results", paginate(results, pageNum, RESULTS_PER_PAGE));
@@ -80,7 +85,9 @@ public class SearchController {
 
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
-        map.addAttribute("isMorning",HomeController.DayorNight());
+        map.addAttribute("isMorning", HomeController.DayorNight());
+
+        map.addAttribute("queryHistory", queryHistory);
 
         return "search";
     }
