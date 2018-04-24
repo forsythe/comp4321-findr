@@ -39,7 +39,8 @@
         <div>
             <p class="black">You previously searched for:</p>
             <div th:each="historyItem : ${queryHistory}">
-                <p th:text="${historyItem}" class="black"></p>
+                <p><a th:text="${historyItem}" th:href="@{/search(query=${historyItem},page=1)}"></a></p>
+
             </div>
         </div>
     </div>
