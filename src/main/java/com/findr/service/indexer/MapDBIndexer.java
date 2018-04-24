@@ -3,11 +3,13 @@ package com.findr.service.indexer;
 import com.findr.object.*;
 import com.findr.service.pagerank.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 
@@ -146,9 +148,9 @@ public class MapDBIndexer implements Indexer {
 
         //multi-map
         triple_inverted = db.treeSet("tripled_inverted")
-        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.INTEGER, 
-        											 Serializer.LONG, Serializer.LONG, Serializer.INTEGER,
-        											 Serializer.LONG, Serializer.LONG, Serializer.INTEGER))
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.LONG,
+        											 Serializer.LONG,
+        											 Serializer.INTEGER))
         		.createOrOpen();
         
         //multi-map
@@ -234,20 +236,34 @@ public class MapDBIndexer implements Indexer {
                 
 				// Get triple index
 				String[] keywordFreqArr = keywordFreq.keySet().toArray(new String[keywordFreq.size()]);
+				LinkedHashMap<ArrayList<Long>, Integer> tripleFreq = new LinkedHashMap<ArrayList<Long>, Integer>();
 				for (int i = 0; i < keywordFreqArr.length - 2; i++) {
+					ArrayList<Long> triple = new ArrayList<Long>();
+					triple.add(keyword_wordID.get(keywordFreqArr[i]));
+					triple.add(keyword_wordID.get(keywordFreqArr[i + 1]));
+					triple.add(keyword_wordID.get(keywordFreqArr[i + 2]));
+					
+					if (tripleFreq.containsKey(triple)) {
+						tripleFreq.put(triple, tripleFreq.get(triple) + 1);
+					} else {
+						tripleFreq.put(triple, 1);
+					}
+				}
+				for (Map.Entry<ArrayList<Long>, Integer> tripleEntry : tripleFreq.entrySet()) {
 					triple_inverted.add(new Object[] {
-							keyword_wordID.get(keywordFreqArr[i]), pID, keywordFreq.get(keywordFreqArr[i]),
-							keyword_wordID.get(keywordFreqArr[i + 1]), pID, keywordFreq.get(keywordFreqArr[i + 1]),
-							keyword_wordID.get(keywordFreqArr[i + 2]), pID, keywordFreq.get(keywordFreqArr[i + 2])
+							tripleEntry.getKey().get(0), tripleEntry.getKey().get(1), tripleEntry.getKey().get(2),
+							pID,
+							tripleEntry.getValue()
 					});
 				}
 				for (Object[] o : triple_inverted) {
 					String s = "";
-					for (int i = 0; i < 9; i++) {
-						if (i == 0 || i == 3 || i == 6)
+					for (int i = 0; i < 5; i++) {
+						if (i < 3) {
 							s += wordID_keyword.get(o[i]).toString() + ",";
-						else
+						} else {
 							s += o[i].toString() + ",";
+						}
 					}
 					System.out.println(s);
 				}

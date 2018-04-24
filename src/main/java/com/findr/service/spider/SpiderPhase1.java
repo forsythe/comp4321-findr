@@ -28,9 +28,9 @@ public class SpiderPhase1 implements Spider {
 //        	
 //        }
         
-        Indexer hongseo = new MapDBIndexer();
-        hongseo.readDBFromDisk();
-        hongseo.addAllWebpageEntries(crawledPages);
+        Indexer indexer = new MapDBIndexer();
+        indexer.readDBFromDisk();
+        indexer.addAllWebpageEntries(crawledPages);
         
         try {
 	        File output = new File("spider_result.txt");
@@ -39,7 +39,7 @@ public class SpiderPhase1 implements Spider {
 	        long pageID = 0;
 	        int count = 30;
 	        while (count > 0) {
-	        	Webpage p = hongseo.getWebpage(Long.valueOf(pageID));
+	        	Webpage p = indexer.getWebpage(Long.valueOf(pageID));
 	        	if (p == null) {
 	        		pageID++;
 	        		continue;
@@ -71,7 +71,7 @@ public class SpiderPhase1 implements Spider {
         	e.printStackTrace();
         }
         
-        hongseo.commitAndClose();	
+        indexer.commitAndClose();	
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.findr.service.utils.stemming;
 
-
-import com.findr.service.crawler.JSoupMultithreadedCrawler;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

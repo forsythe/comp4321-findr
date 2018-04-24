@@ -1,9 +1,9 @@
 package com.findr.controller;
 
 import com.findr.object.Webpage;
-import com.findr.service.searcher.HongseoSearcher;
+import com.findr.service.searcher.MultithreadedSearcher;
 import com.findr.service.searcher.Searcher;
-import com.findr.service.searcher.WolframSearch;
+import com.findr.service.searcher.WolframSearcher;
 import com.findr.service.utils.timer.Timer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
@@ -17,13 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Responsible for showing the search queries page. Each user gets their own.
@@ -31,13 +25,11 @@ import java.util.concurrent.Executors;
 @Controller
 @Scope("session")
 public class SearchController {
-
     private static final int RESULTS_PER_PAGE = 10;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
-    private double crawlTime = 0;
 
-    private Searcher searcher = HongseoSearcher.getInstance();
+    private Searcher searcher = MultithreadedSearcher.getInstance();
 
     /**
      * Handles user query requests
@@ -67,7 +59,6 @@ public class SearchController {
         query = query.trim();
 
         //TODO: access db in a thread safe manner
-        Long startTime = new Date().getTime();
         Double crawlTime = 0.0;
         if (!prevQuery.equals(query)) {
             results.clear();
@@ -90,7 +81,7 @@ public class SearchController {
 
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
-        map.addAttribute("isMorning",HomeController.DayorNight());
+        map.addAttribute("isMorning",HomeController.dayOrNight());
         
         return "search";
     }
@@ -99,7 +90,7 @@ public class SearchController {
     public SseEmitter getWolframResult() {
     	String query = prevQuery;
         final SseEmitter sseemitter = new SseEmitter();
-    	WolframSearch wsearch = new WolframSearch();
+    	WolframSearcher wsearch = new WolframSearcher();
     	wsearch.search(query);
 		String output = wsearch.outputHTML();
 		try {

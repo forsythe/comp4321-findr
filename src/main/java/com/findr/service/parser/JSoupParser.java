@@ -210,7 +210,7 @@ public class JSoupParser implements Parser {
 
         Elements linkElements = doc.select("a");
 
-        Iterator it = linkElements.iterator();
+        Iterator<Element> it = linkElements.iterator();
         while (it.hasNext()) {
             Element e = (Element) it.next();
             System.out.println(e.toString());

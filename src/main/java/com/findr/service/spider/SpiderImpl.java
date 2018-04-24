@@ -18,10 +18,10 @@ public class SpiderImpl implements Spider {
         Crawler crawler = new JSoupMultithreadedCrawler(numCrawlerThreads);
         List<Webpage> crawledPages = crawler.crawl(startUrl, maxRunSeconds, maxPages);
 
-        Indexer hongseo = new MapDBIndexer();
+        Indexer indexer = new MapDBIndexer();
         //TODO idk what hongseo does, i assume this is correct? -heng
-        hongseo.readDBFromDisk();
-        hongseo.addAllWebpageEntries(crawledPages);
-        hongseo.commitAndClose();
+        indexer.readDBFromDisk();
+        indexer.addAllWebpageEntries(crawledPages);
+        indexer.commitAndClose();
     }
 }
