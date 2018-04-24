@@ -103,7 +103,11 @@ public class SearchController {
     	wsearch.search(query);
 		String output = wsearch.outputHTML();
 		try {
-			sseemitter.send(output, MediaType.TEXT_HTML);
+			if (output != null)
+				sseemitter.send(output, MediaType.TEXT_HTML);
+			else {
+				sseemitter.send("", MediaType.TEXT_PLAIN);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			sseemitter.completeWithError(e);

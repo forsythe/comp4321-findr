@@ -13,6 +13,7 @@
 				var source =  new EventSource("/wolframResult");
 				source.onmessage = function(event) {
 					document.getElementById("wolframElement").innerHTML = event.data;
+					source.close();
 				};
 			}
 			else {
@@ -55,9 +56,9 @@
     <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">time elapsed...</span>
 </div>
 
-<div id="wolframElement"></div>
-
 <div class="content-body">
+	<div id="wolframElement"></div>
+	
     <div th:each="page : ${results}" class="results_para">
         <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}"
            class="result-title">Title</a>

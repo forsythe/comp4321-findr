@@ -38,7 +38,6 @@ public class WolframSearch {
 	}
 	
 	public void search(String text) {
-		
 		String query = URLEncoder.encode(text);
 		
 		try {
@@ -89,6 +88,8 @@ public class WolframSearch {
 					int decapproxIdx = buf.indexOf("<pod title='Decimal approximation'");
 					if (decapproxIdx != -1) {
 						String decApprox = buf.substring(decapproxIdx + buf.substring(decapproxIdx).indexOf("<plaintext>") + 11, decapproxIdx + buf.substring(decapproxIdx).indexOf("</plaintext>"));
+						decApprox = decApprox.substring(0, 37);
+						decApprox += "...";
 						calculationResult.put("Decimal Approximation", decApprox);
 					}
 					int basicInfoIdx = buf.indexOf("<pod title='Basic information'");
@@ -107,17 +108,17 @@ public class WolframSearch {
 //					}
 					
 				}
-				System.out.println("Calculation Result");
-				for (String k : calculationResult.keySet()) {
-					System.out.println(k + ": " + calculationResult.get(k));
-				}
-				System.out.println("-------------------");
-				
-				System.out.println("Knowledge Graph");
-				for (String k : knowledgeGraph.keySet()) {
-					System.out.println(k + ": " + knowledgeGraph.get(k));
-				}
-				System.out.println("-------------------");
+//				System.out.println("Calculation Result");
+//				for (String k : calculationResult.keySet()) {
+//					System.out.println(k + ": " + calculationResult.get(k));
+//				}
+//				System.out.println("-------------------");
+//				
+//				System.out.println("Knowledge Graph");
+//				for (String k : knowledgeGraph.keySet()) {
+//					System.out.println(k + ": " + knowledgeGraph.get(k));
+//				}
+//				System.out.println("-------------------");
 				
 			}
 			
