@@ -3,18 +3,27 @@ package com.findr.controller;
 import com.findr.object.Webpage;
 import com.findr.service.searcher.HongseoSearcher;
 import com.findr.service.searcher.Searcher;
+import com.findr.service.searcher.WolframSearch;
 import com.findr.service.utils.timer.Timer;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Responsible for showing the search queries page. Each user gets their own.
@@ -45,6 +54,7 @@ public class SearchController {
             @RequestParam("query") String query,
             @RequestParam("page") String page,
             Model map) {
+    
         int pageNum;
         try {
             pageNum = Integer.parseInt(page);
@@ -81,9 +91,31 @@ public class SearchController {
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
         map.addAttribute("isMorning",HomeController.DayorNight());
-
+        
         return "search";
     }
+    
+    @RequestMapping("/wolframResult")
+    public SseEmitter getWolframResult() {
+    	String query = prevQuery;
+        final SseEmitter sseemitter = new SseEmitter();
+    	WolframSearch wsearch = new WolframSearch();
+    	wsearch.search(query);
+		String output = wsearch.outputHTML();
+		try {
+			if (output != null)
+				sseemitter.send(output, MediaType.TEXT_HTML);
+			else {
+				sseemitter.send("", MediaType.TEXT_PLAIN);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			sseemitter.completeWithError(e);
+		}
+		sseemitter.complete();
+		return sseemitter;
+    }
+    
 
     /**
      * A private helper function to split up a big list of results into several "pages"
@@ -107,6 +139,4 @@ public class SearchController {
         // toIndex exclusive
         return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
     }
-
-
 }
