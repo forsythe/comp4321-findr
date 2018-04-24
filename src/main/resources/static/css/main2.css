@@ -11,26 +11,33 @@ body {
 .main_searchBox {
   /* border: solid rgb(13, 230, 201);*/
   text-align: center;
-  width: 40%;
-  margin-left: 30%;
-  margin-top: 20vh;
+  width: 60%;
+  margin-left: 20%;
+  margin-top: 10vh;
   padding: 0px;
 }
 
 #query{
-  width: 80%;
-  height: 5vh;
+  width: 70%;
+  height: 4.6vh;
   border: none;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #search_button{
-  width: 18%;
+  border 0;
+  width: 15%;
   height:  5vh;
   font-size: 1.2vw;
+  margin: 0;
+  margin-left: 0.5vw;
 }
 
 #logo{
   display: inline-block;
-  width: 100%;
+  width: 60%;
+}
+
+input{
+    padding: 0.2vh 1.2vh;
 }
