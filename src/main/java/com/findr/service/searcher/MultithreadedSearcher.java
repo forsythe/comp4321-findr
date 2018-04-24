@@ -305,9 +305,9 @@ public class MultithreadedSearcher implements Searcher {
 				}
 
 				System.out.print("(" + pageID_title.get(pID).toString() + ") ");
-				System.out.print("Simple score:" + simpleVsmScore.toString() + ",");
-				System.out.print("Phrase score:" + phraseVsmScore.toString() + ",");
-				System.out.println("Total score:" + vsmScore.toString());
+				System.out.print("Simple score: " + simpleVsmScore.toString() + ", ");
+				System.out.print("Phrase score: " + phraseVsmScore.toString() + ", ");
+				System.out.println("Total score: " + vsmScore.toString());
 			}
 
 			// Then, calculate aggregate score
@@ -337,10 +337,10 @@ public class MultithreadedSearcher implements Searcher {
 					Double w = 0.8;
 					Double score = titleMult*(w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha));
 
-					System.out.print("Title multiplier: " + titleMult.toString() + " ");
-					System.out.print("VSM score: " + vsmScore.toString() + "  ");
-					System.out.print("PR score: " + prScore.toString() + " ");
-					System.out.println("Score: " + score.toString() + " " + "DocID: " + pID.toString() + "  " + "Title: " + pageID_title.get(pID));
+					System.out.print("Title multiplier: " + titleMult.toString() + ", ");
+					System.out.print("VSM score: " + vsmScore.toString() + ", ");
+					System.out.print("PR score: " + prScore.toString() + ", ");
+					System.out.println("Score: " + score.toString() + ", DocID: " + pID.toString() + ", Title: " + pageID_title.get(pID));
 
 					if (sortedByScore.containsKey(score))
 						sortedByScore.get(score).add(pID);
