@@ -113,6 +113,22 @@ table{
     -webkit-border-radius:50%;
     text-align: center;
 }
+
+#wolframElement > table {
+	border: 1px solid #ddd;
+	text-align: left;
+}
+
+#wolframElement > th, td {
+	padding: 10px;
+}
+
+#wolframElement{
+	width: 30%;
+	float: right;
+	background-color:rgba(255,0,0,0.3);
+}
+
 .content-body{
   margin-top: 30vh;
   height: 70vh;
