@@ -51,7 +51,7 @@ public class PageRank {
     		nodes.put(n.myUrl, n);
     		edges.put(n, new ArrayList<PRNode>());
     		
-    		for (String e : w.getLinks()) {
+    		for (String e : w.getChildren()) {
     			if (!nodes.containsKey(e)) {
 	        		PRNode en = new PRNode();
 	        		en.myUrl = e;
@@ -67,7 +67,7 @@ public class PageRank {
     	log.info("Constructing edges");
     	for (Webpage w : webpages) {
     		PRNode currNode = nodes.get(w.getMyUrl());
-    		for (String e : w.getLinks()) {
+    		for (String e : w.getChildren()) {
     			PRNode edgeNode = nodes.get(e);
     			edges.get(currNode).add(edgeNode);
     		}

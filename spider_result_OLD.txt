@@ -1630,13 +1630,13 @@ http://www.cse.ust.hk/ct/pg/statement.html
 http://www.cse.ust.hk/ct/pg/toefl_ielts.html
 http://www.cse.ust.hk/ct/pg/conversation.html
 http://www.onelook.com/wotd.shtml
-http://www.cse.ust.hk/ct/links/grammar.html
-http://www.cse.ust.hk/ct/links/writing.html
-http://www.cse.ust.hk/ct/links/quiz.html
-http://www.cse.ust.hk/ct/links/job.html
-http://www.cse.ust.hk/ct/links/useful.html
-http://www.cse.ust.hk/ct/links/associations.html
-http://www.cse.ust.hk/ct/links/interesting.html
+http://www.cse.ust.hk/ct/children/grammar.html
+http://www.cse.ust.hk/ct/children/writing.html
+http://www.cse.ust.hk/ct/children/quiz.html
+http://www.cse.ust.hk/ct/children/job.html
+http://www.cse.ust.hk/ct/children/useful.html
+http://www.cse.ust.hk/ct/children/associations.html
+http://www.cse.ust.hk/ct/children/interesting.html
 http://www.cse.ust.hk/ct/tutors/noor.html
 http://www.cse.ust.hk/ct/tutors/spaeth.html
 https://en.wikipedia.org/wiki/Copy_editing
@@ -2349,7 +2349,7 @@ http://www.cse.ust.hk/pg/forms/
 http://www.ust.hk/provost/pg/rpghandbook/
 http://registry.ust.hk/calendar_dates/dates17-18confirmed.pdf
 http://www.cse.ust.hk/pg/research/guides/
-http://www.cse.ust.hk/pg/research/links/
+http://www.cse.ust.hk/pg/research/children/
 http://qa.ust.hk/student_feedback.html
 -------------------------------------------------------------------------------------------
 Postgraduate Student Early Recruiting
