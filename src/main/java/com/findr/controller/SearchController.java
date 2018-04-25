@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +39,8 @@ public class SearchController {
     private String prevQuery = "";
     private double crawlTime = 0;
 
+    private Set<String> sortedKeywords = new TreeSet<>();
+    
     private Searcher searcher = HongseoSearcher.getInstance();
 
     /**
@@ -93,6 +97,17 @@ public class SearchController {
         map.addAttribute("isMorning",HomeController.DayorNight());
         
         return "search";
+    }
+    
+    @RequestMapping(value = {"/keywords"}, method = RequestMethod.GET)
+    public String listKeywords(Model model) {
+    	
+    	if (sortedKeywords.isEmpty())
+    		sortedKeywords = searcher.getKeywords();
+    	
+    	model.addAttribute("wordSet", sortedKeywords);
+    	model.addAttribute("isMorning",HomeController.DayorNight());
+    	return "keywords";
     }
     
     @RequestMapping("/wolframResult")

@@ -8,6 +8,12 @@
 <body>
 
 
+<div class = "keyword_button">
+	<form th:action="@{/keywords}" method="get">
+		<input type="submit" value="Keywords" id="keywordBtn">
+	</form>
+</div>
+
 <div class = "main_searchBox">
     <image th:if="${isMorning}==false" src = "../static/images/logo_v2.png" th:attr="src=@{/images/logo_v2.png}" alt="logo" id="logo"/>
     <image th:if="${isMorning}==true" src = "../static/images/logo_searchEngine2.png" th:attr="src=@{/images/logo_searchEngine2.png}" alt="logo" id="logo"/>

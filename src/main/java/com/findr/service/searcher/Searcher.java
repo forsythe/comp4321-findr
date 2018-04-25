@@ -3,6 +3,8 @@ package com.findr.service.searcher;
 import com.findr.object.Webpage;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Describes what an ideal searcher should do: given a string of (potentially multiple) queries, returns the best set
@@ -13,4 +15,6 @@ public interface Searcher {
     List<Webpage> search(List<String> query, int maxResults);
 
     List<List<String>> getRelatedQueries(List<String> query);
+    
+    Set<String> getKeywords();
 }

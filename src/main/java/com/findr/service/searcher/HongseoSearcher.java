@@ -261,6 +261,19 @@ public class HongseoSearcher implements Searcher {
         }
     }
 
+    public Set<String> getKeywords() {
+    	Set<String> result = new TreeSet<>();
+    	
+
+    	Collection<String> keywords = wordID_keyword.getValues();
+    	Iterator<String> it = keywords.iterator();
+    	while(it.hasNext()) {
+    		result.add(it.next());
+    	}
+    
+    	return result; 	
+    }
+
     class QueryHandler implements Callable<Double> {
         BlockingQueue<String> wordList;
         List<String> queryList;
