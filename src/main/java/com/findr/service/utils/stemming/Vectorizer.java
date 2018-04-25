@@ -1,11 +1,7 @@
 package com.findr.service.utils.stemming;
 
-
-import com.findr.service.crawler.JSoupMultithreadedCrawler;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.split;
@@ -21,9 +17,8 @@ public class Vectorizer {
      * @param text Raw text to vectorize
      * @return A Hashmap of words and their frequencies
      */
-    public static HashMap<String, Integer> vectorize(String text, boolean doStoppingAndStemming) {
-
-        HashMap<String, Integer> count = new HashMap<>();
+    public static LinkedHashMap<String, Integer> vectorize(String text, boolean doStoppingAndStemming) {
+        LinkedHashMap<String, Integer> count = new LinkedHashMap<>();
         if (text.isEmpty()) return count;
 
         String[] words = split(text);

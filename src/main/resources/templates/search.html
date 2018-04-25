@@ -2,10 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>findr</title>
-    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"
-          th:href="@{/css/search2.css}"/>
-    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"
-          th:href="@{/css/search.css}"/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto" />
+    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"  th:href="@{/css/search2.css}"/>
+    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  th:href="@{/css/search.css}"/>
+	
+	<script type="text/javascript">
+		window.onload = function onLoad() {
+			if (typeof(EventSource) !== "undefined") {
+				var source =  new EventSource("/wolframResult");
+				source.onmessage = function(event) {
+					document.getElementById("wolframElement").innerHTML = event.data;
+					source.close();
+				};
+			}
+			else {
+				document.getElementById("wolframElement").innerHTML = "Not Supported";
+			}
+		}
+	</script>
 </head>
 <body>
 
@@ -18,10 +33,10 @@
     </a>
 
     <div class="image_text">
-        <image th:if="${isMorning}==true" src="../static/images/talk_bubble2.png"
-               th:attr="src=@{/images/talk_bubble2.png}" alt="bubble" id="bubble"/>
-        <image th:if="${isMorning}==false" src="../static/images/talk_bubble.png"
-               th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/>
+        <!--image th:if="${isMorning}==true" src="../static/images/talk_bubble2.png"
+               th:attr="src=@{/images/talk_bubble2.png}" alt="bubble" id="bubble"/-->
+        <!--image th:if="${isMorning}==false" src="../static/images/talk_bubble.png"
+               th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/-->
 
         <!--<div class="centered">-->
         <!--<span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">-->
@@ -55,6 +70,8 @@
 </div>
 
 <div class="content-body">
+	<div id="wolframElement"></div>
+	
     <div th:each="page : ${results}" class="results_para">
         <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}"
            class="result-title">Title</a>
@@ -64,7 +81,7 @@
         <div th:text="${page.getMetaDescription()}" class="result-small">
             page description
         </div>
-        <span th:text="'Last modified ' + ${page.getLastModified()}">Last modified placeholder</span>
+        <span th:text="'Last modified: ' + ${page.getLastModified()}">Last modified placeholder</span>
         <br>
         <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
         <div th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">

@@ -1,6 +1,9 @@
 package com.findr.object;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashMap;
 
 /**
  * Represents a webpage result that we crawled
@@ -13,8 +16,9 @@ public class Webpage {
     private Collection<String> children;
     private Collection<String> parents = new ArrayList<>();
 
-    private HashMap<String, Integer> titleKeywordsAndFrequencies;
-    private HashMap<String, Integer> keywordsAndFrequencies;
+
+    LinkedHashMap<String, Integer> titleKeywordsAndFrequencies;
+    LinkedHashMap<String, Integer> keywordsAndFrequencies;
 
     public String getTitle() {
         return title;
@@ -32,7 +36,6 @@ public class Webpage {
     public Webpage setBody(String body) {
         this.body = body;
         return this;
-
     }
 
     /**
@@ -56,7 +59,6 @@ public class Webpage {
     public Webpage setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
         return this;
-
     }
 
     public long getSize() {
@@ -66,7 +68,6 @@ public class Webpage {
     public Webpage setSize(long size) {
         this.size = size;
         return this;
-
     }
 
     public Date getLastModified() {
@@ -78,22 +79,22 @@ public class Webpage {
         return this;
     }
 
-    public HashMap<String, Integer> getKeywordsAndFrequencies() {
+    public LinkedHashMap<String, Integer> getKeywordsAndFrequencies() {
         return keywordsAndFrequencies;
     }
 
-    public Webpage setKeywordsAndFrequencies(HashMap<String, Integer> keywordsAndFrequencies) {
+    public Webpage setKeywordsAndFrequencies(LinkedHashMap<String, Integer> keywordsAndFrequencies) {
         this.keywordsAndFrequencies = keywordsAndFrequencies;
         return this;
     }
-
-    public HashMap<String, Integer> getTitleKeywordsAndFrequencies() {
-        return titleKeywordsAndFrequencies;
+    
+    public LinkedHashMap<String, Integer> getTitleKeywordsAndFrequencies() {
+    	return titleKeywordsAndFrequencies;
     }
-
-    public Webpage setTitleKeywordsAndFrequencies(HashMap<String, Integer> titleKeywordsAndFrequencies) {
-        this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
-        return this;
+    
+    public Webpage setTitleKeywordsAndFrequencies(LinkedHashMap<String, Integer> titleKeywordsAndFrequencies) {
+    	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
+    	return this;
     }
 
     public LinkedHashMap<String, Integer> getTopNKeywords(int n) {

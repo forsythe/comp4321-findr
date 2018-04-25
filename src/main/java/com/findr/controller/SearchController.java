@@ -1,20 +1,23 @@
 package com.findr.controller;
 
 import com.findr.object.Webpage;
-import com.findr.service.searcher.HongseoSearcher;
+import com.findr.service.searcher.MultithreadedSearcher;
 import com.findr.service.searcher.Searcher;
+import com.findr.service.searcher.WolframSearcher;
 import com.findr.service.utils.timer.Timer;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,13 +26,11 @@ import java.util.List;
 @Controller
 @Scope("session")
 public class SearchController {
-
     private static final int RESULTS_PER_PAGE = 10;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
-    private double crawlTime = 0;
 
-    private Searcher searcher = HongseoSearcher.getInstance();
+    private Searcher searcher = MultithreadedSearcher.getInstance();
 
     private static final int QUERY_HISTORY_SIZE = 5;
     private final CircularFifoQueue<String> queryHistory = new CircularFifoQueue<>(QUERY_HISTORY_SIZE);
@@ -49,6 +50,7 @@ public class SearchController {
             @RequestParam("query") String query,
             @RequestParam("page") String page,
             Model map) {
+    
         int pageNum;
         try {
             pageNum = Integer.parseInt(page);
@@ -61,7 +63,6 @@ public class SearchController {
         query = query.trim();
 
         //TODO: access db in a thread safe manner
-        Long startTime = new Date().getTime();
         Double crawlTime = 0.0;
         if (!prevQuery.equals(query)) {
             results.clear();
@@ -85,12 +86,34 @@ public class SearchController {
 
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
-        map.addAttribute("isMorning", HomeController.DayorNight());
+        map.addAttribute("isMorning", HomeController.dayOrNight());
 
         map.addAttribute("queryHistory", queryHistory);
 
         return "search";
     }
+    
+    @RequestMapping("/wolframResult")
+    public SseEmitter getWolframResult() {
+    	String query = prevQuery;
+        final SseEmitter sseemitter = new SseEmitter();
+    	WolframSearcher wsearch = new WolframSearcher();
+    	wsearch.search(query);
+		String output = wsearch.outputHTML();
+		try {
+			if (output != null)
+				sseemitter.send(output, MediaType.TEXT_HTML);
+			else {
+				sseemitter.send("", MediaType.TEXT_PLAIN);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			sseemitter.completeWithError(e);
+		}
+		sseemitter.complete();
+		return sseemitter;
+    }
+    
 
     /**
      * A private helper function to split up a big list of results into several "pages"
@@ -114,6 +137,4 @@ public class SearchController {
         // toIndex exclusive
         return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
     }
-
-
 }

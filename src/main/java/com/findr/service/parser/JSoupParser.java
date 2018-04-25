@@ -2,6 +2,7 @@ package com.findr.service.parser;
 
 import com.findr.object.Webpage;
 import com.findr.service.utils.stemming.Vectorizer;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,9 +71,9 @@ public class JSoupParser implements Parser {
                 doc = Jsoup.parse(rawBody);
             }
 
-            HashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
-            HashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
-
+            LinkedHashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
+            LinkedHashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
+            
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;
 
@@ -209,7 +210,7 @@ public class JSoupParser implements Parser {
 
         Elements linkElements = doc.select("a");
 
-        Iterator it = linkElements.iterator();
+        Iterator<Element> it = linkElements.iterator();
         while (it.hasNext()) {
             Element e = (Element) it.next();
             System.out.println(e.toString());

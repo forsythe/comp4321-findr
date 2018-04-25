@@ -122,8 +122,19 @@ table {
 }
 
 
-.black {
-    color: black;
+#wolframElement > table {
+	border: 1px solid #ddd;
+	text-align: left;
+}
+
+#wolframElement > th, td {
+	padding: 10px;
+}
+
+#wolframElement{
+	width: 30%;
+	float: right;
+	background-color:rgba(0,0,255,0.3);
 }
 
 .content-body{
@@ -135,4 +146,8 @@ table {
 a{
   font-family: "Open Sans";
   color: rgb(4, 194, 194);
+}
+
+.black {
+    color: black;
 }
