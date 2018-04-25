@@ -33,7 +33,7 @@ public class HomeController {
         boolean isMorning = false;
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
-        if(hour > 6 && hour <= 18) {
+        if(hour >= 6 && hour < 18) {
             isMorning = true;
         }
         return  isMorning;

@@ -300,7 +300,9 @@ public class MultithreadedSearcher implements Searcher {
 			Double simpleVsmScore = new Double(0.0);
 			for (Long pID : filteredDocs) {
 				if (!simpleWeightsSum.isEmpty() && !simpleWeightsSqrSum.isEmpty()) {
-					simpleVsmScore = cosSim(simpleWeightsSum.get(pID), simpleWeightsSqrSum.get(pID), simpleQueryLength);
+					if (simpleWeightsSum.contains(pID)) {
+						simpleVsmScore = cosSim(simpleWeightsSum.get(pID), simpleWeightsSqrSum.get(pID), simpleQueryLength);
+					}
 				}
 
 				Double phraseVsmScore = new Double(0.0);
@@ -383,6 +385,7 @@ public class MultithreadedSearcher implements Searcher {
 					page.setLastModified(pageID_lastmodified.get(pID));
 					page.setMetaDescription(pageID_metaD.get(pID));
 					page.setSize(pageID_size.get(pID));
+					page.setScore(lastEntry.getKey());
 					LinkedHashMap<String, Integer> keywordAndFreq = new LinkedHashMap<String, Integer>();
 					Set<Object[]> docKeyFreq = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
 					for (Object[] entry : docKeyFreq) {

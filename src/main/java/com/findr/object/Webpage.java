@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-import javax.swing.plaf.BorderUIResource.TitledBorderUIResource;
-
 /**
  * Represents a webpage result that we crawled
  */
@@ -13,7 +11,7 @@ public class Webpage {
     String title, body, myUrl, parentUrl, metaDescription;
     long size;
     Date lastModified;
-    double score;
+    Double score;
 
     Collection<String> links;
     LinkedHashMap<String, Integer> titleKeywordsAndFrequencies;
@@ -126,6 +124,15 @@ public class Webpage {
 
     public Webpage setLinks(Collection<String> links) {
         this.links = links;
+        return this;
+    }
+    
+    public Double getScore() {
+        return score;
+    }
+
+    public Webpage setScore(Double score) {
+        this.score = score;
         return this;
     }
 

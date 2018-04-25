@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>findr</title>
+    <title>Findr</title>
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" />
     <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"  th:href="@{/css/search2.css}"/>
     <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  th:href="@{/css/search.css}"/>
 	
@@ -55,7 +55,6 @@
             <p class="black">You previously searched for:</p>
             <div th:each="historyItem : ${queryHistory}">
                 <p><a th:text="${historyItem}" th:href="@{/search(query=${historyItem},page=1)}"></a></p>
-
             </div>
         </div>
     </div>
@@ -66,7 +65,7 @@
         <input type="submit" value="Search">
     </form>
     <br/>
-    <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">time elapsed...</span>
+    <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">Time elapsed</span>
 </div>
 
 <div class="content-body">
@@ -74,20 +73,52 @@
 	
     <div th:each="page : ${results}" class="results_para">
         <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}"
-           class="result-title">Title</a>
-        <br/>
-        <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL abbrev</span>
-        <br/>
-        <div th:text="${page.getMetaDescription()}" class="result-small">
-            page description
-        </div>
-        <span th:text="'Last modified: ' + ${page.getLastModified()}">Last modified placeholder</span>
+           class="result-title">Title placeholder</a>
         <br>
-        <span th:text="'Length: ' + ${page.getSize()}">size placeholder</span>
-        <div th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">
-            <span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()}"></span>
-            <br>
-        </div>
+        
+        <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL placeholder</span>
+        <br>
+        
+        <span th:text="${page.getMetaDescription()}" class="result-small">Page description placeholder</span>
+        <br>
+        
+        <span class="bold">Last modified: </span>
+        <span th:text="${page.getLastModified()}">Last modified placeholder</span>
+        <br>
+        
+        <span class="bold">Size: </span>
+        <span th:text="${page.getSize()} + ' bytes'">Size placeholder</span>
+        <br>
+        
+        <span class="bold">Score: </span>
+        <span th:text="${page.getScore()}">Score placeholder</span>
+        <br>
+        
+        <span class="bold">Keywords: </span>
+        <span th:each="keywordFreqPair, index : ${page.getTopNKeywords(5)}">
+            <span th:text="!${index.last} ?
+            ${keywordFreqPair.getKey()} + ' ' + ${keywordFreqPair.getValue()} + ',' :
+            ${keywordFreqPair.getKey()} + ' ' + ${keywordFreqPair.getValue()}"></span>
+        </span>
+        <br>
+        
+        <span class="bold">Parent links: </span>
+       	<!-- span th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">
+           	<span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+        	<br>
+        </span-->
+        <br>
+        
+        <span class="bold">Child links: </span>
+       	<!-- span th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">
+           	<span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+           	<br>
+        </span-->
+        <br>
+        
+        <span th:with="newQuery=${query + ' ' + #strings.setJoin(page.getTopNKeywords(5).keySet(), ' ')}">
+        	<a th:href="@{/search(query=${newQuery},page=1)}" class="bold lower-bar similar-page">Get similar pages</a>
+        </span>
     </div>
 
     <div class="num_bar">
