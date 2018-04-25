@@ -300,7 +300,7 @@ public class MultithreadedSearcher implements Searcher {
 			Double simpleVsmScore = new Double(0.0);
 			for (Long pID : filteredDocs) {
 				if (!simpleWeightsSum.isEmpty() && !simpleWeightsSqrSum.isEmpty()) {
-					if (simpleWeightsSum.contains(pID)) {
+					if (simpleWeightsSum.containsKey(pID)) {
 						simpleVsmScore = cosSim(simpleWeightsSum.get(pID), simpleWeightsSqrSum.get(pID), simpleQueryLength);
 					}
 				}

@@ -269,7 +269,7 @@ public class MapDBIndexer implements Indexer {
 				}
 
                 //get children page URLs
-                Collection<String> childLinks = webpage.getLinks();
+                Collection<String> childLinks = webpage.getChildren();
                 for (String link : childLinks) {
 
                     //System.out.println(link);
@@ -397,11 +397,10 @@ public class MapDBIndexer implements Indexer {
                 String cUrl = pageID_url.get((Long) ((cLink)[1])); //the second element in the Object array ([1]) is the childID
                 childLinks.add(cUrl); //add them to the temporary list
             }
-            result.setLinks(childLinks); //set the list to the page's child links
+            result.setChildren(childLinks); //set the list to the page's child links
             //Body, MetaDescription and ParentURL are all not needed for our use -> set to empty string
             result.setBody("");
             result.setMetaDescription("");
-            result.setParentUrl("");
 
             return result;
         }

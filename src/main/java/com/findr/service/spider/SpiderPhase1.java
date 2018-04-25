@@ -56,7 +56,7 @@ public class SpiderPhase1 implements Spider {
 	        	}
 	        	bw.newLine();
 	        	
-	        	Collection<String> childLinks = p.getLinks();
+	        	Collection<String> childLinks = p.getChildren();
 	        	for (String link : childLinks) {
 	        		bw.write(link);
 	        		bw.newLine();

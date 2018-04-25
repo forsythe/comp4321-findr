@@ -111,7 +111,7 @@ public class JSoupMultithreadedCrawlerCseOnly implements Crawler {
                             }
                         }
 
-                        for (String link : page.getLinks()) {
+                        for (String link : page.getChildren()) {
                             System.out.println("-- child: " + link);
                             if (!seenURLs.contains(link)) {
                             	boolean status = false;

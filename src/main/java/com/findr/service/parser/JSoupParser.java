@@ -89,7 +89,7 @@ public class JSoupParser implements Parser {
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(contentLengthLong)
                     .setBody(rawBody)
-                    .setLinks(getLinks(doc, baseURL))
+                    .setChildren(getLinks(doc, baseURL))
                     .setTitle(doc.title())
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)

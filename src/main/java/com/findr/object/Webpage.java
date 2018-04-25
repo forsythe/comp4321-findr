@@ -1,5 +1,6 @@
 package com.findr.object;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -8,12 +9,15 @@ import java.util.LinkedHashMap;
  * Represents a webpage result that we crawled
  */
 public class Webpage {
-    String title, body, myUrl, parentUrl, metaDescription;
-    long size;
-    Date lastModified;
-    Double score;
+    private String title, body, myUrl, metaDescription;
+    private long size;
+    private Date lastModified;
+    private Double score;
 
-    Collection<String> links;
+    private Collection<String> children;
+    private Collection<String> parents = new ArrayList<>();
+
+
     LinkedHashMap<String, Integer> titleKeywordsAndFrequencies;
     LinkedHashMap<String, Integer> keywordsAndFrequencies;
 
@@ -48,15 +52,6 @@ public class Webpage {
 
     }
 
-    public String getParentUrl() {
-        return parentUrl;
-    }
-
-    public Webpage setParentUrl(String parentUrl) {
-        this.parentUrl = parentUrl;
-        return this;
-
-    }
 
     public String getMetaDescription() {
         return metaDescription;
@@ -118,12 +113,12 @@ public class Webpage {
         }
     }
 
-    public Collection<String> getLinks() {
-        return links;
+    public Collection<String> getChildren() {
+        return children;
     }
 
-    public Webpage setLinks(Collection<String> links) {
-        this.links = links;
+    public Webpage setChildren(Collection<String> children) {
+        this.children = children;
         return this;
     }
     
@@ -142,4 +137,9 @@ public class Webpage {
     public static Webpage create() {
         return new Webpage();
     }
+
+    public Collection<String> getParents() {
+        return parents;
+    }
+
 }
