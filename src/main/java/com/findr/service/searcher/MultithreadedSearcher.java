@@ -167,15 +167,21 @@ public class MultithreadedSearcher implements Searcher {
 	public List<Webpage> search(List<String> query, int maxResults) {
 		synchronized(MapDBIndexer.class) {
 			BlockingQueue<String> simpleWordList = new LinkedBlockingQueue<String>();
-			// Each element in the array list is a blocking queue for a new phrase
-			ArrayList<BlockingQueue<String>> phraseWordList = new ArrayList<BlockingQueue<String>>();
 			ConcurrentHashMap<Long, Double> simpleWeightsSum = new ConcurrentHashMap<Long, Double>(); 
 			ConcurrentHashMap<Long, Double> simpleWeightsSqrSum = new ConcurrentHashMap<Long, Double>();
-			ArrayList<ConcurrentHashMap<Long, Double>> phraseNormalisedWeights = new ArrayList<ConcurrentHashMap<Long, Double>>();
-			TreeMap<Double, List<Long>> sortedByVSM = new TreeMap<Double, List<Long> >();
-			TreeMap<Double, List<Long>> sortedByScore = new TreeMap<Double, List<Long> >();
 			Double simpleQueryLength = new Double(0.0);
+			
+			// Each element in the array list is a blocking queue for a new phrase
+			ArrayList<BlockingQueue<String>> phraseWordList = new ArrayList<BlockingQueue<String>>();
+			ArrayList<ConcurrentHashMap<Long, Double>> phraseNormalisedWeights = new ArrayList<ConcurrentHashMap<Long, Double>>();
 			Double phraseQueryLength = new Double(0.0);
+			
+			BlockingQueue<String> removeWordList = new LinkedBlockingQueue<String>();
+			ConcurrentHashMap<Long, Double> removeWeightsSum = new ConcurrentHashMap<Long, Double>(); 
+			ConcurrentHashMap<Long, Double> removeWeightsSqrSum = new ConcurrentHashMap<Long, Double>();
+			
+			TreeMap<Double, List<Long>> sortedByVSM = new TreeMap<Double, List<Long>>();
+			TreeMap<Double, List<Long>> sortedByScore = new TreeMap<Double, List<Long>>();
 
 			List<Webpage> results = new ArrayList<Webpage>();
 
@@ -183,12 +189,14 @@ public class MultithreadedSearcher implements Searcher {
 
 			ExecutorService exec = Executors.newFixedThreadPool(NUM_OF_SEARCHER_THREAD + 1);
 
+			// Simple search
 			QueryHandler simpleQHandler = new QueryHandler(simpleWordList, categorisedQuery.get("simple"));
 			Future<Double> simpleVal = exec.submit(simpleQHandler);
 			for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
 				exec.execute(new SimpleSearcher(simpleWordList, simpleWeightsSum, simpleWeightsSqrSum));
 			}
 
+			// Phrase search
 			int lastPhraseIndex = 0;
 			ArrayList<Future<Double>> phraseVal = new ArrayList<Future<Double>>();
 			for (String phraseQuery : categorisedQuery.get("phrase")) {
@@ -203,7 +211,14 @@ public class MultithreadedSearcher implements Searcher {
 				exec.execute(new PhraseSearcher(phraseWordList.get(lastPhraseIndex), phraseNormalisedWeights.get(lastPhraseIndex)));
 				lastPhraseIndex++;
 			}
-
+			
+			// Remove search
+			QueryHandler removeQHandler = new QueryHandler(removeWordList, categorisedQuery.get("remove"));
+			exec.submit(removeQHandler);
+			for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
+				exec.execute(new SimpleSearcher(removeWordList, removeWeightsSum, removeWeightsSqrSum));
+			}
+			
 			try {
 				exec.shutdown();
 				exec.awaitTermination(10, TimeUnit.SECONDS);
@@ -224,8 +239,9 @@ public class MultithreadedSearcher implements Searcher {
 			}
 
 			// Steps
-			// 1) For all documents retrieved in phrase and simple search, remove documents that do not contain all phrases
-			// 2) Rank
+			// 1) For all documents retrieved in simple and phrase search, remove documents that do not contain all phrases
+			// 2) From the modified list of documents, remove all that are retrieved from remove search
+			// 3) Rank
 
 			// Step 1
 
@@ -262,13 +278,16 @@ public class MultithreadedSearcher implements Searcher {
 					filteredDocs.add(e.getKey());
 				}
 			}
-
+			
+			// Step 2
+			filteredDocs.removeAll(removeWeightsSum.keySet());
+			
 			System.out.println("Documents to rank:");
 			for (Long pID : filteredDocs) {
 				System.out.println(pageID_title.get(pID));
 			}
 
-			// Step 2
+			// Step 3
 
 			// VSM (Vector Space Model) = phraseMult*phraseVSM + (1-phraseMult)*simpleVSM
 			// Score = titleMult*(w*VSM + (1-w)*PR/(log(rank of VSM) + alpha))
@@ -388,19 +407,48 @@ public class MultithreadedSearcher implements Searcher {
 		LinkedHashMap<String, ArrayList<String>> lhm = new LinkedHashMap<String, ArrayList<String>>();
 		lhm.put("simple", new ArrayList<String>()); // SimpleSearcher
 		lhm.put("phrase", new ArrayList<String>()); // PhraseSearcher
+		lhm.put("remove", new ArrayList<String>()); // SimpleSearcher, but remove all docs retrieved
 
+		// 1) Collect all words/phrases and put them in simple
+		// 2) Find all phrases and put them into phrase
+		// 3) Find all removes and put them into remove
+		// 4) Remove all phrases and removes from simple
+		// 5) Remove all removes from phrases
+		
+		// Step 1
 		String[] splitter = query.split("\"");
 		for (String s : splitter) {
-			lhm.get("simple").add(s.trim());
+			if (!s.contains("-")) {
+				lhm.get("simple").add(s.trim());
+			} else {
+				String[] hyphenSplitter = s.split(" ");
+				for (String hs : hyphenSplitter) {
+					lhm.get("simple").add(hs.trim().replaceAll("(^-)", ""));
+				}
+			}
 		}
-		lhm.get("simple").removeIf(item -> item == null || item.equals(""));
+		lhm.get("simple").removeIf(item -> item == null || item.equals("") || item.equals("-"));
 
-		Pattern pattern = Pattern.compile("\"([^\"]*)\"");
-		Matcher matcher = pattern.matcher(query);
-		while(matcher.find()) {
-			lhm.get("phrase").add(matcher.group(1).trim());
+		// Step 2
+		Pattern phrasePattern = Pattern.compile("\"([^\"]*)\"");
+		Matcher phraseMatcher = phrasePattern.matcher(query);
+		while (phraseMatcher.find()) {
+			lhm.get("phrase").add(phraseMatcher.group(1).trim());
 		}
+		
+		// Step 3
+		Pattern removePattern = Pattern.compile("(?<=-)(.*?)(?= |$)");
+		Matcher removeMatcher = removePattern.matcher(query);
+		while (removeMatcher.find()) {
+			lhm.get("remove").add(removeMatcher.group(1).trim().replaceAll("\"", ""));
+		}
+		
+		// Step 4
 		lhm.get("simple").removeAll(new HashSet<>(lhm.get("phrase")));
+		lhm.get("simple").removeAll(new HashSet<>(lhm.get("remove")));
+		
+		// Step 5
+		lhm.get("phrase").removeAll(new HashSet<>(lhm.get("remove")));
 
 		System.out.println("Query: " + query + "\n");
 		for (String key : lhm.keySet()) {
