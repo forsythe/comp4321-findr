@@ -116,8 +116,8 @@
         </span-->
         <br>
         
-        <span th:with="newQuery=${query + ' ' + #strings.setJoin(page.getTopNKeywords(5).keySet(), ' ')}">
-        	<a th:href="@{/search(query=${newQuery},page=1)}" class="bold lower-bar similar-page">Get similar pages</a>
+        <span th:with="similarPages=${#strings.setJoin(page.getTopNKeywords(5).keySet(), ' ')}">
+        	<a th:href="@{/search(query=${query},similarPages=${similarPages},page=1)}" class="bold lower-bar similar-page">Get similar pages</a>
         </span>
     </div>
 
@@ -128,7 +128,10 @@
                 <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
                     <div th:switch="${i}" class="circle">
                         <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
-                        <p th:case="*"><a th:text="${i}" th:href="@{/search(query=${query},page=${i})}"></a></p>
+                        <p th:case="*"><a th:text="${i}"
+                        th:href="${similarPages == ''}
+                        ? @{/search(query=${query},page=${i})}
+                        : @{/search(query=${query},similarPages=${similarPages},page=${i})}"></a></p>
                     </div>
                 </td>
             </tr>
