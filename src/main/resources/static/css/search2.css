@@ -10,7 +10,7 @@ body {
   background-position: bottom ;
   /* background-color: rgb(209, 244, 236); */
   background-size: 100% 100%;
-  overflow:hidden;
+  /*overflow:hidden;*/
 }
 
 #logo_searchbar{
@@ -160,7 +160,7 @@ a{
 a.similar-page, a.similar-page:active, a.similar-page:hover, a.similar-page:visited {
     position: relative;
     text-decoration: none;
-    color: #388E8E;
+    color:  #388E8E;
     opacity: 0.8;
     transition: all 0.15s ease-in-out 0s;
 }
@@ -185,4 +185,23 @@ a.lower-bar:after {
 
 a.lower-bar:hover:after {
     transform: scaleX(1);
+}
+
+.button-list{
+  width: 7%;
+  position: fixed;
+  top: 3vh;
+  left: 92%;
+}
+
+.bt_image{
+  width: 40%;
+  padding: 0;
+  margin: 0;
+  margin-right: 3%;
+}
+
+#topfive{
+  color:rgb(9, 21, 48);
+  height: 5vh;
 }

@@ -2,25 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Findr</title>
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" />
-    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"  th:href="@{/css/search2.css}"/>
-    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"  th:href="@{/css/search.css}"/>
-	
-	<script type="text/javascript">
-		window.onload = function onLoad() {
-			if (typeof(EventSource) !== "undefined") {
-				var source =  new EventSource("/wolframResult");
-				source.onmessage = function(event) {
-					document.getElementById("wolframElement").innerHTML = event.data;
-					source.close();
-				};
-			}
-			else {
-				document.getElementById("wolframElement").innerHTML = "Not Supported";
-			}
-		}
-	</script>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans"/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700"/>
+    <link th:if="${isMorning}==true" rel="stylesheet" type="text/css" media="all" href="../static/css/search2.css"
+          th:href="@{/css/search2.css}"/>
+    <link th:if="${isMorning}==false" rel="stylesheet" type="text/css" media="all" href="../static/css/search.css"
+          th:href="@{/css/search.css}"/>
 </head>
 <body>
 
@@ -31,7 +18,6 @@
         <image th:if="${isMorning}==false" src="../static/images/logo_v2.png"
                th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
-
     <div class="image_text">
         <!--image th:if="${isMorning}==true" src="../static/images/talk_bubble2.png"
                th:attr="src=@{/images/talk_bubble2.png}" alt="bubble" id="bubble"/-->
@@ -46,16 +32,14 @@
         <!--<span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>-->
         <!--</div>-->
         <!--<div>-->
-            <!--<p class="black">You previously searched for:</p>-->
-            <!--<div th:each="historyItem : ${queryHistory}">-->
-                <!--<p th:text="${historyItem}" class="black"></p>-->
-            <!--</div>-->
+        <!--<p class="black">You previously searched for:</p>-->
+        <!--<div th:each="historyItem : ${queryHistory}">-->
+        <!--<p th:text="${historyItem}" class="black"></p>-->
         <!--</div>-->
-        <div>
+        <!--</div>-->
+        <div class="black">
             <p class="black">You previously searched for:</p>
-            <div th:each="historyItem : ${queryHistory}">
-                <p><a th:text="${historyItem}" th:href="@{/search(query=${historyItem},page=1)}"></a></p>
-            </div>
+            <p><a th:text="${prevQuery}" th:href="@{/search(query=${prevQuery},page=1)}"></a></p>
         </div>
     </div>
 
@@ -68,32 +52,47 @@
     <span th:text="${totalCrawledPages} + ' results (' + ${crawlTime} + ' seconds)'">Time elapsed</span>
 </div>
 
+
+<div class = "button-list">
+    <input type="image" th:if="${isMorning}==true" src="../static/images/button_5_2.png"
+    th:attr="src=@{/images/button_5_2.png}" class="bt_image" onclick="showHideTop5()"
+    th:onclick="'javascript:showHideTop5();'"/>
+    <input type="image" th:if="${isMorning}==true" src="../static/images/button_index_2.png"
+    th:attr="src=@{/images/button_index_2.png}" class="bt_image" />
+    <input type="image" th:if="${isMorning}==false" src="../static/images/button_5.png"
+           th:attr="src=@{/images/button_5.png}" class="bt_image" onclick="showHideTop5()"
+           th:onclick="'javascript:showHideTop5();'"/>
+    <input type="image" th:if="${isMorning}==false" src="../static/images/button_index.png"
+           th:attr="src=@{/images/button_index.png}" class="bt_image" />
+</div>
+
 <div class="content-body">
-	<div id="wolframElement"></div>
-	
+    <div id="wolframElement"></div>
+
     <div th:each="page : ${results}" class="results_para">
         <a th:text="${#strings.abbreviate(page.getTitle(),80)} " th:href="${page.getMyUrl()}"
            class="result-title">Title placeholder</a>
         <br>
-        
-        <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}" class="result-link result-small">URL placeholder</span>
+
+        <span th:text="${#strings.abbreviate(page.getMyUrl(),100)}"
+              class="result-link result-small">URL placeholder</span>
         <br>
-        
+
         <span th:text="${page.getMetaDescription()}" class="result-small">Page description placeholder</span>
         <br>
-        
+
         <span class="bold">Last modified: </span>
         <span th:text="${page.getLastModified()}">Last modified placeholder</span>
         <br>
-        
+
         <span class="bold">Size: </span>
         <span th:text="${page.getSize()} + ' bytes'">Size placeholder</span>
         <br>
-        
+
         <span class="bold">Score: </span>
         <span th:text="${page.getScore()}">Score placeholder</span>
         <br>
-        
+
         <span class="bold">Keywords: </span>
         <span th:each="keywordFreqPair, index : ${page.getTopNKeywords(5)}">
             <span th:text="!${index.last} ?
@@ -101,24 +100,21 @@
             ${keywordFreqPair.getKey()} + ' ' + ${keywordFreqPair.getValue()}"></span>
         </span>
         <br>
-        
-        <span class="bold">Parent links: </span>
-       	<!-- span th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">
-           	<span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
-        	<br>
-        </span-->
-        <br>
-        
-        <span class="bold">Child links: </span>
-       	<!-- span th:each="keywordFreqPair : ${page.getTopNKeywords(5)}">
-           	<span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
-           	<br>
-        </span-->
-        <br>
-        
+
         <span th:with="similarPages=${#strings.setJoin(page.getTopNKeywords(5).keySet(), ' ')}">
-        	<a th:href="@{/search(query=${query},similarPages=${similarPages},page=1)}" class="bold lower-bar similar-page">Get similar pages</a>
+        	<a th:href="@{/search(query=${query},similarPages=${similarPages},page=1)}"
+               class="bold lower-bar similar-page">Get similar pages</a>
         </span>
+
+        <div id="topfive">
+            <span class="bold">Parent links: </span>
+            <span th:each="keywordFreqPair : ${page.getParents()}">
+            <span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+            <br/>
+            <span class="bold">Child links: </span>
+            <span th:each="keywordFreqPair : ${page.getChildren()}">
+            <span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+        </div>
     </div>
 
     <div class="num_bar">
@@ -129,7 +125,7 @@
                     <div th:switch="${i}" class="circle">
                         <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
                         <p th:case="*"><a th:text="${i}"
-                        th:href="${similarPages == ''}
+                                          th:href="${similarPages == ''}
                         ? @{/search(query=${query},page=${i})}
                         : @{/search(query=${query},similarPages=${similarPages},page=${i})}"></a></p>
                     </div>
@@ -138,6 +134,27 @@
         </table>
     </div>
 </div>
-
+<script type="text/javascript" th:inline="javascript">
+		window.onload = function onLoad() {
+			if (typeof(EventSource) !== "undefined") {
+				var source =  new EventSource("/wolframResult");
+				source.onmessage = function(event) {
+					document.getElementById("wolframElement").innerHTML = event.data;
+					source.close();
+				};
+			}
+			else {
+				document.getElementById("wolframElement").innerHTML = "Not Supported";
+			}
+		}
+        function showHideTop5() {
+            var x = document.getElementById("topfive");
+            if (x.style.display === "none") {
+            x.style.display = "block";}
+            else {
+            x.style.display = "none";
+            }
+        }
+ </script>
 </body>
 </html>
