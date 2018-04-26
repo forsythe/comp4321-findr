@@ -188,20 +188,47 @@ a.lower-bar:hover:after {
 }
 
 .button-list{
-  width: 7%;
+  width: 15%;
   position: fixed;
   top: 3vh;
-  left: 92%;
+  left: 85%;
 }
 
 .bt_image{
-  width: 40%;
+  width: 28%;
   padding: 0;
   margin: 0;
   margin-right: 3%;
+  outline: transparent solid 0px;
 }
+
 
 #topfive{
   color:rgb(9, 21, 48);
   height: 5vh;
+}
+
+#queryHistory{
+  width:20%;
+  height: 20vh;
+  background-image: url("../images/history_bg_2.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: fixed;
+  left:50%;
+  top: 2%;
+  overflow: hidden;
+}
+
+#queryHistory div{
+  display: inline-block;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin: 4% 7%;
+  font-style: oblique;
+  font-weight: bold;
+}
+
+.no_margin{
+  margin: 0;
 }

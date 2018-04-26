@@ -181,14 +181,14 @@ a.lower-bar:hover:after {
 }
 
 .button-list{
-  width: 7%;
+  width: 15%;
   position: fixed;
   top: 3vh;
-  left: 92%;
+  left: 85%;
 }
 
 .bt_image{
-  width: 40%;
+  width: 28%;
   padding: 0;
   margin: 0;
   margin-right: 3%;
@@ -196,4 +196,26 @@ a.lower-bar:hover:after {
 
 #topfive{
   color: rgb(214, 86, 45);
+}
+#queryHistory{
+  width:20%;
+  height: 20vh;
+  background-image: url("../images/history_bg.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: fixed;
+  left:50%;
+  top: 2%;
+}
+
+#queryHistory div{
+  display: inline-block;
+  color: rgb(135, 204, 86);
+  margin: 2% 7%;
+  font-style: oblique;
+  font-weight: bold;
+}
+
+.no_margin{
+  margin: 0;
 }

@@ -43,6 +43,12 @@
         </div>
     </div>
 
+    <div id ="queryHistory">
+        <div th:each="historyItem : ${queryHistory}" >
+            <p th:text="${historyItem}" class="no_margin">QueryHistory</p>
+        </div>
+    </div>
+
     <form th:action="@{/search}">
         <input required type="text" name="query" th:value="${query}" id="query">
         <input type="hidden" name="page" value="1">
@@ -53,17 +59,25 @@
 </div>
 
 
+
+
 <div class = "button-list">
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_5_2.png"
     th:attr="src=@{/images/button_5_2.png}" class="bt_image" onclick="showHideTop5()"
     th:onclick="'javascript:showHideTop5();'"/>
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_index_2.png"
     th:attr="src=@{/images/button_index_2.png}" class="bt_image" />
+    <input type="image" th:if="${isMorning}==true" src="../static/images/button_his_2.png"
+    th:attr="src=@{/images/button_his_2.png}" class="bt_image" onclick="showHideHis()"
+    th:onclick="'javascript:showHideHis();'" />
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_5.png"
            th:attr="src=@{/images/button_5.png}" class="bt_image" onclick="showHideTop5()"
            th:onclick="'javascript:showHideTop5();'"/>
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_index.png"
            th:attr="src=@{/images/button_index.png}" class="bt_image" />
+    <input type="image" th:if="${isMorning}==false" src="../static/images/button_his.png"
+   th:attr="src=@{/images/button_his.png}" class="bt_image" onclick="showHideHis()"
+   th:onclick="'javascript:showHideHis();'"/>
 </div>
 
 <div class="content-body">
@@ -149,6 +163,14 @@
 		}
         function showHideTop5() {
             var x = document.getElementById("topfive");
+            if (x.style.display === "none") {
+            x.style.display = "block";}
+            else {
+            x.style.display = "none";
+            }
+        }
+        function showHideHis(){
+            var x = document.getElementById("queryHistory");
             if (x.style.display === "none") {
             x.style.display = "block";}
             else {
