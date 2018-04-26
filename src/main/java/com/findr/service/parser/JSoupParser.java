@@ -222,15 +222,22 @@ public class JSoupParser implements Parser {
                 .filter(x -> !x.attr("href").isEmpty())
                 .filter(x -> !x.attr("abs:href").endsWith("mp4"))
                 .filter(x -> !x.attr("href").startsWith("javascript"))
+                .filter(x -> !x.attr("href").endsWith("mp3"))
+                .filter(x -> !x.attr("href").endsWith("zip"))
+                .filter(x -> !x.attr("href").endsWith("tar.gz"))
+                .filter(x -> !x.attr("href").endsWith("jpg"))
+                .filter(x -> !x.attr("href").endsWith("png"))
+                .filter(x -> !x.attr("href").endsWith("JPG"))
+                .filter(x -> !x.attr("href").endsWith("pdf"))
                 .forEach(x -> links.add(x.attr("href").split("\\?")[0]));
 
         Collection<String> linksFixed = new ArrayList<>();
         //TODO: do we need this?
 
         try {
-            System.out.println("HI");
-            System.out.println(baseURL);
-            System.out.println("HI2");
+           // System.out.println("HI");
+           // System.out.println(baseURL);
+          //  System.out.println("HI2");
 
             URL base = new URL(baseURL);
 
@@ -244,25 +251,25 @@ public class JSoupParser implements Parser {
                     }
                     URL fixed = new URL(base, l);
                     String fixedString = fixed.toString();
-                    System.out.println("FIXED: " + fixedString);
+                   // System.out.println("FIXED: " + fixedString);
                     linksFixed.add(fixedString);
-                    System.out.println("ADDED");
+                   // System.out.println("ADDED");
                 } else if (l.indexOf('#') == 0) {
-                    System.out.println("SKIPPED");
+                 //   System.out.println("SKIPPED");
                 } else {
-                    System.out.println("OTHER CASE: " + l);
+                  //  System.out.println("OTHER CASE: " + l);
                     int sharp = 0;
                     if ((sharp = l.indexOf('#', 0)) != -1) {
                         l = l.substring(0, sharp);
                     }
-                    System.out.println("OTHER CASE PROCESSED: " + l);
+                  //  System.out.println("OTHER CASE PROCESSED: " + l);
                     linksFixed.add(l);
-                    System.out.println("ADDED");
+                  //  System.out.println("ADDED");
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("EXCEPTION");
+            //System.out.println("EXCEPTION");
         }
 
         log.debug("Found {} child links", links.size());

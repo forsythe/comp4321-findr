@@ -64,6 +64,9 @@ public class MapDBIndexer implements Indexer {
     //Parent->Child table, also with a MultiMap with NavigableMap
     //each entry would be {parent pageID, child pageID}
     private NavigableSet<Object[]> parent_child;
+    
+    //Child->Parent table {child pageID, parent pageID}
+    private NavigableSet<Object[]> child_parent;
 
     //current pageID to be used, initialized to 0 first
     private long pageID = 0;
@@ -167,6 +170,10 @@ public class MapDBIndexer implements Indexer {
         parent_child = db.treeSet("parent_child")
                 .serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
                 .createOrOpen();
+        
+        child_parent = db.treeSet("child_parent")
+        		.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
+        		.createOrOpen();
 
         pageID = pageID_url.sizeLong();
         wordID = wordID_keyword.sizeLong();
@@ -285,6 +292,19 @@ public class MapDBIndexer implements Indexer {
                     }
                     parent_child.add(new Object[]{pID, childID});
                 }
+                
+                Collection<String> parentLinks = webpage.getParents();
+                for (String link : parentLinks) {
+                	Long parentID = pageID;
+                	if (url_pageID.containsKey(link))
+                		parentID = url_pageID.get(link);
+                	else {
+                		url_pageID.put(link, parentID);
+                		pageID_url.put(parentID, link);
+                		pageID++;
+                	}
+                	child_parent.add(new Object[] {pID, parentID});
+                }
 
                 //Handle the title keywords in the same way as the normal inverted/forward indices
                 LinkedHashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
@@ -353,6 +373,9 @@ public class MapDBIndexer implements Indexer {
             //get all the entries to remove in the subset
             Set<Object[]> pcLink = parent_child.subSet(new Object[]{deleteID}, new Object[]{deleteID, null});
             parent_child.removeAll(pcLink); //removeAll
+            
+            Set<Object[]> cpLink = child_parent.subSet(new Object[] {deleteID}, new Object[] {deleteID, null});
+            child_parent.removeAll(cpLink);
         } catch (DBException e) {
             e.printStackTrace();
         }
@@ -394,11 +417,19 @@ public class MapDBIndexer implements Indexer {
             //from id -> id, null => gives all that matches ID in the first element and everything for the second element
             Set<Object[]> cLinks = parent_child.subSet(new Object[]{id}, new Object[]{id, null});
             for (Object[] cLink : cLinks) {
-                String cUrl = pageID_url.get((Long) ((cLink)[1])); //the second element in the Object array ([1]) is the childID
+                String cUrl = pageID_url.get((Long)(cLink[1])); //the second element in the Object array ([1]) is the childID
                 childLinks.add(cUrl); //add them to the temporary list
             }
             result.setChildren(childLinks); //set the list to the page's child links
             //Body, MetaDescription and ParentURL are all not needed for our use -> set to empty string
+            
+            List<String> parentLinks = new LinkedList<>();
+            Set<Object[]> pLinks = child_parent.subSet(new Object[] {id}, new Object[] {id, null});
+            for (Object[] pLink : pLinks) {
+            	String pUrl = pageID_url.get((Long)(pLink[1]));
+            	parentLinks.add(pUrl);
+            }
+            
             result.setBody("");
             result.setMetaDescription("");
 
