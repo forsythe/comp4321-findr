@@ -73,7 +73,7 @@ public class JSoupParser implements Parser {
 
             LinkedHashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
             LinkedHashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
-            
+
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;
 
@@ -90,7 +90,7 @@ public class JSoupParser implements Parser {
                     .setSize(contentLengthLong)
                     .setBody(rawBody)
                     .setChildren(getLinks(doc, baseURL))
-                    .setTitle(doc.title())
+                    .setTitle(doc.title().isEmpty() ? baseURL : doc.title())
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
                     .setTitleKeywordsAndFrequencies(titleKeywords)
