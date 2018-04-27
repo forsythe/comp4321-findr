@@ -10,7 +10,7 @@ body {
   background-position: bottom ;
   /* background-color: rgb(209, 244, 236); */
   background-size: 100% 100%;
-  overflow:hidden;
+  /*overflow:hidden;*/
 }
 
 #logo_searchbar{
@@ -160,7 +160,7 @@ a{
 a.similar-page, a.similar-page:active, a.similar-page:hover, a.similar-page:visited {
     position: relative;
     text-decoration: none;
-    color: #388E8E;
+    color:  #388E8E;
     opacity: 0.8;
     transition: all 0.15s ease-in-out 0s;
 }
@@ -185,4 +185,50 @@ a.lower-bar:after {
 
 a.lower-bar:hover:after {
     transform: scaleX(1);
+}
+
+.button-list{
+  width: 15%;
+  position: fixed;
+  top: 3vh;
+  left: 85%;
+}
+
+.bt_image{
+  width: 28%;
+  padding: 0;
+  margin: 0;
+  margin-right: 3%;
+  outline: transparent solid 0px;
+}
+
+
+#topfive{
+  color:rgb(9, 21, 48);
+  height: 5vh;
+}
+
+#queryHistory{
+  width:20%;
+  height: 20vh;
+  background-image: url("../images/history_bg_2.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: fixed;
+  left:50%;
+  top: 2%;
+  overflow: hidden;
+}
+
+#queryHistory div{
+  display: inline-block;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin: 4% 7%;
+  font-style: oblique;
+  font-weight: bold;
+}
+
+.no_margin{
+  margin: 0;
 }

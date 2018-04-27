@@ -6,11 +6,13 @@ import com.findr.service.utils.stemming.Vectorizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,6 +66,7 @@ public class MultithreadedSearcher implements Searcher {
 	private NavigableSet<Object[]> triple_inverted;
 
 	private NavigableSet<Object[]> parent_child;
+	private NavigableSet<Object[]> child_parent;
 
 	private long totalPageCount = 0;
 	private long totalWordCount = 0;
@@ -154,7 +157,11 @@ public class MultithreadedSearcher implements Searcher {
 		parent_child = db.treeSet("parent_child")
 				.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
 				.createOrOpen();
-
+		
+		child_parent = db.treeSet("child_parent")
+				.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG))
+				.createOrOpen();
+	
 		totalPageCount = pageID_url.sizeLong();
 		totalWordCount = wordID_keyword.sizeLong();
 	}
@@ -393,7 +400,19 @@ public class MultithreadedSearcher implements Searcher {
 					}
 
 					page.setKeywordsAndFrequencies(keywordAndFreq);
-
+					Collection<String> childLinks = new LinkedList<>();
+					Set<Object[]> cLinks = parent_child.subSet(new Object[] {pID}, new Object[] {pID, null});
+					for (Object[] cLink : cLinks) {
+						childLinks.add(pageID_url.get((Long)cLink[1]));
+					}
+					Collection<String> parentLinks = new LinkedList<>();
+					Set<Object[]> pLinks = child_parent.subSet(new Object[] {pID}, new Object[] {pID, null});
+					for (Object[] pLink : pLinks) {
+						parentLinks.add(pageID_url.get((Long)pLink[1]));
+					}
+					page.setChildren(childLinks);
+					page.setParents(parentLinks);
+					
 					results.add(page);
 				}
 			}

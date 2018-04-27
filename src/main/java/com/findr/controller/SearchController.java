@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -44,8 +45,7 @@ public class SearchController {
      * @param map   The map object we can add attributes to and access later in the html using curly braces
      * @return The name of the html page to display
      */
-
-    @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/search"}, method = RequestMethod.GET, params = {"query", "page"})
     public String handleQueryRequest(
             @RequestParam("query") String query,
             @RequestParam("page") String page,
@@ -60,8 +60,9 @@ public class SearchController {
             pageNum = 1;
         }
         map.addAttribute("prevQuery", prevQuery);
+        
         query = query.trim();
-
+        
         //TODO: access db in a thread safe manner
         Double crawlTime = 0.0;
         if (!prevQuery.equals(query)) {
@@ -87,6 +88,81 @@ public class SearchController {
         map.addAttribute("pageNum", pageNum);
         map.addAttribute("query", query.trim());
         map.addAttribute("isMorning", HomeController.dayOrNight());
+
+        map.addAttribute("similarPages", "");
+        map.addAttribute("queryHistory", queryHistory);
+
+        return "search";
+    }
+    
+    
+    @RequestMapping(value = {"/search"}, method = RequestMethod.GET, params = {"query", "similarPages", "page"})
+    public String handleSimilarQueryRequest(
+            @RequestParam("query") String query,
+            @RequestParam("similarPages") String similarPages,
+            @RequestParam("page") String page,
+            Model map) {
+    
+        int pageNum;
+        try {
+            pageNum = Integer.parseInt(page);
+            if (pageNum < 1)
+                throw new IllegalArgumentException();
+        } catch (Exception e) {
+            pageNum = 1;
+        }
+        map.addAttribute("prevQuery", prevQuery);
+        
+        query = query.trim();
+
+        String[] querySplit = query.split(" ");
+        LinkedHashSet<String> querySet = new LinkedHashSet<String>();
+        for (String s : querySplit) {
+        	querySet.add(s.trim());
+        }
+        
+        String[] similarPagesSplit = similarPages.split(" ");
+        LinkedHashSet<String> similarPagesSet = new LinkedHashSet<String>();
+        for (String s : similarPagesSplit) {
+        	similarPagesSet.add(s.trim());
+        }
+        
+        LinkedHashSet<String> noUseSet = new LinkedHashSet<String>(querySet);
+        noUseSet.retainAll(similarPagesSet);
+        
+        for (String s : similarPagesSet) {
+        	if (!noUseSet.contains(s)) {
+        		query += " " + s.trim();
+        	}
+        }
+        query.trim();
+        
+        //TODO: access db in a thread safe manner
+        Double crawlTime = 0.0;
+        if (!prevQuery.equals(query)) {
+            results.clear();
+//            for (int k = 0; k < 35; k++)
+//                results.add("This is (" + query + ") result #" + k);
+            List<String> tempQueryHolder = new ArrayList<>();
+            tempQueryHolder.add(query);
+
+            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
+            prevQuery = query;
+            queryHistory.add(prevQuery);
+        }
+
+        map.addAttribute("results", paginate(results, pageNum, RESULTS_PER_PAGE));
+        int numResultPages = (int) Math.max(1, Math.ceil((double) results.size() / RESULTS_PER_PAGE));
+        pageNum = Math.min(numResultPages, pageNum);
+
+        map.addAttribute("crawlTime", String.format("%.2f", crawlTime));
+        map.addAttribute("numResultPages", numResultPages);
+        map.addAttribute("totalCrawledPages", results.size());
+
+        map.addAttribute("pageNum", pageNum);
+        map.addAttribute("query", query.trim());
+        map.addAttribute("isMorning", HomeController.dayOrNight());
+        map.addAttribute("similarPages", similarPages);
 
         map.addAttribute("queryHistory", queryHistory);
 

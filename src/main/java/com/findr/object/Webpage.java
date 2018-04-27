@@ -141,5 +141,10 @@ public class Webpage {
     public Collection<String> getParents() {
         return parents;
     }
+    
+    public Webpage setParents(Collection<String> parents) {
+    	this.parents = parents;
+    	return this;
+    }
 
 }
