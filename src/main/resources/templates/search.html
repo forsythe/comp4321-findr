@@ -18,28 +18,17 @@
         <image th:if="${isMorning}==false" src="../static/images/logo_v2.png"
                th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
+    
     <div class="image_text">
-        <!--image th:if="${isMorning}==true" src="../static/images/talk_bubble2.png"
-               th:attr="src=@{/images/talk_bubble2.png}" alt="bubble" id="bubble"/-->
-        <!--image th:if="${isMorning}==false" src="../static/images/talk_bubble.png"
-               th:attr="src=@{/images/talk_bubble.png}" alt="bubble" id="bubble"/-->
+        <span>You previously searched for:</span>
+        <br>
+        <span><a th:text="${prevQuery}" th:href="@{/search(query=${prevQuery},page=1)}"></a></span>
+   	    <span>&nbsp;</span>
+    </div>
 
-        <!--<div class="centered">-->
-        <!--<span th:text="'you searched for ' + ${query} + ', page ' + ${pageNum}">-->
-        <!--you prev search for...-->
-        <!--</span>-->
-        <!--<br/>-->
-        <!--<span th:text="'you previously searched for ' + ${prevQuery}">you search for...</span>-->
-        <!--</div>-->
-        <!--<div>-->
-        <!--<p class="black">You previously searched for:</p>-->
-        <!--<div th:each="historyItem : ${queryHistory}">-->
-        <!--<p th:text="${historyItem}" class="black"></p>-->
-        <!--</div>-->
-        <!--</div>-->
-        <div class="black">
-            <p class="black">You previously searched for:</p>
-            <p><a th:text="${prevQuery}" th:href="@{/search(query=${prevQuery},page=1)}"></a></p>
+    <div id ="queryHistory">
+        <div th:each="historyItem : ${queryHistory}" >
+            <p th:text="${historyItem}" class="no_margin">QueryHistory</p>
         </div>
     </div>
 
@@ -53,17 +42,25 @@
 </div>
 
 
+
+
 <div class = "button-list">
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_5_2.png"
     th:attr="src=@{/images/button_5_2.png}" class="bt_image" onclick="showHideTop5()"
     th:onclick="'javascript:showHideTop5();'"/>
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_index_2.png"
     th:attr="src=@{/images/button_index_2.png}" class="bt_image" />
+    <input type="image" th:if="${isMorning}==true" src="../static/images/button_his_2.png"
+    th:attr="src=@{/images/button_his_2.png}" class="bt_image" onclick="showHideHis()"
+    th:onclick="'javascript:showHideHis();'" />
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_5.png"
            th:attr="src=@{/images/button_5.png}" class="bt_image" onclick="showHideTop5()"
            th:onclick="'javascript:showHideTop5();'"/>
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_index.png"
            th:attr="src=@{/images/button_index.png}" class="bt_image" />
+    <input type="image" th:if="${isMorning}==false" src="../static/images/button_his.png"
+   th:attr="src=@{/images/button_his.png}" class="bt_image" onclick="showHideHis()"
+   th:onclick="'javascript:showHideHis();'"/>
 </div>
 
 <div class="content-body">
@@ -149,6 +146,14 @@
 		}
         function showHideTop5() {
             var x = document.getElementById("topfive");
+            if (x.style.display === "none") {
+            x.style.display = "block";}
+            else {
+            x.style.display = "none";
+            }
+        }
+        function showHideHis(){
+            var x = document.getElementById("queryHistory");
             if (x.style.display === "none") {
             x.style.display = "block";}
             else {

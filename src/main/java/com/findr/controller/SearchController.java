@@ -28,6 +28,7 @@ import java.util.List;
 @Scope("session")
 public class SearchController {
     private static final int RESULTS_PER_PAGE = 10;
+    private static final int MAX_RESULTS = 50;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
 
@@ -72,7 +73,7 @@ public class SearchController {
             List<String> tempQueryHolder = new ArrayList<>();
             tempQueryHolder.add(query);
 
-            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
+            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, MAX_RESULTS)));
             prevQuery = query;
             queryHistory.add(prevQuery);
         }
@@ -146,7 +147,7 @@ public class SearchController {
             List<String> tempQueryHolder = new ArrayList<>();
             tempQueryHolder.add(query);
 
-            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, 22)));
+            crawlTime = Timer.measure(() -> results.addAll(searcher.search(tempQueryHolder, MAX_RESULTS)));
             prevQuery = query;
             queryHistory.add(prevQuery);
         }

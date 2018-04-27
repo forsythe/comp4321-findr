@@ -23,6 +23,8 @@ public class JSoupMultithreadedCrawler implements Crawler {
     private volatile boolean running = true;
     private ReentrantLock lockSeenURLs = new ReentrantLock();
 
+    private String requiredSubdomain = "";
+
     /**
      * @param numThreads Number of threads to use for crawling
      */
@@ -63,6 +65,14 @@ public class JSoupMultithreadedCrawler implements Crawler {
         //log.info("Crawl completed in {} seconds", elapsedTimeSec);
 
         return new ArrayList<>(indexQueue);
+    }
+
+    public String getRequiredSubdomain() {
+        return requiredSubdomain;
+    }
+
+    public void setRequiredSubdomain(String requiredSubdomain) {
+        this.requiredSubdomain = requiredSubdomain;
     }
 
     class CrawlTask implements Runnable {
@@ -106,8 +116,10 @@ public class JSoupMultithreadedCrawler implements Crawler {
                         for (String link : page.getChildren()) {
                             System.out.println("-- child: " + link);
                             if (!seenURLs.contains(link)) {
-                                boolean status = crawlQueue.offer(link); //may fail silently if queue full
-                                //    log.info("Insert {{}} into crawlQueue was {{}}", link, status);
+                                if (link.contains(requiredSubdomain)) {
+                                    boolean status = crawlQueue.offer(link); //may fail silently if queue full
+                                    //    log.info("Insert {{}} into crawlQueue was {{}}", link, status);
+                                }
                             } else {
                                 //    log.info("already saw {{}}, skip", link);
                             }

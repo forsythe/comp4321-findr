@@ -9,7 +9,7 @@ public class SpiderPhase1Test {
 	public void test() {
 		System.out.println("Starting Phase1 task");
 		SpiderPhase1 sp1 = new SpiderPhase1();
-		sp1.run("http://www.cse.ust.hk/", 100, 600);
+		sp1.run("http://www.cse.ust.hk/", 6000, 1800);
 		System.out.println("DONE");
 	}
 

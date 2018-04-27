@@ -1,6 +1,7 @@
 package com.findr.service.searcher;
 
 import com.findr.object.Webpage;
+import com.findr.scheduled.CrawlAndIndexTask;
 import com.findr.service.indexer.MapDBIndexer;
 import com.findr.service.utils.stemming.Vectorizer;
 
@@ -36,11 +37,15 @@ import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
 import org.mapdb.serializer.SerializerArrayTuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Multithreaded implementation of the Searcher interface.
  */
 public class MultithreadedSearcher implements Searcher {
+    private static final Logger log = LoggerFactory.getLogger(MultithreadedSearcher.class);
+	
 	private static final int NUM_OF_SEARCHER_THREAD = 3;
 	private static MultithreadedSearcher searcher = null;
 
@@ -149,9 +154,10 @@ public class MultithreadedSearcher implements Searcher {
 				.createOrOpen();
 
 		triple_inverted = db.treeSet("tripled_inverted")
-				.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.LONG, Serializer.LONG,
-						Serializer.LONG,
-						Serializer.INTEGER))
+				.serializer(new SerializerArrayTuple(Serializer.LONG, Serializer.INTEGER,
+													 Serializer.LONG, Serializer.INTEGER,
+													 Serializer.LONG, Serializer.INTEGER,
+													 Serializer.LONG))
 				.createOrOpen();
 
 		parent_child = db.treeSet("parent_child")
@@ -262,7 +268,7 @@ public class MultithreadedSearcher implements Searcher {
 					ArrayList<Long> currDoc = new ArrayList<Long>();
 					for (Long pID : phraseMap.keySet()) {
 						currDoc.add(pID);
-						System.out.println(pageID_title.get(pID));
+						log.info("{{}}", pageID_title.get(pID));
 					}
 					retrievedDocs.add(currDoc);
 				}
@@ -289,9 +295,9 @@ public class MultithreadedSearcher implements Searcher {
 			// Step 2
 			filteredDocs.removeAll(removeWeightsSum.keySet());
 			
-			System.out.println("Documents to rank:");
+			log.info("Documents to rank:");
 			for (Long pID : filteredDocs) {
-				System.out.println(pageID_title.get(pID));
+				log.info(pageID_title.get(pID));
 			}
 
 			// Step 3
@@ -303,7 +309,7 @@ public class MultithreadedSearcher implements Searcher {
 			// From https://guangchun.files.wordpress.com/2012/05/searchenginereport.pdf, use alpha = log5
 
 			// First, VSM
-			System.out.println("Calculating VSM scores");
+			log.info("Calculating VSM scores");
 			Double simpleVsmScore = new Double(0.0);
 			for (Long pID : filteredDocs) {
 				if (!simpleWeightsSum.isEmpty() && !simpleWeightsSqrSum.isEmpty()) {
@@ -332,10 +338,8 @@ public class MultithreadedSearcher implements Searcher {
 					sortedByVSM.put(vsmScore, list);
 				}
 
-				System.out.print("(" + pageID_title.get(pID).toString() + ") ");
-				System.out.print("Simple score: " + simpleVsmScore.toString() + ", ");
-				System.out.print("Phrase score: " + phraseVsmScore.toString() + ", ");
-				System.out.println("Total score: " + vsmScore.toString());
+				log.info("({}) Simple score: {}, Phrase score: {}, Total score: {}",
+						pageID_title.get(pID), simpleVsmScore, phraseVsmScore, vsmScore);
 			}
 
 			// Then, calculate aggregate score
@@ -365,10 +369,8 @@ public class MultithreadedSearcher implements Searcher {
 					Double w = 0.8;
 					Double score = titleMult*(w*vsmScore + (1 - w)*prScore/(Math.log(vsmRank) + alpha));
 
-					System.out.print("Title multiplier: " + titleMult.toString() + ", ");
-					System.out.print("VSM score: " + vsmScore.toString() + ", ");
-					System.out.print("PR score: " + prScore.toString() + ", ");
-					System.out.println("Score: " + score.toString() + ", DocID: " + pID.toString() + ", Title: " + pageID_title.get(pID));
+					log.info("Title multiplier: {}, VSM score: {}, PR score: {}, Score: {}, DocID: {}, Title: {}",
+								titleMult, vsmScore, prScore, score, pID, pageID_title.get(pID));
 
 					if (sortedByScore.containsKey(score))
 						sortedByScore.get(score).add(pID);
@@ -386,7 +388,7 @@ public class MultithreadedSearcher implements Searcher {
 				List<Long> pages = lastEntry.getValue();
 				for (Long pID : pages) {
 					Webpage page = Webpage.create();
-					System.out.println(pID.toString() + " (" + lastEntry.getKey().toString() + ")");
+					log.info("{} ({})", pID, lastEntry.getKey());
 					page.setTitle(pageID_title.get(pID));
 					page.setMyUrl(pageID_url.get(pID));
 					page.setLastModified(pageID_lastmodified.get(pID));
@@ -472,13 +474,13 @@ public class MultithreadedSearcher implements Searcher {
 		// Step 5
 		lhm.get("phrase").removeAll(new HashSet<>(lhm.get("remove")));
 
-		System.out.println("Query: " + query + "\n");
+		log.info("Query: {}\n", query);
 		for (String key : lhm.keySet()) {
-			System.out.println("Type: " + key);
+			log.info("Type: {}", key);
 			for (String s : lhm.get(key)) {
-				System.out.println(s);
+				log.info(s);
 			}
-			System.out.println("===============");
+			log.info("===============");
 		}
 
 		return lhm;
@@ -504,23 +506,23 @@ public class MultithreadedSearcher implements Searcher {
 		@Override
 		public Double call() throws Exception {
 			double queryLength = 0.0;
-			System.out.println("LENGTH: " + queryList.size());
+			log.debug("LENGTH: {}", queryList.size());
 			for (String query : queryList) {
-				System.out.println("QUERY: " + query);
+				log.debug("QUERY: {}", query);
 				LinkedHashMap<String, Integer> tokenizedQuery = Vectorizer.vectorize(query, true);
-				System.out.println("TOKENS: ");
+				log.debug("TOKENS: ");
 				for (String token : tokenizedQuery.keySet()) {
-					System.out.println(token);
+					log.debug("{}", token);
 				}
 
 				for (String s : tokenizedQuery.keySet()) {
-					System.out.println("TOKENIZED: " + s);
+					log.debug("TOKENIZED: {}", s);
 					for (int i = 0; i < tokenizedQuery.get(s).intValue(); i++) {
 						queryLength++;
-						System.out.println("querylength: " + queryLength);
+						log.debug("querylength: {}", queryLength);
 						try {
 							wordList.put(s);
-							System.out.println("Done");
+							log.debug("Done");
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -559,7 +561,7 @@ public class MultithreadedSearcher implements Searcher {
 		@Override
 		public void run() {
 			try {
-				System.out.println("[SimpleSearcher] Start");
+				log.info("Start");
 				String word = wordList.take();
 				while (!word.equals("")) {
 					Long wID = keyword_wordID.get(word);
@@ -568,7 +570,7 @@ public class MultithreadedSearcher implements Searcher {
 					while (it.hasNext()) {
 						Object[] wordDocPair = it.next();
 						Long pID = (Long)wordDocPair[1]; 
-						System.out.println("Doc:" + pageID_title.get(pID));
+						log.info("Doc: {}", pageID_title.get(pID));
 						Integer freq = (Integer)wordDocPair[2];
 						//Posting p = (Posting)wordDocPair[1];
 						double docWeight = documentWeight(freq, pageID_tfmax.get(pID), documents.size());
@@ -577,7 +579,7 @@ public class MultithreadedSearcher implements Searcher {
 					}
 					word = wordList.take();
 				}
-				System.out.println("[SimpleSearcher] End");
+				log.info("End");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}	
@@ -594,25 +596,25 @@ public class MultithreadedSearcher implements Searcher {
 		}
 
 		private void printTriple(Object[] o) {
-			String s = "[PhraseSearcher] ";
-			for (int i = 0; i < 5; i++) {
-				if (i < 3) {
+			String s = "";
+			for (int i = 0; i < 7; i++) {
+				if (i == 0 || i == 2 || i == 4) {
 					s += wordID_keyword.get(o[i]).toString() + ",";
 				} else {
 					s += o[i].toString() + ",";
 				}
 			}
-			System.out.print(s);
+			log.info(s);
 		}
 
 		private void printSeperator() {
-			System.out.println("[PhraseSearcher] ===========================================");
+			log.info("===========================================");
 		}
 
 		/**
 		 * w_i,j = tf_i,j * log_2(N/df_j)
-		 * @param tf the term frequency of word/phrase j in document i tf_i,j
-		 * @param df document frequency of word/phrase j df_j
+		 * @param tf the term frequency of word j in document i tf_i,j
+		 * @param df document frequency of word j df_j
 		 * @return
 		 */
 		private double getDocumentWeight(double tf, double df) {
@@ -621,8 +623,8 @@ public class MultithreadedSearcher implements Searcher {
 
 		/**
 		 * w_Q,j = tf_Q,j * log_2(N/df_j)
-		 * @param tf the term frequency of word/phrase j in query Q tf_Q,j
-		 * @param df document frequency of word/phrase j df_j
+		 * @param tf the term frequency of word j in query Q tf_Q,j
+		 * @param df document frequency of word j df_j
 		 * @return
 		 */
 		private double getQueryWeight(double tf, double df) {
@@ -648,8 +650,10 @@ public class MultithreadedSearcher implements Searcher {
 				Long id2 = keyword_wordID.get(word2);
 				Long id3 = keyword_wordID.get(word3);
 
-				Set<Object[]> documents = triple_inverted.subSet(new Object[] {id1}, new Object[] {id1, id2, id3,
-						d, null});
+				Set<Object[]> documents = triple_inverted.subSet(new Object[] {id1}, new Object[] {id1, null,
+																								   id2, null,
+																								   id3, null,
+																								   d});
 
 				if (documents.isEmpty()) {
 					return false;
@@ -657,8 +661,8 @@ public class MultithreadedSearcher implements Searcher {
 					for (Object[] document : documents) {					
 						// If all words is found in d at least once, go to next word
 						// Otherwise, return false
-						if (((Long)document[0]).equals(id1) && ((Long)document[1]).equals(id2) &&
-								((Long)document[2]).equals(id3) && ((Long)document[3]).equals(d)) {
+						if (((Long)document[0]).equals(id1) && ((Long)document[2]).equals(id2) &&
+								((Long)document[4]).equals(id3) && ((Long)document[6]).equals(d)) {
 							found = true;
 							break;
 						}
@@ -683,12 +687,13 @@ public class MultithreadedSearcher implements Searcher {
 				TreeMap<Long, Double> d1 = phraseSearch(words.subList(0, midIndex));
 				TreeMap<Long, Double> d2 = phraseSearch(words.subList(midIndex, words.size()));
 
-				System.out.println("[PhraseSearcher] Searching size > 2");
-				System.out.print("[PhraseSearcher] Words: ");
+				log.info("Searching size = {}", words.size());
+				
+				String wordLog = "Words: ";
 				for (String word : words) {
-					System.out.print(word + ",");
+					wordLog += word + ",";
 				}
-				System.out.println();
+				log.info(wordLog);
 
 				TreeMap<Long, Double> dl = new TreeMap<Long, Double>();
 
@@ -712,7 +717,7 @@ public class MultithreadedSearcher implements Searcher {
 				printSeperator();
 				return dl;
 			} else if (words.size() == 2) {
-				System.out.println("[PhraseSearcher] Searching size = 2");
+				log.info("Searching size = 2");
 
 				String word1 = words.get(0);
 				String word2 = words.get(1);
@@ -720,48 +725,72 @@ public class MultithreadedSearcher implements Searcher {
 				Long id1 = keyword_wordID.get(word1);
 				Long id2 = keyword_wordID.get(word2);
 
-				System.out.println("[PhraseSearcher] Words: " + word1 + "," + word2);
+				log.info("Words: {},{}", word1, word2);
 
-				Set<Object[]> documents = triple_inverted.subSet(new Object[] {id1}, new Object[] {id1, id2, null,
-						null, null});
+				Set<Object[]> documents = triple_inverted.subSet(new Object[] {id1}, new Object[] {id1, null,
+																								   id2, null,
+																								   null, null,
+																								   null});
 
 				Iterator<Object[]> it = documents.iterator();
 				TreeMap<Long, Double> d = new TreeMap<Long, Double>();
+				TreeMap<Long, LinkedHashMap<Long, Integer>> intermediateScores = new TreeMap<Long, LinkedHashMap<Long, Integer>>();
 
 				while(it.hasNext()) {
 					Object[] triple = it.next();
-					Long wID1 = (Long)triple[0];
-					Long wID2 = (Long)triple[1];
 					printTriple(triple);
+					
+					Long wID1 = (Long)triple[0];
+					Long wID2 = (Long)triple[2];
 
 					if (wID1.equals(id1) && wID2.equals(id2)) {
-						Long pID = (Long)triple[3];
-						Integer freq = (Integer)triple[4];
-						d.put(pID, freq.doubleValue()); // Store document term frequency for later calculation
-						System.out.print(" [KEPT]");
+						Long pID = (Long)triple[6];
+						
+						Integer tf_ij1 = (Integer)triple[1];
+						Integer tf_ij2 = (Integer)triple[3];
+						
+						LinkedHashMap<Long, Integer> tempScores = new LinkedHashMap<Long, Integer>();
+						tempScores.put(wID1, tf_ij1);
+						tempScores.put(wID2, tf_ij2);
+						intermediateScores.put(pID, tempScores);
+						
+						d.put(pID, 0.0);
+						log.info(" [KEPT]");
 					}
-					System.out.println();
 				}
-
+				
 				for (Long pID : d.keySet()) {
-					Integer tf_Qj = 1; // tf_Q,j
-					Integer tf_ij = d.get(pID).intValue(); // tf_i,j
-					Integer df_j = d.size(); // d_j
-					Double queryWeight = getQueryWeight(tf_Qj, df_j);
-					Double docWeight = getDocumentWeight(tf_ij, df_j);
-
+					Long wID1 = (Long)intermediateScores.get(pID).keySet().toArray()[0];
+					Long wID2 = (Long)intermediateScores.get(pID).keySet().toArray()[1];
+					
+					Integer tf_ij1 = (Integer)intermediateScores.get(pID).get(wID1);
+					Integer tf_ij2 = (Integer)intermediateScores.get(pID).get(wID2);
+					
+					// TODO: Properly count tf_Qj
+					Integer tf_Qj1 = 1;
+					Integer tf_Qj2 = 1;
+					
+					Integer df_j = d.size();
+					
 					Set<Object[]> wordsInDi = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
 					Integer wordCountDi = wordsInDi.size();
-
-					Double weight = queryWeight*docWeight/Math.sqrt(wordCountDi); // tf_Q,j*tf_i,j/sqrt(number of words in D_i)
+					
+					Double queryWeight1 = getQueryWeight(tf_Qj1, df_j);
+					Double queryWeight2 = getQueryWeight(tf_Qj2, df_j);
+					Double docWeight1 = getDocumentWeight(tf_ij1, df_j);
+					Double docWeight2 = getDocumentWeight(tf_ij2, df_j);
+					
+					Double weight = queryWeight1*docWeight1/Math.sqrt(wordCountDi); // tf_Q,j*tf_i,j/sqrt(number of words in D_i)
+					weight += queryWeight2*docWeight2/Math.sqrt(wordCountDi);
+					
 					d.put(pID, weight);
 				}
 
 				printSeperator();
 				return d;
 			} else if (words.size() == 1) { // 1 word only
-				System.out.println("[PhraseSearcher] Searching size = 1");
-				System.out.println("[PhraseSearcher] Word: " + words.get(0));
+				log.info("Searching size = 1");
+				log.info("Word: {}", words.get(0));
 
 				String word = words.get(0);
 				Long wID = keyword_wordID.get(word);
@@ -771,28 +800,32 @@ public class MultithreadedSearcher implements Searcher {
 
 				while (it.hasNext()) {
 					Object[] triple = it.next();
-					System.out.print("[PhraseSearcher] " + wordID_keyword.get((Long)triple[0]).toString() + ",");
-					System.out.print(((Long)triple[1]).toString() + "," + ((Integer)triple[2]).toString());
+					String tripleLog = wordID_keyword.get((Long)triple[0]).toString() + ","
+										+ ((Long)triple[1]).toString() + "," + ((Integer)triple[2]).toString();
 
 					if (((Long)triple[0]).equals(wID)) {
-						Long pID = (Long)triple[1]; 
-						Integer freq = (Integer)triple[2];
-						d.put(pID, freq.doubleValue()); // Store document term frequency for later calculation
-						System.out.print(" [KEPT]");
+						Long pID = (Long)triple[1];
+						Integer tf_ij = (Integer)triple[2];
+						d.put(pID, tf_ij.doubleValue());
+						
+						tripleLog += " [KEPT]";
 					}
-					System.out.println();
+					
+					log.info(tripleLog);
 				}
-
+				
 				for (Long pID : d.keySet()) {
-					Integer tf_Qj = 1; // tf_Q,j
-					Integer tf_ij = d.get(pID).intValue(); // tf_i,j
-					Integer df_j = d.size(); // d_j
-					Double queryWeight = getQueryWeight(tf_Qj, df_j);
-					Double docWeight = getDocumentWeight(tf_ij, df_j);
-
+					// TODO: Properly count tf_Qj
+					Integer tf_Qj = 1;
+					Integer tf_ij = d.get(pID).intValue();
+					Integer df_j = d.size();
+					
 					Set<Object[]> wordsInDi = content_forward.subSet(new Object[] {pID}, new Object[] {pID, null, null});
 					Integer wordCountDi = wordsInDi.size();
-
+					
+					Double queryWeight = getQueryWeight(tf_Qj, df_j);
+					Double docWeight = getDocumentWeight(tf_ij, df_j);
+					
 					Double weight = queryWeight*docWeight/Math.sqrt(wordCountDi); // tf_Q,j*tf_i,j/sqrt(number of words in D_i)
 					d.put(pID, weight);
 				}
@@ -807,7 +840,7 @@ public class MultithreadedSearcher implements Searcher {
 		@Override
 		public void run() {
 			try {
-				System.out.println("[PhraseSearcher] Start");
+				log.info("Start");
 
 				List<String> words = new ArrayList<String>();
 				String word = wordList.take();
@@ -816,23 +849,22 @@ public class MultithreadedSearcher implements Searcher {
 					word = wordList.take();
 				}
 
-				System.out.println("[PhraseSearcher] Size of wordList: " + words.size());
+				log.info("Size of wordList: {}", words.size());
 				for (String w : words) {
-					System.out.println("[PhraseSearcher] " + w);
+					log.info("{}" + w);
 				}
 
 				TreeMap<Long, Double> documents = phraseSearch(words);
 				normalisedWeights.putAll(documents);
 
-				System.out.println("[PhraseSearcher] Documents retrieved:");
+				log.info("Documents retrieved:");
 				for (Entry<Long, Double> d : normalisedWeights.entrySet()) {
 					Long pID = d.getKey();
 					Double score = d.getValue();
-					System.out.print("[PhraseSearcher] " + pID.toString() + " " + pageID_url.get(pID));
-					System.out.println(" (" + score + ")");
+					log.info("{} {} ({})", pID, pageID_url.get(pID), score);
 				}
 
-				System.out.println("[PhraseSearcher] End");
+				log.info("End");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}	
@@ -849,7 +881,7 @@ public class MultithreadedSearcher implements Searcher {
 		searchList.add("HKUST");
 		List<Webpage> result = searcher.search(searchList, 30);
 		for (Webpage wp : result) {
-			System.out.println(wp.getTitle());
+			log.info(wp.getTitle());
 		}
 	}
 }
