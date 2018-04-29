@@ -217,20 +217,32 @@ public class JSoupParser implements Parser {
             System.out.println(e.toString());
         }
         */
-
+        
         Collection<String> links = new ArrayList<>();
 
         linkElements.stream()
                 .filter(x -> !x.attr("href").isEmpty())
-                .filter(x -> !x.attr("abs:href").endsWith("mp4"))
+                .filter(x -> !x.attr("abs:href").toLowerCase().endsWith(".mp4"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".wmv"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".avi"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".mpg"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".mpeg"))
                 .filter(x -> !x.attr("href").startsWith("javascript"))
-                .filter(x -> !x.attr("href").endsWith("mp3"))
-                .filter(x -> !x.attr("href").endsWith("zip"))
-                .filter(x -> !x.attr("href").endsWith("tar.gz"))
-                .filter(x -> !x.attr("href").endsWith("jpg"))
-                .filter(x -> !x.attr("href").endsWith("png"))
-                .filter(x -> !x.attr("href").endsWith("JPG"))
-                .filter(x -> !x.attr("href").endsWith("pdf"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".mp3"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".wav"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".zip"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".tar.gz"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".jpg"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".png"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".jpg"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".jpeg"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".pdf"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".ppt"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".pptx"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".doc"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".docx"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".xls"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".xlsx"))
                 .forEach(x -> links.add(x.attr("href").split("\\?")[0]));
 
         Collection<String> linksFixed = new ArrayList<>();
