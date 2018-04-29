@@ -13,9 +13,9 @@
 
 <div id="logo_searchbar">
     <a href="/" class="hidden">
-        <image th:if="${isMorning}==true" src="../static/images/logo_searchEngine2.png"
+        <img th:if="${isMorning}==true" src="../static/images/logo_searchEngine2.png"
                th:attr="src=@{/images/logo_searchEngine2.png}" id="logo" alt="logo"/>
-        <image th:if="${isMorning}==false" src="../static/images/logo_v2.png"
+        <img th:if="${isMorning}==false" src="../static/images/logo_v2.png"
                th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
     
@@ -90,9 +90,29 @@
         <span th:text="${page.getScore()}">Score placeholder</span>
         <br>
 
+        <span id="topfive">
+            <span class="bold">Parent links: </span>
+            <br>
+            <span th:each="parent, iter : ${page.getParents()}">
+            	<span th:if="${iter.index < 5}">
+            	    <span th:text="${parent}"></span>
+            	    <br>
+           	    </span>
+           	</span>
+            
+            <span class="bold">Child links: </span>
+            <br>
+            <span th:each="child, iter : ${page.getChildren()}">
+            	<span th:if="${iter.index < 5}">
+            	    <span th:text="${child}"></span>
+            	    <br>
+           	    </span>
+           	</span>
+        </span>
+        
         <span class="bold">Keywords: </span>
-        <span th:each="keywordFreqPair, index : ${page.getTopNKeywords(5)}">
-            <span th:text="!${index.last} ?
+        <span th:each="keywordFreqPair, iter : ${page.getTopNKeywords(5)}">
+            <span th:text="!${iter.last} ?
             ${keywordFreqPair.getKey()} + ' ' + ${keywordFreqPair.getValue()} + ',' :
             ${keywordFreqPair.getKey()} + ' ' + ${keywordFreqPair.getValue()}"></span>
         </span>
@@ -102,23 +122,13 @@
         	<a th:href="@{/search(query=${query},similarPages=${similarPages},page=1)}"
                class="bold lower-bar similar-page">Get similar pages</a>
         </span>
-
-        <div id="topfive">
-            <span class="bold">Parent links: </span>
-            <span th:each="parent : ${page.getParents()}">
-            <span th:text="${parent}"></span>
-            <br/>
-            <span class="bold">Child links: </span>
-            <span th:each="child : ${page.getChildren()}">
-            <span th:text="${child}"></span>
-        </div>
     </div>
 
     <div class="num_bar">
         <hr>
         <table>
             <tr>
-                <td th:each="i: ${#numbers.sequence(1,numResultPages)}">
+                <td th:each="i : ${#numbers.sequence(1,numResultPages)}">
                     <div th:switch="${i}" class="circle">
                         <p th:case="${pageNum}" th:text="${i}" class="page-num">1</p>
                         <p th:case="*"><a th:text="${i}"

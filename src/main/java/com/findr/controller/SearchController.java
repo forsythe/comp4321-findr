@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
 @Controller
 @Scope("session")
 public class SearchController {
-    private static final int RESULTS_PER_PAGE = 10;
+    private static final int RESULTS_PER_PAGE = 50;
     private static final int MAX_RESULTS = 50;
     private List<Webpage> results = new ArrayList<>();
     private String prevQuery = "";
