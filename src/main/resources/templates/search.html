@@ -95,7 +95,7 @@
             <br>
             <span th:each="parent, iter : ${page.getParents()}">
             	<span th:if="${iter.index < 5}">
-            	    <span th:text="${parent}"></span>
+            	    <a th:href="${parent}" th:text="${parent}"></a>
             	    <br>
            	    </span>
            	</span>
@@ -104,7 +104,7 @@
             <br>
             <span th:each="child, iter : ${page.getChildren()}">
             	<span th:if="${iter.index < 5}">
-            	    <span th:text="${child}"></span>
+            	    <a th:href="${child}" th:text="${child}"></a>
             	    <br>
            	    </span>
            	</span>
