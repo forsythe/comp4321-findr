@@ -275,8 +275,9 @@ public class MapDBIndexer implements Indexer {
 						pageID++; //increment pageID for next page
 					}
 					parent_child.add(new Object[]{pID, childID});
+					child_parent.add(new Object[]{childID, pID});
 				}
-
+				/*
 				Collection<String> parentLinks = webpage.getParents();
 				for (String link : parentLinks) {
 					Long parentID = pageID;
@@ -289,7 +290,7 @@ public class MapDBIndexer implements Indexer {
 					}
 					child_parent.add(new Object[] {pID, parentID});
 				}
-
+				*/
 				//Handle the title keywords in the same way as the normal inverted/forward indices
 				LinkedHashMap<String, Integer> titleKeywords = webpage.getTitleKeywordsAndFrequencies();
 				for (String tKeyword : titleKeywords.keySet()) {
@@ -424,6 +425,9 @@ public class MapDBIndexer implements Indexer {
 	//commitAndClose() must be called to finish indexing to make the actual change (otherwise the file will get corrupted) 
 	@Override
 	public void commitAndClose() {
+		System.out.println("# of pages: " + pageID);
+		System.out.println("# of words: " + wordID);
+		
 		db.commit();
 		db.close(); //closes the db file -> cannot work with it anymore!
 	}

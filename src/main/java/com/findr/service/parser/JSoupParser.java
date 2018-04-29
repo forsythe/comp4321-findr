@@ -53,6 +53,7 @@ public class JSoupParser implements Parser {
             httpCon.setInstanceFollowRedirects(true);
 
             httpCon = handleRedirectHttpURLConnection(httpCon);
+            url = httpCon.getURL().toString();
             rawBody = getBody(httpCon);
 
             doc = Jsoup.parse(rawBody);
@@ -209,12 +210,13 @@ public class JSoupParser implements Parser {
         //Elements linkElements = doc.select("a[href]");
 
         Elements linkElements = doc.select("a");
-
+        /*
         Iterator<Element> it = linkElements.iterator();
         while (it.hasNext()) {
             Element e = (Element) it.next();
             System.out.println(e.toString());
         }
+        */
 
         Collection<String> links = new ArrayList<>();
 

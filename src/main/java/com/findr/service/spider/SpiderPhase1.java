@@ -34,7 +34,7 @@ public class SpiderPhase1 implements Spider {
         Indexer indexer = new MapDBIndexer();
         indexer.readDBFromDisk();
         indexer.addAllWebpageEntries(crawledPages);
-
+        /*
         try {
             File output = new File("spider_result.txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(output));
@@ -73,7 +73,7 @@ public class SpiderPhase1 implements Spider {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+		*/
         indexer.commitAndClose();
     }
 

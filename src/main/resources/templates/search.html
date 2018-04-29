@@ -105,12 +105,12 @@
 
         <div id="topfive">
             <span class="bold">Parent links: </span>
-            <span th:each="keywordFreqPair : ${page.getParents()}">
-            <span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+            <span th:each="parent : ${page.getParents()}">
+            <span th:text="${parent}"></span>
             <br/>
             <span class="bold">Child links: </span>
-            <span th:each="keywordFreqPair : ${page.getChildren()}">
-            <span th:text="${keywordFreqPair.getKey()} + ': ' + ${keywordFreqPair.getValue()} + ' | '"></span>
+            <span th:each="child : ${page.getChildren()}">
+            <span th:text="${child}"></span>
         </div>
     </div>
 
