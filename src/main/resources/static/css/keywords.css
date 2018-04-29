@@ -1,0 +1,66 @@
+body,html {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    background-image: url(../images/bg_keywords.png);
+    background-repeat:no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    overflow-x: hidden !important;
+}
+
+#search_bar{
+  width: 40%;
+}
+
+.button {
+    width: 80%;
+    margin: auto;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 12px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    word-wrap: break-word;
+}
+
+.button1 {
+    background-color: rgba(255, 255, 255,0.6);
+    color: black;
+    border: 2px solid #555555;
+}
+
+.button1:hover {
+    background-color: #555555;
+    color: white;
+}
+
+.wordlist{
+  width: 30%;
+  height: auto;
+  display:inline-block;
+  position: absolute;
+  top: 10vh;
+  padding: 0;
+}
+
+#word_list1{
+}
+
+#word_list2{
+  position: absolute;
+  top: 10vh;
+  left: 33%;
+}
+
+#word_list3{
+  position: absolute;
+  top: 10vh;
+  left: 66%;
+}

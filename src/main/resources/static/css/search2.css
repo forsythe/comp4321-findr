@@ -207,7 +207,7 @@ a.lower-bar:hover:after {
   position: fixed;
   left:50%;
   top: 2%;
-  overflow: hidden;
+  word-wrap: break-word;
 }
 
 #queryHistory div {
@@ -217,8 +217,15 @@ a.lower-bar:hover:after {
   margin: 4% 7%;
   font-style: oblique;
   font-weight: bold;
+
 }
 
 .no_margin{
+  margin: 0;
+}
+
+.bt_form{
+  display: inline;
+  padding: 0;
   margin: 0;
 }
