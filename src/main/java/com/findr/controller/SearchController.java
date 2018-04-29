@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Responsible for showing the search queries page. Each user gets their own.
@@ -36,6 +41,8 @@ public class SearchController {
 
     private static final int QUERY_HISTORY_SIZE = 5;
     private final CircularFifoQueue<String> queryHistory = new CircularFifoQueue<>(QUERY_HISTORY_SIZE);
+    private Set<String> sortedKeywords = new TreeSet<>();
+
 
     /**
      * Handles user query requests
@@ -168,6 +175,17 @@ public class SearchController {
         map.addAttribute("queryHistory", queryHistory);
 
         return "search";
+    }
+    
+    @RequestMapping(value = {"/keywords"}, method = RequestMethod.GET)
+    public String listKeywords(Model model) {
+    	
+    	if (sortedKeywords.isEmpty())
+    		sortedKeywords = searcher.getKeywords();
+    	
+    	model.addAttribute("wordSet", sortedKeywords);
+    	model.addAttribute("isMorning",HomeController.dayOrNight());
+    	return "keywords";
     }
     
     @RequestMapping("/wolframResult")

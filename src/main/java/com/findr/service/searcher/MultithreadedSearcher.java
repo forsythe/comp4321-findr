@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -493,6 +494,19 @@ public class MultithreadedSearcher implements Searcher {
 			return Collections.emptyList();
 		}
 	}
+	
+    public Set<String> getKeywords() {
+    	Set<String> result = new TreeSet<>();
+    	
+
+    	Collection<String> keywords = wordID_keyword.getValues();
+    	Iterator<String> it = keywords.iterator();
+    	while(it.hasNext()) {
+    		result.add(it.next());
+    	}
+    
+    	return result; 	
+    }
 
 	class QueryHandler implements Callable<Double> {
 		BlockingQueue<String> wordList;
