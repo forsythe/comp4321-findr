@@ -18,7 +18,7 @@
         <img th:if="${isMorning}==false" src="../static/images/logo_v2.png"
                th:attr="src=@{/images/logo_v2.png}" id="logo" alt="logo"/>
     </a>
-    
+
     <div class="image_text">
         <span>You previously searched for:</span>
         <br>
@@ -48,19 +48,30 @@
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_5_2.png"
     th:attr="src=@{/images/button_5_2.png}" class="bt_image" onclick="showHideTop5()"
     th:onclick="'javascript:showHideTop5();'"/>
-    <input type="image" th:if="${isMorning}==true" src="../static/images/button_index_2.png"
-    th:attr="src=@{/images/button_index_2.png}" class="bt_image" />
+
+    <form action="/keywords" th:attr="action=@{/subscribe}" method="get" target = _blank
+    th:target="_blank">
+      <input type="image" th:if="${isMorning}==true"
+      src="../static/images/button_index_2.png"
+      th:attr="src=@{/images/button_index_2.png}" class="bt_image"
+      value="Keywords" />
+    </form>
+
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_his_2.png"
     th:attr="src=@{/images/button_his_2.png}" class="bt_image" onclick="showHideHis()"
     th:onclick="'javascript:showHideHis();'" />
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_5.png"
            th:attr="src=@{/images/button_5.png}" class="bt_image" onclick="showHideTop5()"
            th:onclick="'javascript:showHideTop5();'"/>
+    <form action="/keywords" th:attr="action=@{/keywords}" method="get" target = _blank
+          th:target="_blank" class="bt_form" >
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_index.png"
-           th:attr="src=@{/images/button_index.png}" class="bt_image" />
+           th:attr="src=@{/images/button_index.png}" class="bt_image"  />
+    </form>
     <input type="image" th:if="${isMorning}==false" src="../static/images/button_his.png"
    th:attr="src=@{/images/button_his.png}" class="bt_image" onclick="showHideHis()"
    th:onclick="'javascript:showHideHis();'"/>
+
 </div>
 
 <div class="content-body">
@@ -90,7 +101,7 @@
         <span th:text="${page.getScore()}">Score placeholder</span>
         <br>
 
-        <span id="topfive">
+        <span class="topfive">
             <span class="bold">Parent links: </span>
             <br>
             <span th:each="parent, iter : ${page.getParents()}">
@@ -99,7 +110,7 @@
             	    <br>
            	    </span>
            	</span>
-            
+
             <span class="bold">Child links: </span>
             <br>
             <span th:each="child, iter : ${page.getChildren()}">
@@ -109,7 +120,7 @@
            	    </span>
            	</span>
         </span>
-        
+
         <span class="bold">Keywords: </span>
         <span th:each="keywordFreqPair, iter : ${page.getTopNKeywords(5)}">
             <span th:text="!${iter.last} ?
@@ -155,11 +166,13 @@
 			}
 		}
         function showHideTop5() {
-            var x = document.getElementById("topfive");
-            if (x.style.display === "none") {
-            x.style.display = "block";}
-            else {
-            x.style.display = "none";
+            var x = document.getElementsByClassName("topfive");
+            for (i = 0; i < x.length; i++) {
+              if (x[i].style.display === "none") {
+                x[i].style.display = "block";}
+              else {
+                x[i].style.display = "none";
+              }
             }
         }
         function showHideHis(){

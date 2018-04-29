@@ -186,6 +186,7 @@ a.lower-bar:hover:after {
   padding: 0;
   margin: 0;
   margin-right: 3%;
+  outline: none;
 }
 
 #topfive {
@@ -201,6 +202,7 @@ a.lower-bar:hover:after {
   position: fixed;
   left:50%;
   top: 2%;
+  word-wrap: break-word;
 }
 
 #queryHistory div {
@@ -212,5 +214,11 @@ a.lower-bar:hover:after {
 }
 
 .no_margin {
+  margin: 0;
+}
+
+.bt_form{
+  display: inline;
+  padding: 0;
   margin: 0;
 }
