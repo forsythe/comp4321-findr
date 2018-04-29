@@ -231,6 +231,7 @@ public class JSoupParser implements Parser {
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".mp3"))
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".wav"))
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".zip"))
+                .filter(x -> !x.attr("href").toLowerCase().endsWith(".rar"))
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".tar.gz"))
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".jpg"))
                 .filter(x -> !x.attr("href").toLowerCase().endsWith(".png"))
