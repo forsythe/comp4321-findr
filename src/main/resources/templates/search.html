@@ -52,11 +52,11 @@
     th:onclick="'javascript:showHideTop5();'"/>
 
     <form action="/keywords" th:attr="action=@{/keywords}" method="get" target = _blank
-    th:target="_blank">
+    th:target="_blank" class="bt_form">
       <input type="image" th:if="${isMorning}==true"
       src="../static/images/button_index_2.png"
-      th:attr="src=@{/images/button_index_2.png}" class="bt_image"
-      value="Keywords" />
+      th:attr="src=@{/images/button_index_2.png}"
+      value="Keywords" class = "bt_image" />
     </form>
 
     <input type="image" th:if="${isMorning}==true" src="../static/images/button_his_2.png"
