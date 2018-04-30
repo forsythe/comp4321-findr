@@ -128,13 +128,25 @@ public class JSoupParser implements Parser {
             }
 
             String baseURL = httpCon.getURL().toString();
+            String originalTitle = doc.title().isEmpty() ? baseURL : doc.title();
+            String title = originalTitle;
+    		Pattern urlTitlePattern = Pattern.compile("\\/([^\\/]*)(.htm)");
+    		Matcher urlTitleMatcher = urlTitlePattern.matcher(baseURL);
+    		while (urlTitleMatcher.find()) {
+    			if (!urlTitleMatcher.group(1).toLowerCase().equals("index")) {
+    				title = urlTitleMatcher.group(1).trim() + " - " + originalTitle;
+    			} else {
+    				title = originalTitle;
+    			}
+    		}
+    		System.out.println("TITLING: " + title);
 
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
                     .setSize(contentLengthLong)
                     .setBody(rawBody)
                     .setChildren(getLinks(doc, baseURL))
-                    .setTitle(doc.title().isEmpty() ? baseURL : doc.title())
+                    .setTitle(title)
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
                     .setTitleKeywordsAndFrequencies(titleKeywords)

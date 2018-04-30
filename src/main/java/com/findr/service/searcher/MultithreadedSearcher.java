@@ -459,6 +459,7 @@ public class MultithreadedSearcher implements Searcher {
 		lhm.get("simple").removeIf(item -> item == null || item.equals("") || item.equals("-"));
 
 		// Step 2
+		// Keep all words in "<word>"
 		Pattern phrasePattern = Pattern.compile("\"([^\"]*)\"");
 		Matcher phraseMatcher = phrasePattern.matcher(query);
 		while (phraseMatcher.find()) {
@@ -466,6 +467,7 @@ public class MultithreadedSearcher implements Searcher {
 		}
 		
 		// Step 3
+		// Remove all words in the format "-<word> " or "-<word>"
 		Pattern removePattern = Pattern.compile("(?<=-)(.*?)(?= |$)");
 		Matcher removeMatcher = removePattern.matcher(query);
 		while (removeMatcher.find()) {
