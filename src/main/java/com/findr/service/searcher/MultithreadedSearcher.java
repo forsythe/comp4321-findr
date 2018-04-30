@@ -80,6 +80,9 @@ public class MultithreadedSearcher implements Searcher {
 	private String updatedTime = null;
 
 	public static MultithreadedSearcher getInstance() {
+	    ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+	    root.setLevel(ch.qos.logback.classic.Level.INFO);
+		
 		if (searcher == null)
 			searcher = new MultithreadedSearcher();
 		return searcher;
@@ -865,7 +868,7 @@ public class MultithreadedSearcher implements Searcher {
 
 				log.info("Size of wordList: {}", words.size());
 				for (String w : words) {
-					log.info("{}" + w);
+					log.info("{}", w);
 				}
 
 				TreeMap<Long, Double> documents = phraseSearch(words);

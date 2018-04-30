@@ -95,7 +95,6 @@ public class PageRank {
     	List<PRNode> result = new ArrayList<PRNode>();
     	for (PRNode n : nodes.values()) {
     		result.add(n);
-    		log.info("Rank of {}: {}", n.myUrl, n.currRank);
     	}
 
     	return result;
