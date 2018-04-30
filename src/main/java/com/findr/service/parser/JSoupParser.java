@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang3.StringUtils.split;
+
 /**
  * The JSoup implementation of the Parser class
  */
@@ -74,6 +76,47 @@ public class JSoupParser implements Parser {
 
             LinkedHashMap<String, Integer> keywords = Vectorizer.vectorize(doc.text(), true);
             LinkedHashMap<String, Integer> titleKeywords = Vectorizer.vectorize(doc.title(), true);
+            
+            ArrayList<ArrayList<String>> triples = new ArrayList<ArrayList<String>>();
+            List<String> docSplit = new ArrayList<String>(Arrays.asList(split(doc.text())));
+            for (int i = 0; i < docSplit.size(); i++) {
+            	Object[] vArray = Vectorizer.vectorize(docSplit.get(i), true).keySet().toArray();
+            	String v = "";
+            	if (vArray.length != 0) {
+            		v = (String)vArray[0];
+            	}
+            	docSplit.set(i, v);
+            }
+            docSplit.removeIf(item -> item == null || item.equals(""));
+            
+            if (docSplit.size() >= 3) {
+	            for (int i = 0; i < docSplit.size() - 2; i++) {
+	            	ArrayList<String> triple = new ArrayList<String>();
+	            	triple.add(docSplit.get(i));
+	            	triple.add(docSplit.get(i + 1));
+	            	triple.add(docSplit.get(i + 2));
+	            	triples.add(triple);
+	            }
+            } else {
+            	ArrayList<String> triple = new ArrayList<String>();
+            	
+            	switch (docSplit.size()) {
+            	case 3:
+	            	triple.add(docSplit.get(2));
+	            	
+            	case 2:
+	            	triple.add(docSplit.get(1));
+	            	
+            	case 1:
+            		triple.add(docSplit.get(0));
+            		
+            	default:
+            		break;
+            	}
+            	
+            	Collections.reverse(triple);
+            	triples.add(triple);
+            }
 
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;
@@ -95,6 +138,7 @@ public class JSoupParser implements Parser {
                     .setMyUrl(url)
                     .setKeywordsAndFrequencies(keywords)
                     .setTitleKeywordsAndFrequencies(titleKeywords)
+                    .setTriples(triples)
                     .setMetaDescription(getMetaDescription(doc));
 
             //            if (result.getSize() == -1)

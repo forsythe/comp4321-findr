@@ -243,15 +243,19 @@ public class MapDBIndexer implements Indexer {
 				}
 
 				// Get triple index
-				String[] keywordFreqArr = keywordFreq.keySet().toArray(new String[keywordFreq.size()]);
-				for (int i = 0; i < keywordFreqArr.length - 2; i++) {
-					Long wID1 = keyword_wordID.get(keywordFreqArr[i]);
-					Long wID2 = keyword_wordID.get(keywordFreqArr[i + 1]);
-					Long wID3 = keyword_wordID.get(keywordFreqArr[i + 2]);
+				ArrayList<ArrayList<String>> triplesList = webpage.getTriples();
+				for (ArrayList<String> triple : triplesList) {
+					String first = triple.get(0);
+					String second = triple.get(1);
+					String third = triple.get(2);
+					
+					Long wID1 = keyword_wordID.get(first);
+					Long wID2 = keyword_wordID.get(second);
+					Long wID3 = keyword_wordID.get(third);
 
-					Integer freq1 = keywordFreq.get(keywordFreqArr[i]);
-					Integer freq2 = keywordFreq.get(keywordFreqArr[i + 1]);
-					Integer freq3 = keywordFreq.get(keywordFreqArr[i + 2]);
+					Integer freq1 = keywordFreq.get(first);
+					Integer freq2 = keywordFreq.get(second);
+					Integer freq3 = keywordFreq.get(third);
 					
 					triple_inverted.add(new Object[] {wID1, freq1,
 													  wID2, freq2,
