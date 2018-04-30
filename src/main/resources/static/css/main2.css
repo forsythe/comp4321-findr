@@ -17,27 +17,65 @@ body {
   padding: 0px;
 }
 
-#query{
+#query {
   width: 70%;
   height: 4.6vh;
   border: none;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-#search_button{
-  border 0;
+#search_button {
+  /*border: 0;*/
   width: 15%;
   height:  5vh;
   font-size: 1.2vw;
   margin: 0;
   margin-left: 0.5vw;
+  
+  position: relative;
+  top: 0.250vh;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
 }
 
-#logo{
+#search_button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+#search_button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+#search_button:hover span {
+  padding-right: 25px;
+}
+
+#search_button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+#logo {
   display: inline-block;
   width: 60%;
 }
 
-input{
+input {
     padding: 0.2vh 1.2vh;
 }

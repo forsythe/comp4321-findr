@@ -35,7 +35,7 @@
     <form th:action="@{/search}">
         <input required type="text" name="query" th:value="${query}" id="query">
         <input type="hidden" name="page" value="1">
-        <input type="submit" value="Search">
+        <button type="submit" id="search_button"><span>Search </span></button>
     </form>
     <br/>
     <span th:text="${totalCrawledPages} + ' result(s) (' + ${crawlTime} + ' seconds)'">Time elapsed</span>
