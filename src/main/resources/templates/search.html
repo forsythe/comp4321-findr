@@ -38,7 +38,9 @@
         <button type="submit" id="search_button"><span>Search </span></button>
     </form>
     <br/>
-    <span th:text="${totalCrawledPages} + ' result(s) (' + ${crawlTime} + ' seconds)'">Time elapsed</span>
+    <span th:with="plural = ${totalCrawledPages == 1} ? 'result' : 'results'">
+        <span th:text="${totalCrawledPages} + ' ' + ${plural} + ' (' + ${crawlTime} + ' seconds)'">Time elapsed</span>
+    </span>
 </div>
 
 
@@ -49,7 +51,7 @@
     th:attr="src=@{/images/button_5_2.png}" class="bt_image" onclick="showHideTop5()"
     th:onclick="'javascript:showHideTop5();'"/>
 
-    <form action="/keywords" th:attr="action=@{/subscribe}" method="get" target = _blank
+    <form action="/keywords" th:attr="action=@{/keywords}" method="get" target = _blank
     th:target="_blank">
       <input type="image" th:if="${isMorning}==true"
       src="../static/images/button_index_2.png"
