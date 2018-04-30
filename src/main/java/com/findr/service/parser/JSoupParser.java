@@ -89,7 +89,7 @@ public class JSoupParser implements Parser {
             }
             docSplit.removeIf(item -> item == null || item.equals(""));
             
-            if (docSplit.size() >= 3) {
+//            if (docSplit.size() >= 3) {
 	            for (int i = 0; i < docSplit.size() - 2; i++) {
 	            	ArrayList<String> triple = new ArrayList<String>();
 	            	triple.add(docSplit.get(i));
@@ -97,26 +97,37 @@ public class JSoupParser implements Parser {
 	            	triple.add(docSplit.get(i + 2));
 	            	triples.add(triple);
 	            }
-            } else {
-            	ArrayList<String> triple = new ArrayList<String>();
-            	
-            	switch (docSplit.size()) {
-            	case 3:
-	            	triple.add(docSplit.get(2));
-	            	
-            	case 2:
-	            	triple.add(docSplit.get(1));
-	            	
-            	case 1:
-            		triple.add(docSplit.get(0));
-            		
-            	default:
-            		break;
-            	}
-            	
-            	Collections.reverse(triple);
-            	triples.add(triple);
-            }
+//            } else {
+//            	ArrayList<String> triple = new ArrayList<String>();
+//            	
+//            	switch (docSplit.size()) {
+//            	case 1:
+//            		triple.add(docSplit.get(0));
+//	            	triple.add("");
+//	            	triple.add("");
+//	            	break;
+//	            	
+//            	case 2:
+//	            	triple.add(docSplit.get(0));
+//	            	triple.add(docSplit.get(1));
+//	            	triple.add("");
+//	            	break;
+//	            	
+//            	case 3:
+//            		triple.add(docSplit.get(0));
+//	            	triple.add(docSplit.get(1));
+//	            	triple.add(docSplit.get(2));
+//	            	break;
+//            		
+//            	default:
+//            		triple.add("");
+//	            	triple.add("");
+//	            	triple.add("");
+//	            	break;
+//            	}
+//            	
+//            	triples.add(triple);
+//            }
 
             String contentLength = httpCon.getHeaderField("Content-Length");
             long contentLengthLong;
@@ -139,7 +150,6 @@ public class JSoupParser implements Parser {
     				title = originalTitle;
     			}
     		}
-    		System.out.println("TITLING: " + title);
 
             Webpage result = Webpage.create()
                     .setLastModified(getLastModifiedDate(httpCon))
