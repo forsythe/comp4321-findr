@@ -20,6 +20,7 @@ public class Webpage {
 
     LinkedHashMap<String, Integer> titleKeywordsAndFrequencies;
     LinkedHashMap<String, Integer> keywordsAndFrequencies;
+    ArrayList<ArrayList<String>> triples;
 
     public String getTitle() {
         return title;
@@ -95,6 +96,15 @@ public class Webpage {
     
     public Webpage setTitleKeywordsAndFrequencies(LinkedHashMap<String, Integer> titleKeywordsAndFrequencies) {
     	this.titleKeywordsAndFrequencies = titleKeywordsAndFrequencies;
+    	return this;
+    }
+    
+    public ArrayList<ArrayList<String>> getTriples() {
+    	return triples;
+    }
+    
+    public Webpage setTriples(ArrayList<ArrayList<String>> triples) {
+    	this.triples = triples;
     	return this;
     }
 

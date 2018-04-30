@@ -1,9 +1,10 @@
 package com.findr.service.searcher;
 
 import com.findr.object.Webpage;
-import com.findr.scheduled.CrawlAndIndexTask;
 import com.findr.service.indexer.MapDBIndexer;
 import com.findr.service.utils.stemming.Vectorizer;
+
+import static org.apache.commons.lang3.StringUtils.split;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -537,14 +538,26 @@ public class MultithreadedSearcher implements Searcher {
 					for (int i = 0; i < tokenizedQuery.get(s).intValue(); i++) {
 						queryLength++;
 						log.debug("querylength: {}", queryLength);
-						try {
-							wordList.put(s);
-							log.debug("Done");
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+//						try {
+//							wordList.put(s);
+//							log.debug("Done");
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
 					}
 				}
+				
+				List<String> querySplit = new ArrayList<String>(Arrays.asList(split(query)));
+	            for (int i = 0; i < querySplit.size(); i++) {
+	            	Object[] vArray = Vectorizer.vectorize(querySplit.get(i), true).keySet().toArray();
+	            	String v = "";
+	            	if (vArray.length != 0) {
+	            		v = (String)vArray[0];
+	            	}
+	            	querySplit.set(i, v);
+	            }
+	            querySplit.removeIf(item -> item == null || item.equals(""));
+	            wordList.addAll(querySplit);
 			}
 
 			for (int i = 0; i < NUM_OF_SEARCHER_THREAD; i++) {
@@ -606,6 +619,7 @@ public class MultithreadedSearcher implements Searcher {
 	class PhraseSearcher implements Runnable {
 		BlockingQueue<String> wordList;
 		ConcurrentHashMap<Long, Double> normalisedWeights;
+		List<String> words;
 
 		public PhraseSearcher(BlockingQueue<String> wordList, ConcurrentHashMap<Long, Double> normalisedWeights) {
 			this.wordList = wordList;
@@ -783,9 +797,8 @@ public class MultithreadedSearcher implements Searcher {
 					Integer tf_ij1 = (Integer)intermediateScores.get(pID).get(wID1);
 					Integer tf_ij2 = (Integer)intermediateScores.get(pID).get(wID2);
 					
-					// TODO: Properly count tf_Qj
-					Integer tf_Qj1 = 1;
-					Integer tf_Qj2 = 1;
+					Integer tf_Qj1 = Collections.frequency(this.words, (String)wordID_keyword.get(wID1));
+					Integer tf_Qj2 = Collections.frequency(this.words, (String)wordID_keyword.get(wID2));
 					
 					Integer df_j = d.size();
 					
@@ -832,8 +845,7 @@ public class MultithreadedSearcher implements Searcher {
 				}
 				
 				for (Long pID : d.keySet()) {
-					// TODO: Properly count tf_Qj
-					Integer tf_Qj = 1;
+					Integer tf_Qj = Collections.frequency(this.words, (String)wordID_keyword.get(wID));
 					Integer tf_ij = d.get(pID).intValue();
 					Integer df_j = d.size();
 					
@@ -859,19 +871,19 @@ public class MultithreadedSearcher implements Searcher {
 			try {
 				log.info("Start");
 
-				List<String> words = new ArrayList<String>();
+				this.words = new ArrayList<String>();
 				String word = wordList.take();
 				while(!word.equals("")) {
-					words.add(word);
+					this.words.add(word);
 					word = wordList.take();
 				}
 
-				log.info("Size of wordList: {}", words.size());
-				for (String w : words) {
+				log.info("Size of wordList: {}", this.words.size());
+				for (String w : this.words) {
 					log.info("{}", w);
 				}
 
-				TreeMap<Long, Double> documents = phraseSearch(words);
+				TreeMap<Long, Double> documents = phraseSearch(this.words);
 				normalisedWeights.putAll(documents);
 
 				log.info("Documents retrieved:");
