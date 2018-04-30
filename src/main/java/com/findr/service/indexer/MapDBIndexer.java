@@ -325,7 +325,7 @@ public class MapDBIndexer implements Indexer {
 			for (Webpage webpage : listOfWebpages)
 				addWebpageEntry(webpage);
 
-			log.info("[MapDBIndexer] Executing PageRank after indexing all webpages");
+			log.info("Executing PageRank after indexing all webpages");
 			List<PRNode> pagerankResult = PageRank.pagerank(listOfWebpages, 0.85, 100);
 			for (PRNode node : pagerankResult) {
 				Long pID = url_pageID.get(node.getMyUrl());
