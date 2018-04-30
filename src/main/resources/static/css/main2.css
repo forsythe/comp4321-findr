@@ -31,14 +31,14 @@ body {
   font-size: 1.2vw;
   margin: 0;
   margin-left: 0.5vw;
-  
+
   position: relative;
   top: 0.250vh;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  
+
   display: inline-block;
   border-radius: 4px;
-  background-color: #f4511e;
+  background-color: rgb(96, 231, 170);
   border: none;
   color: #FFFFFF;
   text-align: center;
