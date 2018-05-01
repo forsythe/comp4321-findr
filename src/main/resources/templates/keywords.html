@@ -4,109 +4,116 @@
     <title>Findr</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/css/keywords.css"
           th:href="@{/css/keywords.css}"/>
-	<script type="text/javascript" th:inline="javascript">
-		var wset = [[${wordSet}]];
-		console.log("Size of JS word set: %d", wset.length);
-		var size = [[${wordSet.size()}]];
-		var i = 0;
-		window.onload = function() {
-			var x = loadKeywords();
+    <script type="text/javascript" th:inline="javascript">
+        var wset = [[${wordSet}]];
+        console.log("Size of JS word set: %d", wset.length);
+        var size = [[${wordSet.size()}]];
+        var i = 0;
+        window.onload = function () {
+            var x = loadKeywords();
 
-			size2 = Math.ceil(size/1000);
-			var pageNum = document.getElementById("pages");
-		};
-		function loadKeywords() {
-			var set = [];
-			for (var ii = i*1000; ((ii < i*1000 + 1000) && (ii < size)); ii++) {
-				set.push(wset[ii]);
-			}
+            size2 = Math.ceil(size / 1000);
+            var pageNum = document.getElementById("pages");
+        };
 
-			var wordslist1 = document.getElementById("word_list1");
-			var wordslist2 = document.getElementById("word_list2");
-			var wordslist3 = document.getElementById("word_list3");
+        function loadKeywords() {
+            var set = [];
+            for (var ii = i * 1000; ((ii < i * 1000 + 1000) && (ii < size)); ii++) {
+                set.push(wset[ii]);
+            }
 
-			var count = 0;
+            var wordslist1 = document.getElementById("word_list1");
+            var wordslist2 = document.getElementById("word_list2");
+            var wordslist3 = document.getElementById("word_list3");
 
-			for (var j = 0; j < set.length; j++) {
-				var buttonwrap = document.createElement("div");
-				// buttonwrap.setAttribute('style',
-        // 'text-align: center; float: left; ');
-				var button = document.createElement("button");
-				button.innerHTML = set[j];
-				button.setAttribute('id', set[j].concat("_btn"));
-				button.setAttribute('onClick', 'addWord("'+set[j]+'")');
-        button.setAttribute('class',"button button1");
-				buttonwrap.appendChild(button);
+            var count = 0;
 
-				switch (j % 3) {
-					case 0:
-						wordslist1.appendChild(buttonwrap);
-            break;
-					case 1:
-						wordslist2.appendChild(buttonwrap);
-            break;
-					case 2:
-						wordslist3.appendChild(buttonwrap);
-            break;
-					default:
-						wordslist1.appendChild(buttonwrap);
-				}
-			}
-			i++;
-			if (i*1000 > size) {
-				var btn = getElementById("moreBtn");
-				btn.disabled="disabled";
-			}
+            for (var j = 0; j < set.length; j++) {
+                var buttonwrap = document.createElement("div");
+                // buttonwrap.setAttribute('style',
+                // 'text-align: center; float: left; ');
+                var button = document.createElement("button");
+                button.innerHTML = set[j];
+                button.setAttribute('id', set[j].concat("_btn"));
+                button.setAttribute('onClick', 'addWord("' + set[j] + '")');
+                button.setAttribute('class', "button button1");
+                buttonwrap.appendChild(button);
 
-		}
-	</script>
+                switch (j % 3) {
+                    case 0:
+                        wordslist1.appendChild(buttonwrap);
+                        break;
+                    case 1:
+                        wordslist2.appendChild(buttonwrap);
+                        break;
+                    case 2:
+                        wordslist3.appendChild(buttonwrap);
+                        break;
+                    default:
+                        wordslist1.appendChild(buttonwrap);
+                }
+            }
+            i++;
+            if (i * 1000 > size) {
+                var btn = getElementById("moreBtn");
+                btn.disabled = "disabled";
+            }
+
+        }
+    </script>
 </head>
 
 <body>
-  <div>
-	<input type="text" value="" id="search_bar"/>
-	<input type="submit" value="Search" class="ctrlBtn" onclick="getQuery()" id="search_btn">
-  </div>
+<div class="fixedPos">
+    <div>
+        <input type="text" value="" id="search_bar"/>
+        <input type="submit" value="Search" class="ctrlBtn" onclick="getQuery()" id="search_btn">
+    </div>
 
-	<div class="chosen_words">
-		<div id="chosen_word_list">
-			<ul id="word_list1" class="wordlist" ></ul>
-			<ul id="word_list2" class="wordlist" ></ul>
-			<ul id="word_list3" class="wordlist"></ul>
-		</div>
-		<div id="buttons">
-			<input type="submit" value="Remove All" class="ctrlBtn" onclick="removeAll()">
-			<input type="submit" value="MORE" id="moreBtn" onclick="loadKeywords()">
-		</div>
-	</div>
+    <div class="chosen_words">
+        <div id="chosen_word_list">
+            <ul id="word_list1" class="wordlist"></ul>
+            <ul id="word_list2" class="wordlist"></ul>
+            <ul id="word_list3" class="wordlist"></ul>
+        </div>
+        <div id="buttons">
+            <input type="submit" value="Remove All" class="ctrlBtn" onclick="removeAll()">
+            <input type="submit" value="MORE" id="moreBtn" onclick="loadKeywords()">
+        </div>
+    </div>
+</div>
 
-	<div id="words"></div>
 
-	<script>
-		function addWord(word) {
-			var searchbox = document.getElementById("search_bar");
-			searchbox.value += " " + word;
-		}
-		function removeWord(word) {
-			var ul = document.getElementById("chosen_word_list");
-			var term = document.getElementById(word);
-			ul.removeChild(term);
-			var btn = document.getElementById(word.concat("_btn"));
-			btn.disabled = "";
+<div id="words"></div>
 
-		}
-		function removeAll() {
-			var searchbox = document.getElementById("search_bar");
-			searchbox.value = "";
-		}
-		function getQuery() {
-			var searchbox = document.getElementById("search_bar");
-			var qry = "";
-			qry.concat("/search?query=");
-			qry += searchbox.value;
-			location.href = "/search?query=" + qry + "&page=1";
-		}
-	</script>
+<script>
+    function addWord(word) {
+        var searchbox = document.getElementById("search_bar");
+        searchbox.value += " " + word;
+    }
+
+    function removeWord(word) {
+        var ul = document.getElementById("chosen_word_list");
+        var term = document.getElementById(word);
+        ul.removeChild(term);
+        var btn = document.getElementById(word.concat("_btn"));
+        btn.disabled = "";
+
+    }
+
+    function removeAll() {
+        var searchbox = document.getElementById("search_bar");
+        searchbox.value = "";
+    }
+
+    function getQuery() {
+        var searchbox = document.getElementById("search_bar");
+        var qry = "";
+        qry.concat("/search?query=");
+        qry += searchbox.value;
+        location.href = "/search?query=" + qry + "&page=1";
+    }
+</script>
 
 </body>
 </html>

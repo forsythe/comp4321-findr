@@ -19,11 +19,11 @@ public class CrawlAndIndexTask {
     private static final Logger log = LoggerFactory.getLogger(CrawlAndIndexTask.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-    @Scheduled(fixedRate = 30000)
-    public void reportCurrentTime() {
-        log.info("I am scheduled to say hi every 30 seconds. Replace me with some crawling/indexing task, " +
-                "and change it to 1 hour or something {}", dateFormat.format(new Date()));
-    }
+//    @Scheduled(fixedRate = 30000)
+//    public void reportCurrentTime() {
+//        log.info("I am scheduled to say hi every 30 seconds. Replace me with some crawling/indexing task, " +
+//                "and change it to 1 hour or something {}", dateFormat.format(new Date()));
+//    }
     /*
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void crawlAndIndex() {
