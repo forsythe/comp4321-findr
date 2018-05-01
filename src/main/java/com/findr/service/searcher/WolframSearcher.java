@@ -12,7 +12,7 @@ import java.net.MalformedURLException;
 
 public class WolframSearcher {
 	static final String baseURL = "http://api.wolframalpha.com/v2/query";
-	static final String appID = "6RV2U3-5E5E6759JP";
+	static final String appID = "Q5UT29-63J64XWLR4";
 
 	LinkedHashMap<String, String> calculationResult = new LinkedHashMap<>();
 	LinkedHashMap<String, String> knowledgeGraph = new LinkedHashMap<>();
