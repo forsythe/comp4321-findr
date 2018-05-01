@@ -4,7 +4,7 @@
 bin/
 
 ### DB ###
-*.db
+#*.db
 
 ### STS ###
 .apt_generated
